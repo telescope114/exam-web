@@ -22,7 +22,6 @@
         name: "AdminHeader",
         methods: {
             async logout () {
-                /* 未写接口！！！！！！！ */
                 const { data } = await layout()
                 if (data.code === '200') {
                     this.$store.commit('setUser', '')

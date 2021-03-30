@@ -33,13 +33,13 @@
                 <el-form-item label="C" label-width="200px">    <el-input v-model="optionList.C.option"></el-input>  </el-form-item>
                 <el-form-item label="D" label-width="200px">    <el-input v-model="optionList.D.option"></el-input>  </el-form-item>
             </div>
-            <div  v-else-if="examQuestionInfo.type === 1">
+            <div  v-else-if="examQuestionInfo.type === 2">
                 <el-form-item prop="answer" label="答案" label-width="120px">
                     <el-radio v-model="examQuestionInfo.answer" label="true">对</el-radio>
                     <el-radio v-model="examQuestionInfo.answer" label="false">错</el-radio>
                 </el-form-item>
             </div>
-            <div v-else-if="examQuestionInfo.type === 2">
+            <div v-else-if="examQuestionInfo.type === 1">
                 <el-form-item prop="answer" label="答案" label-width="120px">
                     <el-input v-model="examQuestionInfo.answer"></el-input>
                 </el-form-item>

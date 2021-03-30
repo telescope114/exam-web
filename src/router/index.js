@@ -86,7 +86,24 @@ const routes = [
     path: '/student',
     name: 'ExamForStudent',
     component: () => import(/* webpackChunkName: "student" */'@/views/student'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'StudentInfo',
+        component: () => import(/* webpackChunkName: "studentInfo" */'@/views/student/studentInfo')
+      },
+      {
+        path: 'examList',
+        name: 'ExamList',
+        component: () => import(/* webpackChunkName: "examList" */'@/views/student/examList')
+      },
+      {
+        path: 'getStudentScore',
+        name: 'GetStudentScore',
+        component: () => import(/* webpackChunkName: "getStudentScore" */'@/views/student/getStudentScore')
+      }
+    ]
   },
   {
     path: '/examInfo/:eid',

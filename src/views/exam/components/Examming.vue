@@ -124,9 +124,10 @@
             },
             async submitAnswer () {  // 答案上传服务器
                 const form = {
-                    eqid: this.aimQuestionInfo.sepId,
+                    eqid: this.aimQuestionInfo.id,
                     answer: this.aimAnswer,
-                    id: this.aimQuestionInfo.id,
+                    id: this.aimQuestionInfo.sepId,
+                    // id: this.aimQuestionInfo.id,
                     seid: this.questionList.seid,
                     score: this.questionList[this.aimQuestionName+'Score']
                 }
