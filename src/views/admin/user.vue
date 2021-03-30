@@ -7,17 +7,19 @@
             </div>
             <div class="admin-user-main">
                 <el-table
+                    v-loading="loadingUser"
+                    element-loading-text="拼命加载中"
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-background="rgba(255,255,255,0.8)"
                     :data="userListPagination"
                     border
                     style="width: 100%">
                     <el-table-column
                         prop="username"
-                        label="账号"
-                        width="180">
+                        label="账号">
                     </el-table-column>
                     <el-table-column
-                        label="创建时间"
-                        width="180">
+                        label="创建时间">
                         <template slot-scope="scope">
                             <p>{{ scope.row.createTime | dateFormat }}</p>
                         </template>
@@ -117,6 +119,7 @@
                 if (data.code === '200') {
                     this.userList = data.data
                     this.userListPagination = this.userList.slice(0,this.pageSize)
+                    this.userPage = 1
                 }
             },
             // 添加用户

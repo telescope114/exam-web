@@ -6,7 +6,6 @@
         <div class="dialog-main">
             <el-tree
                 v-loading="loadingCreateOrEditMenu"
-                element-loading-text="拼命加载中"
                 element-loading-background="rgba(255,255,255,0.8)"
                 :data="assignData"
                 :props="defaultProps"

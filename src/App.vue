@@ -6,9 +6,9 @@
 
 <style lang="scss" scoped>
   div {
-    user-select: none;
+    /*user-select: none;*/
   }
   span {
-    user-select: none;
+    /*user-select: none;*/
   }
 </style>

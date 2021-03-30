@@ -35,10 +35,10 @@ request.interceptors.request.use(function (config) {
 // 返回登录界面
  function toLogin() {
     return router.push({
-        name: 'Login',
+        name: 'Login'/*,
         query: {
             redirect: router.currentRoute.fullPath
-        }
+        }*/
     })
 }
 

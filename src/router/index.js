@@ -80,7 +80,18 @@ const routes = [
         meta: { title: '班级管理' }
       }
       // 教师管理结束
-    ]
+    ],
+  },
+  {
+    path: '/student',
+    name: 'ExamForStudent',
+    component: () => import(/* webpackChunkName: "student" */'@/views/student'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/examInfo/:eid',
+    name: 'ExamInfo',
+    component: () => import(/* webpackChunkName: "examInfo" */'@/views/exam')
   },
   {
     path: '*',

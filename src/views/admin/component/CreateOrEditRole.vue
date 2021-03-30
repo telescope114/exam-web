@@ -20,9 +20,9 @@
         props: {
             roleInfo: {
                 type: Object,
-                default: new Object()
+                default: new Object({})
             },
-            isEidt: {
+            isEdit: {
                 type: Boolean,
                 default: false
             }
@@ -46,7 +46,7 @@
                 this.$refs[roleInfo].validate((valid) => {
                     if (valid) {
                         // console.log(valid)
-                        if (!this.isEidt) {
+                        if (!this.isEdit) {
                             this.createRole()
                         } else {
                             this.editRole()
@@ -61,19 +61,19 @@
             async createRole () {
                 const { data } = await systemRoleAdd(this.roleInfo)
                 if (data.code === '200') {
-                    this.$message.success('请求成功')
+                    this.$message.success('添加成功')
                     this.$emit('success')
                 } else {
-                    this.$message.error('请求失败！！！！！')
+                    this.$message.error('添加失败！！！！！')
                 }
             },
             async editRole () {
                 // const { data } = await systemRoleAdd(this.roleInfo)
                 // if (data.code === '200') {
-                    this.$message.success('请求成功')
+                    this.$message.success('修改成功')
                     this.$emit('success')
                 // } else {
-                //     this.$message.error('请求失败！！！！！')
+                //     this.$message.error('修改失败！！！！！')
                 // }
             }
         }

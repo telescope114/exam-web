@@ -6,7 +6,7 @@
                     class="el-menu-vertical-demo"
                     router
                     unique-opened
-                    background-color="#006C37"
+                    background-color="#288F5D"
                     text-color="#fff"
                     active-text-color="#ffd04b">
                 <el-submenu

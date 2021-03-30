@@ -218,13 +218,18 @@
                         form.fillQuestion <= this.aimQuestionBank.fillQuestion
                     ) {
                         if (form.openTime && form.closeTime && form.duration) {
-                            if (this.isEdit) {
-                                this.editExam()
+                            if (this.createOrEditExamInfo.ids !== []) {
+                                if (this.isEdit) {
+                                    this.editExam()
+                                } else {
+                                    this.addExam()
+                                }
                             } else {
-                                this.addExam()
+                                this.$message.error('请选择班级！！')
                             }
                         } else {
                             this.$message.error('考试时间有误！！')
+                            this.step = 3
                         }
                     } else {
                         this.$message.error('题目选择有误！！')

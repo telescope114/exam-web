@@ -20,15 +20,13 @@
                         width="150">
                     </el-table-column>
                     <el-table-column
-                            label="创建时间"
-                            width="200">
+                            label="创建时间">
                         <template slot-scope="scope">
                             <p>{{scope.row.createTime | dateFormat}}</p>
                         </template>
                     </el-table-column>
                     <el-table-column
-                            label="状态"
-                            width="120">
+                            label="状态">
                         <template slot-scope="scope">
                             <el-tooltip :content="'当前状态： ' + (scope.row.status === 1?'启用':'禁用')" placement="top">
                                 <el-switch
@@ -76,6 +74,7 @@
         >
             <assign-permissions-tree
                 :roleInfo="roleInfo"
+                :isEdit="isEdit"
                 @success="success"
                 @cancel="cancel"
                 v-if="dialogAssignPermission"
@@ -116,13 +115,15 @@
         },
         methods: {
             async loadRole () {
+                this.loadingRole = true
                 const { data } = await systemRole()
                 // console.log(data)
                 if (data.code === '200') {
                     this.roleList = data.data
-                    this.roleListPagination = this.loadingRole.slice(0,this.pageSize)
+                    this.roleListPagination = this.roleList.slice(0,this.pageSize)
+                    this.rolePage = 1
+                    this.loadingRole = false
                 }
-                this.loadingRole = false
             },
             // 添加绝色
             addRole () {
@@ -132,8 +133,8 @@
             },
             // 编辑角色
             editRole (row) {
-                this.roleInfo = row
                 this.isEdit = true
+                this.roleInfo = row
                 this.dialogFormVisible=true
             },
             // 添加、编辑成功

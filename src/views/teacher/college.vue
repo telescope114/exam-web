@@ -17,8 +17,7 @@
                     style="width: 100%">
                     <el-table-column
                             prop="collegeName"
-                            label="学院"
-                            width="110">
+                            label="学院">
                     </el-table-column>
                     <el-table-column
                             label="操作"
@@ -43,8 +42,7 @@
                     style="width: 100%">
                     <el-table-column
                             prop="majorName"
-                            label="专业"
-                            width="110">
+                            label="专业">
                     </el-table-column>
                     <el-table-column
                             label="操作"
@@ -69,8 +67,7 @@
                     style="width: 100%">
                     <el-table-column
                         prop="className"
-                        label="班级"
-                        width="160">
+                        label="班级">
                     </el-table-column>
                     <el-table-column
                             label="操作"

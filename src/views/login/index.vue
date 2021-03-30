@@ -54,7 +54,7 @@
             return {
                 // 存储表单数据的对象
                 loginForm: {
-                    username: '123456',
+                    username: '1705111102',
                     password: '123456'
                 },
                 // 用于设置表单校验规则
@@ -93,6 +93,9 @@
                     if (data.code === '200') {
                         this.isLoginLoading = false
                         this.$store.commit('setUser',data.token)
+                        if (data.role === 2) {
+                            this.$router.push({ name: 'ExamForStudent' } )
+                        } else if (data.role === 0|| data.role === 1)
                         this.$router.push( this.$route.query.redirect || { name: 'Layout' } )
                     } else if (data.code === '0') {
                         this.$message.error("账号密码不匹配")
