@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div>
-                <el-table :data="examList" border style="width: 100%" v-loading="loadingExam" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(255,255,255,0.8)">
+                <el-table :data="pageList" border style="width: 100%" v-loading="loadingExam" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(255,255,255,0.8)">
                     <el-table-column fixed width="200" prop="examName" label="考试名称"></el-table-column>
                     <el-table-column width="200" label="开始时间">
                         <template slot-scope="scope">
@@ -51,6 +51,15 @@
                     </el-table-column>
                 </el-table>
             </div>
+            <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageExam"
+                :page-sizes="pageSizes"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="examList.length"></el-pagination>
         </el-card>
         <el-dialog :title="isEdit?'编辑':'添加'+'考试'" :visible.sync="dialogCreateOrEditExam">
             <create-or-edit-exam
@@ -86,7 +95,11 @@
                 dialogCreateOrEditExam: false,
                 dialogSeeExamDetail: false,
                 isEdit: false,
-                loadingExam: true
+                loadingExam: true,
+                pageList: [],
+                pageExam: 1,
+                pageSize: 5,
+                pageSizes: [5,10,20,50,100]
             }
         },
         methods: {
@@ -96,6 +109,7 @@
                 if (data.code === '200') {
                     this.examList = data.data
                     console.log(this.examList)
+                    this.handleSizeChange(5)
                 }
                 this.loadingExam = false
             },
@@ -142,6 +156,16 @@
                 this.dialogSeeExamDetail = false
                 this.dialogCreateOrEditExam = false
                 this.loadExam()
+            },
+            handleSizeChange(val) {
+                // console.log(`每页 ${val} 条`);
+                this.pageSize = val
+                this.pageExam = 1
+                this.pageList = this.examList.slice(0,val)
+            },
+            handleCurrentChange(val) {
+                // console.log(`当前页: ${val}`);
+                this.pageList = this.examList.slice((val-1)*this.pageSize,val*this.pageSize)
             }
         },
         filters: {dateFormat}

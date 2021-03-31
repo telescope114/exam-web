@@ -6,7 +6,7 @@
             </div>
             <div slot="default">
                 <el-table
-                        :data="teacherList"
+                        :data="pageList"
                         border
                         style="width: 100%">
                     <el-table-column
@@ -54,7 +54,16 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
             </div>
+            <el-pagination
+               @size-change="handleSizeChange"
+               @current-change="handleCurrentChange"
+               :current-page="pageTeacher"
+               :page-sizes="pageSizes"
+               :page-size="pageSize"
+               layout="total, sizes, prev, pager, next, jumper"
+               :total="teacherList.length"></el-pagination>
         </el-card>
 <!--    添加、编辑教师    -->
         <el-dialog
@@ -111,7 +120,11 @@
                 dialogSeeClass: false,
                 dialogAssignClass: false,
                 isEdit: false,
-                teacherInfo: {}
+                teacherInfo: {},
+                pageTeacher: 1,
+                pageSize: 10,
+                pageSizes: [10,20,50,100,500],
+                pageList: []
             }
         },
         methods: {
@@ -119,6 +132,7 @@
                 const { data } = await teacherTeacher()
                 if (data.code === '200') {
                     this.teacherList = data.data
+                    this.handleSizeChange(10)
                 }
             },
             // 添加教师
@@ -157,6 +171,16 @@
                 this.dialogCreateOrEditTeacher = false
                 this.teacherInfo = {}
                 this.loadingTeacher()
+            },
+            handleSizeChange(val) {
+                // console.log(`每页 ${val} 条`);
+                this.pageSize = val
+                this.pageTeacher = 1
+                this.pageList = this.teacherList.slice(0,val)
+            },
+            handleCurrentChange(val) {
+                // console.log(`当前页: ${val}`);
+                this.pageList = this.teacherList.slice((val-1)*this.pageSize,val*this.pageSize)
             }
         }
     }

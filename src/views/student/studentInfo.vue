@@ -1,6 +1,13 @@
 <template>
     <div class="student-info">
-        <h1>个人信息</h1>
+        <el-card>
+            <div slot="header">
+                <h1>个人信息</h1>
+            </div>
+            <div>
+
+            </div>
+        </el-card>
     </div>
 </template>
 
@@ -10,6 +17,6 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 </style>

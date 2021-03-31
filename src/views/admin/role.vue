@@ -49,6 +49,7 @@
                     </el-table-column>
                 </el-table>
             </div>
+            <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
             <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
@@ -161,6 +162,7 @@
             handleSizeChange(val) {
                 // console.log(`每页 ${val} 条`);
                 this.roleListPagination = this.roleList.slice(0,val)
+                this.rolePage = 1
                 this.pageSize = val
             },
             handleCurrentChange(val) {

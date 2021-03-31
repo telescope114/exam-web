@@ -38,15 +38,29 @@ export const examPreviousOrNext = (form) => {
 }
 
 /**
+ * 提交答案
+ * @param form
+ * @returns {AxiosPromise}
+ */
+export const examReturnExam = () => {
+    return request({
+        method: 'GET',
+        url: '/student/exam/returnExam',
+        // headers: QS,
+        // data: JSON.stringify(form)
+    })
+}
+
+/**
  * 结束考试
  * @param form
  * @returns {AxiosPromise}
  */
-export const examEndExam = () => {
+export const examEndExam = (form) => {
     return request({
-        method: 'GET',
+        method: 'POST',
         url: '/student/exam/endExam',
-        // headers: QS,
-        // data: JSON.stringify(form)
+        headers: QS,
+        data: qs.stringify(form)
     })
 }

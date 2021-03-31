@@ -4,9 +4,8 @@
             <div>
                 <h1>考试信息</h1>
                 <el-table
-                        :data="studentExamList"
-                        v-loading="loadingStudentExam"
-                >
+                        :data="pageList"
+                        v-loading="loadingStudentExam">
                     <el-table-column fixed label="考试科目">
                         <template slot-scope="scope">
                             <p :class="checkExamTime(scope.row)?'examing':'before-exam'">{{scope.row.examName}}</p>
@@ -35,6 +34,16 @@
                     </el-table-column>
                 </el-table>
             </div>
+            <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="pageStudentExam"
+                    :page-sizes="pageSizes"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="studentExamList.length">
+            ></el-pagination>
         </el-card>
     </div>
 </template>
@@ -49,6 +58,10 @@
             return {
                 loadingStudentExam: true,
                 studentExamList: [],
+                pageSizes: [5,10,20,50],
+                pageSize: 5,
+                pageStudentExam: 1,
+                pageList: []
             }
         },
         created() {
@@ -60,8 +73,15 @@
                 const { data } = await studentExamGetExamList()
                 this.loadingStudentExam = false
                 if (data.code === '200') {
-                    this.studentExamList = data.data
-                    console.log(this.studentExamList)
+                    data.data.forEach(item => {
+                        if (this.checkExamTime(item)) {
+                            this.studentExamList.unshift(item)
+                        } else {
+                            this.studentExamList.push(item)
+                        }
+                    })
+                    this.pageList = this.studentExamList.slice(0,this.pageSize)
+                    this.pageStudentExam = 1
                 }
             },
             // 去考试按钮
@@ -84,6 +104,16 @@
                 } else {
                     return true
                 }
+            },
+            handleSizeChange(val) {
+                // console.log(`每页 ${val} 条`);
+                this.pageSize = val
+                this.pageStudentExam = 1
+                this.pageList = this.studentExamList.slice(0,val)
+            },
+            handleCurrentChange(val) {
+                // console.log(`当前页: ${val}`);
+                this.pageList = this.studentExamList.slice((val-1)*this.pageSize,val*this.pageSize)
             }
         },
         filters: {

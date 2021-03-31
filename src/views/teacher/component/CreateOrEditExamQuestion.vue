@@ -14,8 +14,8 @@
                 <el-select v-model="examQuestionInfo.type" style="width: 100%;">
                     <el-option value="" label="请选择" disabled></el-option>
                     <el-option :value="0" label="单选题"></el-option>
-                    <el-option :value="1" label="判断题"></el-option>
-                    <el-option :value="2" label="填空题"></el-option>
+                    <el-option :value="1" label="填空题"></el-option>
+                    <el-option :value="2" label="判断题"></el-option>
                 </el-select>
             </el-form-item>
             <div  v-if="examQuestionInfo.type === 0">

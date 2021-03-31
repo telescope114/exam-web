@@ -38,3 +38,37 @@ export const studentExamGetStartExam = (form) => {
         data: qs.stringify(form)
     })
 }
+
+/**
+ * 学生获取成绩列表
+ * @returns {AxiosPromise}
+ */
+export const studentScoreGetExamList = () => {
+    return request({
+        method: 'GET',
+        url: '/student/score/getExamList'
+    })
+}
+
+/**
+ * 获取成绩详情
+ * @param form
+ * @returns {AxiosPromise}
+ */
+export const studentScoreFindScore = (form) => {
+    return request({
+        method: 'POST',
+        url: '/student/score/findScore',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 学生获取自己的信息
+ */
+export const studentGetStudentInfo = () => {
+
+}

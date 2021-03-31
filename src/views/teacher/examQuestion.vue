@@ -18,7 +18,7 @@
         </el-card>
         <el-card>
             <div class="exam-question-content">
-                <el-table :data="examQuestionList" border style="width: 100%;" v-loading="loadingExamQuestion" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(255,255,255,0.8)">
+                <el-table :data="pageList" border style="width: 100%;" v-loading="loadingExamQuestion" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(255,255,255,0.8)">
                     <el-table-column label="题库" prop="questionBankName" width="180"></el-table-column>
                     <el-table-column label="题型" width="100">
                         <template slot-scope="scope">
@@ -65,6 +65,14 @@
                     </el-table-column>
                 </el-table>
             </div>
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageExamQuestion"
+                :page-sizes="pageSizes"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="examQuestionList.length"></el-pagination>
         </el-card>
         <el-dialog :title="isEdit?'编辑试题':'添加试题'" :visible.sync="dialogExamQuestion">
             <create-or-edit-exam-question
@@ -126,7 +134,11 @@
                 dialogExamQuestionOption: false,
                 examQuestionInfo: {},
                 isEdit: false,
-                loadingExamQuestion: true
+                loadingExamQuestion: true,
+                pageExamQuestion: 1,
+                pageSize: 10,
+                pageSizes: [10,30,50,100],
+                pageList: []
             }
         },
         methods: {
@@ -135,6 +147,7 @@
                 const { data } = await teacherExamQuestion()
                 if (data.code === '200') {
                     this.examQuestionList = data.data
+                    this.handleSizeChange(10)
                 }
                 this.loadingExamQuestion = false
             },
@@ -180,6 +193,16 @@
             },
             async enableExamQuestion () {
                 this.$message.success('已经启用')
+            },
+            handleSizeChange(val) {
+                // console.log(`每页 ${val} 条`);
+                this.pageSize = val
+                this.pageExamQuestion = 1
+                this.pageList = this.examQuestionList.slice(0,val)
+            },
+            handleCurrentChange(val) {
+                // console.log(`当前页: ${val}`);
+                this.pageList = this.examQuestionList.slice((val-1)*this.pageSize,val*this.pageSize)
             }
         },
         filters: { dateFormat, hideString }

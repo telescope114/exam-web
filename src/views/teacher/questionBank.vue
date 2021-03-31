@@ -12,7 +12,7 @@
         </el-card>
         <el-card>
             <el-table
-                :data="questionBankList"
+                :data="pageList"
                 border
                 style="width: 100%;"
             >
@@ -50,6 +50,15 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageQuestionBank"
+                :page-sizes="pageSizes"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="questionBankList.length"></el-pagination>
         </el-card>
         <el-dialog :title="isEdit?'编辑题库':'添加题库'" :visible.sync="dialogCreateOrEditQuestionBank">
             <create-or-edit-question-bank
@@ -81,7 +90,11 @@
                 questionBankList: [],
                 dialogCreateOrEditQuestionBank: false,
                 questionBankInfo: {},
-                isEdit: false
+                isEdit: false,
+                pageSize: 5,
+                pageSizes: [5,10,20,50],
+                pageList: [],
+                pageQuestionBank: 1
             }
         },
         methods: {
@@ -118,6 +131,16 @@
                 this.dialogCreateOrEditQuestionBank = false
                 this.questionBankInfo = {}
                 this.loadingQuestionBank()
+            },
+            handleSizeChange(val) {
+                // console.log(`每页 ${val} 条`)
+                this.pageSize = val
+                this.pageQuestionBank = 1
+                this.pageList = this.questionBankList.slice(0,val)
+            },
+            handleCurrentChange(val) {
+                // console.log(`当前页: ${val}`)
+                this.pageList = this.questionBankList.slice((val-1)*this.pageSize,val*this.pageSize)
             }
         }
     }

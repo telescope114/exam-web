@@ -48,6 +48,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"

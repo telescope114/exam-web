@@ -44,8 +44,11 @@
                             <el-button :type="aimAnswer==='D'?'primary':(aimAnswer?'':'info')" @dblclick.native="page(aimQuestion + 2)" @click="aimQuestionAnswer('D')" >D</el-button>
                         </div>
                         <div v-else-if="aimType === 1">
-                            <el-radio v-model="aimAnswer" label="true">正确</el-radio>
-                            <el-radio v-model="aimAnswer" label="false">错误</el-radio>
+                            <el-radio v-model="aimAnswer" @dblclick.native="page(aimQuestion + 2)" label="true">正确</el-radio>
+                            <el-radio v-model="aimAnswer" @dblclick.native="page(aimQuestion + 2)" label="false">错误</el-radio>
+                        </div>
+                        <div v-else-if="aimType === 2">
+                            <el-input type="text" :class="aimAnswer?'':'input-no-answer'" v-model="aimAnswer" clearable></el-input>
                         </div>
                         <div>
                             <el-button type="primary" @click="page(aimQuestion)">上一题</el-button>
@@ -71,17 +74,24 @@
 </template>
 
 <script>
-    import {examEndExam, examPreviousOrNext} from "../../../services/exam";
+    import {examPreviousOrNext, examReturnExam} from "../../../services/exam";
 
     export default {
         name: "Examming",
         props: {
-            questionList: Object
+            question: {
+                type: Object,
+                default: new Object({})
+            },
+            code: {
+                type: String
+            }
         },
         data () {
             return {
-                aimType: '',    // 当前题目类型
-                aimTypeName: '',    // 当前题目类型名称
+                questionList: [],       // 全部题目信息
+                aimType: '',            // 当前题目类型
+                aimTypeName: '',        // 当前题目类型名称
                 aimQuestionName: '',    // 当前类型对应的变量名称
                 aimQuestionList: [],    // 当前类型题目列表
                 aimQuestionInfo: '',    // 当前所做的题目对象
@@ -99,9 +109,50 @@
             }
         },
         created() {
-            this.choiceNum(1)
+            if (this.code === '203') {
+                this.continueExam()
+            } else {
+                this.questionList = this.question
+                this.startExam()
+            }
         },
         methods: {
+            startExam () {
+                if (this.questionList.choiceQuestionNumber > 0) {
+                    this.choiceNum(1)
+                } else if (this.questionList.judgmentQuestionNumber > 0) {
+                    this.judgmentNum(1)
+                } else if (this.questionList.fillQuestionNumber > 0) {
+                    this.fillNum(1)
+                } else {
+                    this.$message.error('考题错误，请联系出题教师！！！！！')
+                    this.isEnd = true
+                }
+            },
+            async continueExam () {
+                const { data } = await examReturnExam()
+                if (data.code === '200') {
+                    this.questionList = data.data
+                    this.$emit('lastTime',this.questionList.timeRemaining)
+                    this.$emit('setSEID',this.questionList.seid)
+                    this.questionList.choiceQuestionExam.forEach((item,index) => {
+                        if (item.myAnswer) {
+                            this.answerChoiceList[index] = item.myAnswer
+                        }
+                    })
+                    this.questionList.judgmentQuestionExam.forEach((item,index) => {
+                        if (item.myAnswer) {
+                            this.answerJudgmentList[index] = item.myAnswer
+                        }
+                    })
+                    this.questionList.fillQuestionExam.forEach((item,index) => {
+                        if (item.myAnswer) {
+                            this.answerFillList[index] = item.myAnswer
+                        }
+                    })
+                    this.startExam()
+                }
+            },
             setAnswer () {       // 将答案书写到指定位置
                 if (this.aimAnswer) {
                     if (this.aimType === 0) {
@@ -136,6 +187,9 @@
                 // console.log(data)
                 if (data.code === '200') {
                     console.log(data)
+                } else if (data.code === '205') {
+                    this.$message.error('时间到！！！')
+                    this.endExam()
                 } else {
                     this.$message.error(this.aimTypeName+'第'+(this.aimQuestion+1)+'题提交失败')
                     switch (this.aimType) {
@@ -253,13 +307,12 @@
                     }
                 }
             },
-            async endExam () {
-                const { data } = await examEndExam()
-                if (data.code === '200') {
-                    this.dialogEndExam = false
-                    this.$message.success('结束考试')
-                    this.$router.push({name: 'ExamForStudent'})
-                }
+            endExam () {
+                this.$emit('endExam',this.questionList.seid)
+                // const { data } = await examEndExam({seid: this.questionList.seid})
+                // if (data.code === '200') {
+                    // this.dialogEndExam = false
+                // }
             }
         }
     }
@@ -284,6 +337,9 @@
             .el-card__header {
                 padding-bottom: 0px;
             }
+        }
+        .input-no-answer {
+            border: 1px $danger-color solid;
         }
         .answer-previous-or-next {
             display: flex;

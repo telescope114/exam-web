@@ -9,3 +9,10 @@ function dateFormat (date) {
 }
 
 export default dateFormat
+
+export const setTime = (seconds) => {
+    const hour = parseInt(seconds / 3600)
+    const min = parseInt((seconds % 3600) / 60)
+    const second = parseInt(seconds % 60)
+    return `${hour.toString().length>1?hour.toString():'0'+hour.toString()}:${min.toString().length>1?min.toString():'0'+min.toString()}:${second.toString().length>1?second.toString():'0'+second.toString()}`
+}
