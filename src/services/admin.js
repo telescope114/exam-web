@@ -40,19 +40,30 @@ export const systemMenuAdd = (form) => {
 }
 
 /**
- * 菜单管理-编辑菜单请求（未实现）
+ * 菜单管理-编辑菜单请求
  * @param data
  */
 export const systemMenuEdit = (form) => {
-    console.log(form)
+    return request({
+        method: 'POST',
+        url: '/system/menu/edit',
+        data: JSON.stringify(form)
+    })
 }
 
 /**
- * 菜单管理-启用菜单请求（未实现）
+ * 菜单管理-启用菜单请求
  * @param form id
  */
 export const systemMenuEnable = (form) => {
-    console.log(form)
+    return request({
+        method: 'POST',
+        url: '/system/menu/enable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data: qs.stringify(form)
+    })
 }
 
 /**
@@ -60,7 +71,14 @@ export const systemMenuEnable = (form) => {
  * @param form id
  */
 export const systemMenuDisable = (form) => {
-    console.log(form)
+    return request({
+        method: 'POST',
+        url: '/system/menu/disable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data: qs.stringify(form)
+    })
 }
 
 /**
@@ -99,7 +117,10 @@ export const systemRoleEdit = (form) => {
     return request({
         method: 'POST',
         url: '/system/role/edit',
-        data: JSON.stringify(form)
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data: qs.stringify(form)
     })
 }
 
@@ -112,7 +133,10 @@ export const systemRoleEnable = (form) => {
     return request({
         method: 'POST',
         url: '/system/role/enable',
-        data: JSON.stringify(form)
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data: qs.stringify(form)
     })
 }
 
@@ -125,7 +149,10 @@ export const systemRoleDisable = (form) => {
     return request({
         method: 'POST',
         url: '/system/role/disable',
-        data: JSON.stringify(form)
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data: qs.stringify(form)
     })
 }
 
@@ -218,19 +245,6 @@ export const systemUserGetRole = (form) => {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         data: qs.stringify(form)
-    })
-}
-
-/**
- * 用户管理-重置密码
- * @param form 请求： id
- * @returns {AxiosPromise}
- */
-export const systemUserResetPassword = (form) => {
-    return request({
-        method: 'POST',
-        url: '/system/user/resetPassword',
-        data: JSON.stringify(form)
     })
 }
 

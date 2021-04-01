@@ -18,6 +18,7 @@
                     </div>
                     <div style="margin-top: 100px">
                         <el-button type="info" @click="backToScoreList">返回</el-button>
+                        <el-button :disabled="loadingScore" type="warning" v-loading="loadingPrintScore" @click="printScore">打印</el-button>
                     </div>
                 </div>
             </el-card>
@@ -58,13 +59,14 @@
 </template>
 
 <script>
-    import {studentScoreFindScore} from "../../services/student";
+    import {studentDownLoadScore, studentPrintScore, studentScoreFindScore} from "../../services/student";
 
     export default {
         name: "getExamScore",
         data () {
             return {
                 loadingScore: true,
+                loadingPrintScore: false,
                 studentScoreInfo: {},
                 questionList: [],
                 questionFirst: 0,
@@ -96,6 +98,21 @@
             },
             backToScoreList () {
                 this.$router.push({name: 'GetStudentScore'})
+            },
+            async printScore () {
+                this.loadingPrintScore = true
+                const { data } = await studentPrintScore({eid:this.$route.params.id})
+                if (data.code === '200') {
+                    // console.log(data)
+                    this.downloadScore(data.data)
+                }
+                this.loadingPrintScore = false
+            },
+            async downloadScore (fileName) {
+                const { data } = await studentDownLoadScore({fileName:fileName})
+                if (data.code === '200') {
+                    console.log(data)
+                }
             }
         }
     }

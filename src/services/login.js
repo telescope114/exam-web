@@ -26,3 +26,18 @@ export const layout = () => {
         url: '/user/logout'
     })
 }
+
+/**
+ * 修改密码
+ * @returns 响应：
+ */
+export const changePassword = (form) => {
+    return request({
+        method: 'POST',
+        url: '/user/changePassword',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data: qs.stringify(form)
+    })
+}

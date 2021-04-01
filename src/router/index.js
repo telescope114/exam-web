@@ -111,7 +111,7 @@ const routes = [
       },
       {
         path: 'score/:id/',
-        name: 'Score',
+        name: 'StudentScore',
         component: () => import(/* webpackChunkNameL "getExamScore" */'@/views/student/getExamScore')
       }
     ]

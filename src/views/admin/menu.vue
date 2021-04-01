@@ -158,11 +158,11 @@
                     this.ableMenu(row)
                 }
             },
-            disableMenu (row) {
+            async disableMenu (row) {
                 console.log(row)
                 this.$message.warning('已经禁用！')
             },
-            ableMenu (row) {
+            async ableMenu (row) {
                 console.log(row)
                 this.$message.success('启用成功！')
             }

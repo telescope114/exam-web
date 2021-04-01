@@ -4,6 +4,9 @@
 import request from "@/utils/request";
 import qs from 'qs'
 
+/**
+ * 班级管理-获取班级列表
+ */
 export const teacherClass = () => {
     return request({
         method: 'GET',
@@ -11,6 +14,9 @@ export const teacherClass = () => {
     })
 }
 
+/**
+ * 学院管理-获取学院列表
+ */
 export const teacherCollege = () => {
     return request({
         method: 'GET',
@@ -232,5 +238,36 @@ export const teacherExamAddExamSubmit = (form) => {
         method: 'POST',
         url: '/teacher/exam/addExam/submit',
         data: JSON.stringify(form)
+    })
+}
+
+/**
+ * 成绩管理-成绩查询
+ * @Author 郭瑞峰
+ * @Date 2021/4/1 11:48
+ * @param data
+ * @returns
+ **/
+export const teacherScore = () => {
+    return request({
+        method: 'GET',
+        url: '/teacher/score'
+    })
+}
+
+/**
+ * 成绩管理-查看所有学生成绩
+ * @Author 郭瑞峰
+ * @Date 2021/4/1 11:48
+ * @param data
+ * @returns
+ **/
+export const teacherScoreGetStudentScore = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/score/getClassScore',headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
     })
 }

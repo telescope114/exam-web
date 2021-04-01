@@ -53,18 +53,32 @@ request.interceptors.response.use(function (res) {
     if (res.data.code === '100') {
         // 更新token
         store.commit('setUser',res.data.token)
-        /* if (!store.state.user) {
+         /*if (!store.state.user) {
             toLogin()
             return
         }
-        检查token刷新状态
+        // 检查token刷新状态
         if (isRefreshToken) {
             requests.push(() => {
                 request(res.config)
             })
         }
-        isRefreshToken = true */
+        isRefreshToken = true*/
         return  request(res.config)
+            /*.then(res => {
+            if (res.data.state !== 1) {
+                // 清除无效的用户信息
+                store.commit('setUser', null)
+                toLogin()
+            }
+            // store.commit('setUser', res.data.content)
+            //  - 重新发送失败的请求（根据 requests 发送所有失败的请求）
+            requests.forEach(callback => callback())
+            //  - 发送完毕，清除 requests 内容即可
+            requests = []
+            //  - 将本次请求发送
+            return res
+        })*/
     } else if (res.data.code === '101') {
         // token 无效
         toLogin()

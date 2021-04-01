@@ -43,6 +43,7 @@
         justify-content: space-between;
         align-items: center;
         .el-dropdown-link {
+            margin-right: 20px;
             display: flex;
             align-items: center;
             cursor: pointer;

@@ -84,7 +84,8 @@
                 }
             },
             getScoreAllInformation (row) {
-                this.$router.push({name: 'Score',params:{id: row.id}})
+                this.$router.push('score/'+row.id)
+                this.$router.push({name: 'StudentScore',params:{id: row.id}})
             },
             handleSizeChange(val) {
                 // console.log(`每页 ${val} 条`);

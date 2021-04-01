@@ -67,6 +67,44 @@ export const studentScoreFindScore = (form) => {
 }
 
 /**
+ * 打印成绩详情请求
+ * @param form
+ * @returns {AxiosPromise}
+ */
+export const studentPrintScore = (form) => {
+    return request({
+        method: 'POST',
+        url: '/student/printScore',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 下载成绩详情请求
+ * @param form
+ * @returns {AxiosPromise}
+ */
+export const studentDownLoadScore = (fileName) => {
+// export const studentDownLoadScore = (form) => {
+    /*return request({
+        method: 'POST',
+        url: '/download',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })*/
+    return request({
+        method: 'GET',
+        url: '/file/download?fileName='+fileName,
+        responseType: 'arraybuffer'
+    })
+}
+
+/**
  * 学生获取自己的信息
  */
 export const studentInfo = () => {
