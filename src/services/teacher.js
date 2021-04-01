@@ -256,7 +256,7 @@ export const teacherScore = () => {
 }
 
 /**
- * 成绩管理-查看所有学生成绩
+ * 成绩管理-查看学生成绩
  * @Author 郭瑞峰
  * @Date 2021/4/1 11:48
  * @param data
@@ -265,9 +265,50 @@ export const teacherScore = () => {
 export const teacherScoreGetStudentScore = (form) => {
     return request({
         method: 'POST',
-        url: '/teacher/score/getClassScore',headers: {
+        url: '/teacher/score/getClassScore',
+        headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         data: qs.stringify(form)
+    })
+}
+
+/**
+ * 成绩管理-打印学生成绩
+ * @Author 郭瑞峰
+ * @Date 2021/4/1 11:48
+ * @param data
+ * @returns
+ **/
+export const teacherScorePrintClassScore = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/score/printClassScore',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 成绩管理-下载班级成绩
+ * @param form
+ * @returns {AxiosPromise}
+ */
+export const teacherScoreDownloadClassScore = (fileName) => {
+// export const studentDownLoadScore = (form) => {
+    /*return request({
+        method: 'POST',
+        url: '/download',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })*/
+    return request({
+        method: 'GET',
+        url: '/file/download?fileName='+fileName,
+        responseType: 'blob'
     })
 }

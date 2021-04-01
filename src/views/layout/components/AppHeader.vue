@@ -8,6 +8,9 @@
             <span class="el-dropdown-link">
                 <el-avatar size="medium" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"></el-avatar>
             </span>
+            <el-dropdown-menu>
+                <el-dropdown-item divided @click.native="changePassword">修改密码</el-dropdown-item>
+            </el-dropdown-menu>
             <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
             </el-dropdown-menu>
@@ -20,6 +23,11 @@
 
     export default {
         name: "AdminHeader",
+        data () {
+            return {
+                dialogChangePassword: false
+            }
+        },
         methods: {
             async logout () {
                 const { data } = await layout()
@@ -30,6 +38,9 @@
                 } else {
                     this.$message.error("登出错误")
                 }
+            },
+            changePassword () {
+
             }
         }
     }

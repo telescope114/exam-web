@@ -1,6 +1,3 @@
-<!--
-    未完成功能： 禁用启用、编辑
--->
 <template>
     <div class="admin-menu">
         <el-card class="box-card-aside">

@@ -28,13 +28,28 @@ export const layout = () => {
 }
 
 /**
- * 修改密码
+ * 教师修改密码
  * @returns 响应：
  */
-export const changePassword = (form) => {
+export const teacherChangePassword = (form) => {
     return request({
         method: 'POST',
-        url: '/user/changePassword',
+        url: '/teacher/teacher/changePassword',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 学生修改密码
+ * @returns 响应：
+ */
+export const studentChangePassword = (form) => {
+    return request({
+        method: 'POST',
+        url: '/student/changePassword',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         },
