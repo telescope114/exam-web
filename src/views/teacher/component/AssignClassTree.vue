@@ -5,6 +5,10 @@
         </div>
         <div class="dialog-main">
             <el-tree
+                v-loading="loadingAssign"
+                element-loading-text="拼命加载中"
+                element-loading-spinner="el-icon-loading"
+                element-loading-background="rgba(255,255,255)"
                 :data="assignClassList"
                 :props="defaultProps"
                 :default-checked-keys="cids"
@@ -16,7 +20,11 @@
         </div>
         <div slot="footer" class="dialog-footer">
             <el-button @click="cancel">取 消</el-button>
-            <el-button type="primary" @click="submit">确 定</el-button>
+            <el-button
+                type="primary"
+                @click="submit"
+                v-loading="loadingAssign||loadingSubmit"
+            >确 定</el-button>
         </div>
     </div>
 </template>
@@ -33,7 +41,7 @@
             }
         },
         created() {
-            this.loadingassign()
+            this.loadAssign()
         },
         data () {
             return {
@@ -43,13 +51,17 @@
                     label: 'name'
                 },
                 // 给予班级ID
-                cids: []
+                cids: [],
+                loadingAssign: true,
+                loadingSubmit: true
             }
         },
         methods: {
             // 获取班级列表
-            async loadingassign () {
+            async loadAssign () {
+                this.loadingAssign = true
                 const { data } = await teacherTeacherGetAllClassByTeacherId({ tid: this.teacherInfo.tid })
+                this.loadingAssign = false
                 // 生成树的数据
                 if (data.code === '200') {
                     this.assignClassList = collegeMajorClass(data.data)
@@ -67,6 +79,7 @@
                 })
             },
             async submit () {
+                this.loadingSubmit = true
                 this.cids = this.$refs.assignClassList.getCheckedKeys()
                 let check = []
                 this.cids.forEach(item => {
@@ -79,6 +92,7 @@
                     tid: this.teacherInfo.tid,
                     cids: check
                 })
+                this.loadingSubmit = false
                 if (data.code === '200') {
                     this.$message.success('分配成功!!')
                     this.$emit('success')

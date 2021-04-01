@@ -20,6 +20,7 @@
                         <el-input
                             v-model="loginForm.username"
                             placeholder="请输入账号"
+                            @keydown.native.enter="onSubmit"
                         ></el-input>
                     </el-form-item>
                     <el-form-item
@@ -29,6 +30,7 @@
                             type="password"
                             v-model="loginForm.password"
                             placeholder="请输入密码"
+                            @keydown.native.enter="onSubmit"
                             show-password
                         ></el-input>
                     </el-form-item>

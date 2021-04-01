@@ -47,7 +47,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button type="info" @click="cancel">取消</el-button>
-            <el-button type="primary" @click="submit">确定</el-button>
+            <el-button type="primary" @click="submit" v-loading="loadingSubmit">确定</el-button>
         </div>
     </div>
 </template>
@@ -62,9 +62,9 @@
     export default {
         name: "CreateOrEditExamQuestion",
         created() {
-            this.loadingQuestionBank()
+            this.loadQuestionBank()
             if (this.isEdit) {
-                this.loadingExamQuestionOption()
+                this.loadExamQuestionOption()
             }
         },
         props: {
@@ -86,21 +86,28 @@
                     answer: [{required: true, message: '请选择', trigger: 'blur'}]
                 },
                 questionBankList: [],
-                optionList: { A: {}, B: {}, C: {}, D: {} }
+                optionList: { A: {}, B: {}, C: {}, D: {} },
+                loadingQuestionBank: false,
+                loadingExamQuestionOption: false,
+                loadingSubmit: false
                 // 当前题目类型判定
                 // questionType: ''
             }
         },
         methods: {
-            async loadingQuestionBank () {
+            async loadQuestionBank () {
+                this.loadingQuestionBank = true
                 const { data } = await teacherExamQuestionGetAllQuestionBank()
+                this.loadingQuestionBank = false
                 if (data.code === '200') {
                     this.questionBankList = data.data
                     console.log(this.questionBankList)
                 }
             },
-            async loadingExamQuestionOption () {
+            async loadExamQuestionOption () {
+                this.loadingExamQuestionOption = true
                 const { data } = await teacherExamQuestionGetExamQuestionOption({eid: this.examQuestionInfo.id})
+                this.loadingExamQuestionOption = false
                 if (data.code === '200') {
                     data.data.forEach(item => {
                         this.optionList[item.option.slice(0,1)] = {
@@ -122,7 +129,8 @@
                 this.$emit('cancel')
             },
             submit () {
-                console.log(this.examQuestionInfo)
+                // console.log(this.examQuestionInfo)
+                this.loadingSubmit = true
                 this.$refs.examQuestionInfo.validate((valid) => {
                     if (valid) {
                         if (this.isEdit) {
@@ -130,8 +138,10 @@
                         } else {
                             this.addExamQuestion()
                         }
+                        this.loadingSubmit = false
                     } else {
                         this.$message.error('填写完整！！！')
+                        this.loadingSubmit = false
                         return false
                     }
                 })

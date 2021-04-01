@@ -69,6 +69,9 @@ export const studentScoreFindScore = (form) => {
 /**
  * 学生获取自己的信息
  */
-export const studentGetStudentInfo = () => {
-
+export const studentInfo = () => {
+    return request({
+        method: 'GET',
+        url: '/student/info'
+    })
 }

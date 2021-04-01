@@ -77,7 +77,13 @@ const routes = [
         path: 'teacher/college',
         name: 'College',
         component: () => import(/* webpackChunkName: "college" */'@/views/teacher/college'),
-        meta: { title: '班级管理' }
+        meta: { title: '学院管理' }
+      },
+      {
+        path: 'teacher/score',
+        name: 'Score',
+        component: () => import(/* webpackChunkName: "score" */'@/views/teacher/score'),
+        meta: { title: '成绩管理' }
       }
       // 教师管理结束
     ],

@@ -6,9 +6,13 @@
             </div>
             <div slot="default">
                 <el-table
-                        :data="pageList"
-                        border
-                        style="width: 100%">
+                    :data="pageList"
+                    border
+                    style="width: 100%"
+                    v-loading="loadingTeacher"
+                    element-loading-text="拼命加载中"
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-background="rgba(255,255,255,0.8)">
                     <el-table-column
                             prop="teacherNumber"
                             label="教职工编号"
@@ -54,7 +58,6 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
             </div>
             <el-pagination
                @size-change="handleSizeChange"
@@ -111,7 +114,7 @@
         name: "TeacherTeacher",
         components: { CreateOrEditTeacher, TeacherGetClass, AssignClassTree },
         created() {
-            this.loadingTeacher()
+            this.loadTeacher()
         },
         data () {
             return {
@@ -124,12 +127,15 @@
                 pageTeacher: 1,
                 pageSize: 10,
                 pageSizes: [10,20,50,100,500],
-                pageList: []
+                pageList: [],
+                loadingTeacher: false
             }
         },
         methods: {
-            async loadingTeacher () {
+            async loadTeacher () {
+                this.loadingTeacher = true
                 const { data } = await teacherTeacher()
+                this.loadingTeacher = false
                 if (data.code === '200') {
                     this.teacherList = data.data
                     this.handleSizeChange(10)
@@ -170,7 +176,7 @@
                 this.dialogSeeClass = false
                 this.dialogCreateOrEditTeacher = false
                 this.teacherInfo = {}
-                this.loadingTeacher()
+                this.loadTeacher()
             },
             handleSizeChange(val) {
                 // console.log(`每页 ${val} 条`);

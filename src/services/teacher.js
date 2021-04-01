@@ -216,6 +216,17 @@ export const teacherExamGetClass = () => {
     })
 }
 
+export const teacherExamDetails = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/exam/details',
+        headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    data: qs.stringify(form)
+    })
+}
+
 export const teacherExamAddExamSubmit = (form) => {
     return request({
         method: 'POST',

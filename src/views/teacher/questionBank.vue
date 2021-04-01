@@ -12,6 +12,10 @@
         </el-card>
         <el-card>
             <el-table
+                v-loading="loadingQuestionBank"
+                element-loading-text="拼命加载中"
+                element-loading-spinner="el-icon-loading"
+                element-loading-background="'el-icon-loading"
                 :data="pageList"
                 border
                 style="width: 100%;"
@@ -50,7 +54,6 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
             <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
@@ -80,7 +83,7 @@
         name: "TeacherQuestionBank",
         components: { CreateOrEditQuestionBank },
         created() {
-            this.loadingQuestionBank()
+            this.loadQuestionBank()
         },
         data () {
             return {
@@ -94,15 +97,18 @@
                 pageSize: 5,
                 pageSizes: [5,10,20,50],
                 pageList: [],
-                pageQuestionBank: 1
+                pageQuestionBank: 1,
+                loadingQuestionBank: true
             }
         },
         methods: {
-            async loadingQuestionBank () {
+            async loadQuestionBank () {
+                this.loadingQuestionBank = true
                 const { data } = await teacherQuestionBank()
+                this.loadingQuestionBank = false
                 if (data.code === '200') {
                     this.questionBankList = data.data
-                    console.log(this.questionBankList)
+                    this.handleSizeChange(5)
                 }
             },
             // 添加题库
@@ -130,7 +136,7 @@
             success () {
                 this.dialogCreateOrEditQuestionBank = false
                 this.questionBankInfo = {}
-                this.loadingQuestionBank()
+                this.loadQuestionBank()
             },
             handleSizeChange(val) {
                 // console.log(`每页 ${val} 条`)

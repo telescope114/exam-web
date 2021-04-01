@@ -22,22 +22,22 @@
             <div>
                 <el-table :data="pageList" border style="width: 100%" v-loading="loadingExam" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(255,255,255,0.8)">
                     <el-table-column fixed width="200" prop="examName" label="考试名称"></el-table-column>
-                    <el-table-column width="200" label="开始时间">
+                    <el-table-column label="开始时间">
                         <template slot-scope="scope">
                             <p>{{scope.row.openTime|dateFormat}}</p>
                         </template>
                     </el-table-column>
-                    <el-table-column width="200" label="结束时间">
+                    <el-table-column label="结束时间">
                         <template slot-scope="scope">
                             <p>{{scope.row.closeTime|dateFormat}}</p>
                         </template>
                     </el-table-column>
-                    <el-table-column width="100" label="考试时长">
+                    <el-table-column label="考试时长">
                         <template slot-scope="scope">
                             <p>{{scope.row.duration + '分钟'}}</p>
                         </template>
                     </el-table-column>
-                    <el-table-column width="100" prop="totalScore" label="总分"></el-table-column>
+                    <el-table-column prop="totalScore" label="总分"></el-table-column>
                     <el-table-column width="100" label="当前状态">
                         <template slot-scope="scope">
                             <p :class="'exam-status-'+checkExamTime(scope.row)">{{checkExamTime(scope.row)>0?(checkExamTime(scope.row)>1?'考试结束':'考试中'):'未开考'}}</p>
@@ -51,7 +51,6 @@
                     </el-table-column>
                 </el-table>
             </div>
-            <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
             <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
@@ -70,6 +69,13 @@
                 @success="success"
             ></create-or-edit-exam>
         </el-dialog>
+        <el-dialog title="参考班级" :visible.sync="dialogSeeExamDetail">
+            <see-exam-detail
+                v-if="dialogSeeExamDetail"
+                :examInfo="examInfo"
+                @cancel="cancel"
+            ></see-exam-detail>
+        </el-dialog>
     </div>
 </template>
 
@@ -77,10 +83,11 @@
     import {teacherExam} from "../../services/teacher";
     import dateFormat from "../../utils/dateFormat";
     import CreateOrEditExam from "./component/CreateOrEditExam";
+    import SeeExamDetail from "./component/SeeExamDetail";
 
     export default {
         name: "TeacherExam",
-        components: {CreateOrEditExam},
+        components: {CreateOrEditExam, SeeExamDetail},
         created() {
             this.loadExam()
         },
@@ -108,7 +115,7 @@
                 const { data } = await teacherExam()
                 if (data.code === '200') {
                     this.examList = data.data
-                    console.log(this.examList)
+                    // console.log(this.examList)
                     this.handleSizeChange(5)
                 }
                 this.loadingExam = false

@@ -14,13 +14,17 @@
     <div>
         <div v-show="step===1" style="height: 40vh">
             <div class="content-exam-info">
-                <el-form :label-position="'right'" :model="createOrEditExamInfo">
+                <el-form :label-position="'right'" :model="createOrEditExamInfo"
+                         v-loading="loadingQuestionBank||loadingClassList||loadingEdit"
+                         element-loading-text="拼命加载中"
+                         element-loading-spinner="el-icon-loading"
+                         element-loading-background="rgba(255,255,255)">
                     <h1>基本信息</h1>
                     <el-form-item label="题库名称" label-width="200px">
                         <el-input v-model="createOrEditExamInfo.examName"></el-input>
                     </el-form-item>
                     <el-form-item label="题库名称" label-width="200px">
-                        <el-select v-model="createOrEditExamInfo.id" filterable>
+                        <el-select v-model="createOrEditExamInfo.id" filterable >
                             <el-option :value="item.id" v-for="item in questionBankList" :key="item.id" :label="item.questionBankName" @click.native="aimQuestionBank=item"></el-option>
                         </el-select>
                     </el-form-item>
@@ -91,8 +95,11 @@
     <div slot="footer" class="dialog-footer">
         <el-button type="info" @click="cancel">取消</el-button>
         <el-button :disabled="step===1" type="primary" @click="enterStep(step-1)">上一步</el-button>
-        <el-button v-show="step!==4" type="primary" @click="enterStep(step+1)">下一步</el-button>
-        <el-button v-show="step===4" type="primary" @click="submit">确定</el-button>
+        <el-button v-show="step!==4" type="primary" @click="enterStep(step+1)"
+                   v-loading="loadingQuestionBank||loadingClassList||loadingEdit"
+                   element-loading-text="拼命加载中">下一步</el-button>
+        <el-button v-show="step===4" type="primary" @click="submit"
+                   v-loading="loadingSubmit">确定</el-button>
     </div>
 </div>
 </template>
@@ -135,25 +142,29 @@
                     duration: 120,
                     totalScore: 0
                 },
+                loadingQuestionBank: true,
+                loadingSubmit: true,
+                loadingClassList: true,
+                loadingEdit: false
             }
         },
         created() {
-            this.loadingQuestionBank()
-            this.loadingClassList()
+            this.loadQuestionBank()
+            this.loadClassList()
             if (this.isEdit) {
                 // 编辑时再请求一次
                 console.log(this.isEdit)
             }
         },
         methods: {
-            async loadingQuestionBank () {
+            async loadQuestionBank () {
                 const { data } = await teacherQuestionBank()
                 if (data.code === '200') {
                     this.questionBankList = data.data
                     console.log(questionBank)
                 }
             },
-            async loadingClassList () {
+            async loadClassList () {
                 const { data } = await teacherExamGetClass()
                 if (data.code === '200') {
                     this.classList = data.data
@@ -207,6 +218,7 @@
                 }
             },
             submit () {
+                this.loadingSubmit = true
                 const form = this.createOrEditExamInfo
                 if (form.examName && form.id) {
                     if (
@@ -224,20 +236,25 @@
                                 } else {
                                     this.addExam()
                                 }
+                                this.loadingSubmit = false
                             } else {
                                 this.$message.error('请选择班级！！')
+                                this.loadingSubmit = false
                             }
                         } else {
                             this.$message.error('考试时间有误！！')
                             this.step = 3
+                            this.loadingSubmit = false
                         }
                     } else {
                         this.$message.error('题目选择有误！！')
                         this.step = 2
+                        this.loadingSubmit = false
                     }
                 } else {
                     this.$message.error('基本信息不完整！！')
                     this.step = 1
+                    this.loadingSubmit = false
                 }
             },
             outNumber () {

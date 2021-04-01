@@ -3,6 +3,10 @@
         <div class="teacher-student-aside">
             <el-card>
                 <el-tree
+                    v-loading="loadingClassList"
+                    element-loading-text="拼命加载中"
+                    element-loading-spinner="el-icon-loading"
+                    element-loading-background="rgba(255,255,255,0.8)"
                     :data="classList"
                     :props="defaultProps"
                     node-key="classId"
@@ -29,6 +33,10 @@
                     <el-table
                         :data="studentList"
                         border
+                        v-loading="loadingStudentList"
+                        element-loading-text="拼命加载中"
+                        element-loading-spinner="el-icon-loading"
+                        element-loading-background="rgba(255,255,255)"
                         style="width: 100%">
                         <el-table-column
                             fixed
@@ -110,8 +118,8 @@
         name: "TeacherStudent",
         components: { CreateOrEditStudent },
         created() {
-            this.loadingClassList()
-            this.loadingStudentList()
+            this.loadClassList()
+            this.loadStudentList()
         },
         data () {
             return {
@@ -127,18 +135,21 @@
                 dialogCreateOrEditStudent: false,
                 isEdit: false,
                 classInfo: '',
-                studentInfo: {}
+                studentInfo: {},
+                loadingClassList: false,
+                loadingStudentList: false
             }
         },
         methods: {
-            async loadingClassList () {
-                console.log(11)
+            async loadClassList () {
+                this.loadingClassList = true
                 const { data } = await teacherStudent()
+                this.loadingClassList = false
                 if (data.code === '200') {
                     this.classList = collegeMajorClass(data.data)
                 }
             },
-            loadingStudentList () {
+            loadStudentList () {
                 if (this.$store.studentList !== '') {
                     this.studentList = this.$store.state.studentList
                     // this.$message.warning('当前为查看状态,若是要添加学生,请选则到对应为班级')
@@ -160,7 +171,9 @@
             },
             // 获取学生列表
             async getStudentList (row) {
+                this.loadingStudentList = true
                 const { data } = await teacherStudentGetStudentList({classId: row.classId})
+                this.loadingStudentList = false
                 if (data.code === '200') {
                     this.studentList = data.data
                 }
