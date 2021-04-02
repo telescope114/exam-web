@@ -2,7 +2,7 @@
     <div class="create-or-edit-user">
         <el-form :model="userInfo" :rules="rules" ref="userInfo">
             <el-form-item label="账号" label-width="12rem" prop="username">
-                <el-input v-model="userInfo.username" autocomplete="off"></el-input>
+                <el-input v-model="userInfo.username" autocomplete="off" @keydown.native.enter="submit('userInfo')"></el-input>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import {systemUserAddUser} from "../../../services/admin";
+    import {systemUserAddUser, systemUserEditUser} from "../../../services/admin";
 
     export default {
         name: "AdminCreateOrEditUser",
@@ -34,7 +34,13 @@
                         { required: true, message: '用户名称不能为空！！！', trigger: 'blur' }
                     ]
                 },
-                loadingSubmit: false
+                loadingSubmit: false,
+                checkUser: {}
+            }
+        },
+        created() {
+            if (this.isEdit) {
+                this.checkUser.username = this.userInfo.username
             }
         },
         methods: {
@@ -46,7 +52,7 @@
                 this.$refs[userInfo].validate((valid) => {
                     if (valid) {
                         // console.log(valid)
-                        if (!this.isEidt) {
+                        if (!this.isEdit) {
                             // console.log([])
                             this.addUser()
                         } else {
@@ -69,13 +75,19 @@
                 }
             },
             async editUser () {
-                // const { data } = await systemUserAddUser(this.userInfo)
-                // if (data.code === '200') {
-                    this.$message.success('添加成功')
-                    this.$emit('success')
-                // } else {
-                //     this.$message.error('添加失败！！！')
-                // }
+                if (this.checkUser.username !== this.userInfo.username) {
+                    const {data} = await systemUserEditUser(this.userInfo)
+                    if (data.code === '200') {
+                        this.$message.success('编辑成功')
+                        this.$emit('success')
+                    } else if (data.code === '303') {
+                        this.$message.error('不能修改管理员！！！')
+                    } else {
+                        this.$message.error('编辑失败！！！')
+                    }
+                } else {
+                    this.$message.error('没有任何修改')
+                }
             }
         }
     }

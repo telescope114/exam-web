@@ -23,7 +23,7 @@
             <el-button
                 type="primary"
                 @click="submit"
-                v-loading="loadingAssign||loadingSubmit"
+                v-loading="loadingAssign&&loadingSubmit"
             >确 定</el-button>
         </div>
     </div>

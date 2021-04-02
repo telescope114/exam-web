@@ -1,7 +1,7 @@
 <template>
     <div class="teacher-student">
         <div class="teacher-student-aside">
-            <el-card>
+            <el-card style="height: 68vh">
                 <el-tree
                     v-loading="loadingClassList"
                     element-loading-text="拼命加载中"
@@ -66,7 +66,6 @@
                         </el-table-column>
                         <el-table-column
                             label="班级"
-                            width="150"
                         >
                             <template slot-scope="scope">
                                 <p>{{scope.row.majorName + scope.row.grade + '' + scope.row.classNumber}}</p>
@@ -75,12 +74,10 @@
                         <el-table-column
                             prop="majorName"
                             label="专业"
-                            width="150"
                         ></el-table-column>
                         <el-table-column
                             prop="collegeName"
                             label="学院"
-                            width="150"
                         ></el-table-column>
                         <el-table-column
                             fixed="right"

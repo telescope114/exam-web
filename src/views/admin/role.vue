@@ -20,6 +20,13 @@
                         width="150">
                     </el-table-column>
                     <el-table-column
+                        label="说明">
+                        <template slot-scope="scope">
+                            <p v-if="scope.row.description">{{scope.row.description}}</p>
+                            <p v-else style="color: #939397;">无</p>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
                             label="创建时间">
                         <template slot-scope="scope">
                             <p>{{scope.row.createTime | dateFormat}}</p>
@@ -34,6 +41,7 @@
                                     inactive-color="#ff4949"
                                     :active-value="1"
                                     :inactive-value="0"
+                                    @click.native="ableOrDisable(scope.row)"
                                 ></el-switch>
                             </el-tooltip>
                         </template>
@@ -44,12 +52,12 @@
                         <template slot-scope="scope">
                             <el-button @click="assignPermissions(scope.row)" type="primary" size="small">分配权限</el-button>
                             <el-button @click="editRole(scope.row)" type="info" size="small">编辑</el-button>
-                            <el-button type="danger" size="small">删除</el-button>
+<!--                            <el-button type="danger" size="small">删除</el-button>-->
                         </template>
                     </el-table-column>
                 </el-table>
             </div>
-            <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
+<!--            <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>-->
             <el-pagination
                     @size-change="handleSizeChange"
                     @current-change="handleCurrentChange"
@@ -89,6 +97,7 @@
     import CreateOrEditRole from "./component/CreateOrEditRole";
     import dateFormat from '@/utils/dateFormat'
     import AssignPermissionsTree from "./component/AssignPermissionsTree";
+    import {systemRoleDisable, systemRoleEnable} from "../../services/admin";
 
     export default {
         name: "AdminRole",
@@ -121,8 +130,7 @@
                 // console.log(data)
                 if (data.code === '200') {
                     this.roleList = data.data
-                    this.roleListPagination = this.roleList.slice(0,this.pageSize)
-                    this.rolePage = 1
+                    this.handleSizeChange(this.pageSize)
                     this.loadingRole = false
                 }
             },
@@ -153,6 +161,54 @@
                 this.dialogFormVisible = false
                 this.dialogAssignPermission = false
             },
+            ableOrDisable (row) {
+                if (row.status === 0) {
+                    this.$confirm('是否禁用？？？','警告！',{
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'error'
+                    }).then(() => {
+                        this.disableRole(row)
+                    }).catch(() => {
+                        row.status = 1
+                    })
+                } else {
+                    this.ableRole(row)
+                }
+            },
+            async disableRole (row) {
+                const {data} = await systemRoleDisable({roleId:row.id})
+                // console.log(data)
+                if (data.code === '200') {
+                    row.status = 0
+                    this.$message.warning('禁用成功！')
+                } else if (data.code === '201') {
+                    row.status = 0
+                    this.$message.warning('禁用成功！')
+                } else {
+                    row.status = 1
+                    this.$message.error('无权操作！')
+                }
+            },
+            async ableRole (row) {
+                const {data} = await systemRoleEnable({roleId:row.id})
+                // console.log(data)
+                if (data.code === '200') {
+                    row.status = 1
+                    this.$message.success('启用成功！')
+                } else if (data.code === '201') {
+                    row.status = 1
+                    this.$message.success('启用成功！')
+                } else {
+                    row.status = 0
+                    this.$message.error('无权操作！')
+                }
+            },
+            /*seeRole (row) {
+                this.$alert(`${row.description?row.description:'暂无描述'}`, '角色描述', {
+                    confirmButtonText: '确定'
+                });
+            },*/
             // 分配权限
             assignPermissions (row) {
                 this.dialogAssignPermission = true
@@ -161,13 +217,15 @@
             },
             handleSizeChange(val) {
                 // console.log(`每页 ${val} 条`);
-                this.roleListPagination = this.roleList.slice(0,val)
+                // this.roleListPagination = this.roleList.slice(0,val)
                 this.rolePage = 1
                 this.pageSize = val
+                this.handleCurrentChange(1)
             },
             handleCurrentChange(val) {
                 // console.log(`当前页: ${val}`);
                 this.roleListPagination = this.roleList.slice((val-1)*this.pageSize,val*this.pageSize)
+                this.rolePage = val
             }
         },
         filters: {

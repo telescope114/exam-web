@@ -62,10 +62,12 @@
             async submit () {
                 const { data } = await systemUserAssignRoles(this.form)
                 if (data.code === '200') {
-                    this.$message.success('请求成功')
+                    this.$message.success('修改成功')
                     this.$emit('success')
+                } else if (data.code === '305') {
+                    this.$message.error('不能修改管理员角色！！！')
                 } else {
-                    this.$message.error('请求失败!!!')
+                    this.$message.error('修改失败!!!')
                 }
             },
             cancel () {

@@ -2,7 +2,10 @@
     <div class="create-or-edit-role">
         <el-form :model="roleInfo" :rules="rules" ref="roleInfo">
             <el-form-item label="角色名称" label-width="12rem" prop="roleName">
-                <el-input v-model="roleInfo.roleName" autocomplete="off"></el-input>
+                <el-input v-model="roleInfo.roleName" @keydown.native.enter="submit('roleInfo')" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="说明" label-width="12rem">
+                <el-input v-model="roleInfo.description" @keydown.native.enter="submit('roleInfo')" autocomplete="off"></el-input>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -13,14 +16,17 @@
 </template>
 
 <script>
-    import {systemRoleAdd} from "../../../services/admin";
+    import {systemRoleAdd, systemRoleEdit} from "../../../services/admin";
 
     export default {
         name: "CreateOrEditRole",
         props: {
             roleInfo: {
                 type: Object,
-                default: new Object({})
+                default: new Object({
+                    roleName:'',
+                    description: ''
+                })
             },
             isEdit: {
                 type: Boolean,
@@ -34,7 +40,14 @@
                         { required: true, message: '角色名不能为空！！！', trigger: 'blur' }
                     ]
                 },
-                loadingSubmit: false
+                loadingSubmit: false,
+                checkRole: {}
+            }
+        },
+        created() {
+            if (this.isEdit) {
+                this.checkRole.roleName = this.roleInfo.roleName
+                this.checkRole.description = this.roleInfo.description
             }
         },
         methods: {
@@ -68,13 +81,17 @@
                 }
             },
             async editRole () {
-                // const { data } = await systemRoleAdd(this.roleInfo)
-                // if (data.code === '200') {
-                    this.$message.success('修改成功')
-                    this.$emit('success')
-                // } else {
-                //     this.$message.error('修改失败！！！！！')
-                // }
+                if (this.checkRole.roleName !== this.roleInfo.roleName || this.checkRole.description !== this.roleInfo.description) {
+                    const { data } = await systemRoleEdit(this.roleInfo)
+                    if (data.code === '200') {
+                        this.$message.success('修改成功')
+                        this.$emit('success')
+                    } else {
+                        this.$message.error('修改失败！！！！！')
+                    }
+                } else {
+                    this.$message.error('没有任何修改！！')
+                }
             }
         }
     }

@@ -76,8 +76,9 @@
 
 <script>
     import {systemMenu} from "@/services/admin";
-    import {getMenuTree} from "@/utils/login";
+    import {getMenuTree} from "@/utils/common";
     import CreateOrEditMenu from "./component/CreateOrEditMenu";
+    import {systemMenuDisable, systemMenuEnable} from "../../services/admin";
 
     export default {
         name: "AdminMenu",
@@ -115,6 +116,7 @@
                 if (data.code === '200') {
                     console.log(data.data)
                     this.menusList = getMenuTree(data.data)
+                    this.menuInfo = []
                 }
                 this.loadingMenu = false
             },
@@ -155,13 +157,56 @@
                     this.ableMenu(row)
                 }
             },
+            getChildrenId (row) {
+                let ids = [row.id]
+                if (row.children) {
+                    for (const item of row.children) {
+                        // console.log([item.id])
+                        ids = ids.concat(this.getChildrenId(item))
+                    }
+                    return ids
+                } else {
+                    return ids
+                }
+            },
+            refreshMenuStatus (row,status) {
+                row.status = status
+                if (row.children) {
+                    row.children.forEach(item => {
+                        this.refreshMenuStatus(item,status)
+                    })
+                }
+            },
             async disableMenu (row) {
-                console.log(row)
-                this.$message.warning('已经禁用！')
+                const ids = this.getChildrenId(row)
+                const { data } = await systemMenuDisable({menuIds: ids.join(',')})
+                if (data.code === '200') {
+                    this.$message.warning('已经禁用！')
+                    this.refreshMenuStatus(row,0)
+                } else if (data.code === '201') {
+                    this.$message.warning('已经禁用！')
+                    this.refreshMenuStatus(row,0)
+                } else{
+                    this.$message.error('无权操作！')
+                    this.row.status = 1
+                }
+                // console.log(row)
             },
             async ableMenu (row) {
-                console.log(row)
-                this.$message.success('启用成功！')
+                /*console.log(row)
+                this.$message.success('启用成功！')*/
+                const ids = this.getChildrenId(row)
+                const { data } = await systemMenuEnable({menuIds: ids.join(',')})
+                if (data.code === '200') {
+                    this.$message.success('已经启用！')
+                    this.refreshMenuStatus(row,1)
+                } else if (data.code === '201') {
+                    this.$message.success('已经启用！')
+                    this.refreshMenuStatus(row,1)
+                } else{
+                    this.$message.error('无权操作！')
+                    this.row.status = 0
+                }
             }
         }
     }

@@ -99,7 +99,7 @@ export const studentDownLoadScore = (fileName) => {
     })*/
     return request({
         method: 'GET',
-        url: '/file/download?fileName='+fileName,
+        url: '/common/download?fileName='+fileName,
         responseType: 'arraybuffer'
     })
 }

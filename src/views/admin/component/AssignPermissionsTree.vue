@@ -26,7 +26,7 @@
 
 <script>
     import {systemRoleAssignPermissions, systemRoleGetRolePermission} from "../../../services/admin";
-    import {getMenuList} from "../../../utils/login";
+    import {getMenuList} from "../../../utils/common";
 
     export default {
         name: "assignPermissionsTree",

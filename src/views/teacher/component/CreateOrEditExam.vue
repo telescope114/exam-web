@@ -15,7 +15,7 @@
         <div v-show="step===1" style="height: 40vh">
             <div class="content-exam-info">
                 <el-form :label-position="'right'" :model="createOrEditExamInfo"
-                         v-loading="loadingQuestionBank||loadingClassList||loadingEdit"
+                         v-loading="loadingQuestionBank||loadingClassList"
                          element-loading-text="拼命加载中"
                          element-loading-spinner="el-icon-loading"
                          element-loading-background="rgba(255,255,255)">
@@ -158,7 +158,11 @@
         },
         methods: {
             async loadQuestionBank () {
+                this.loadingQuestionBank = true
+                this.loadingClassList = true
                 const { data } = await teacherQuestionBank()
+                this.loadingQuestionBank = false
+                this.loadingClassList = false
                 if (data.code === '200') {
                     this.questionBankList = data.data
                     console.log(questionBank)

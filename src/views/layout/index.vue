@@ -20,7 +20,7 @@
     import AppAside from "./components/AppAside";
     import AppHeader from "./components/AppHeader";
     import { getMenuName } from "@/services/admin";
-    import {getMenuList} from "@/utils/login";
+    import {getMenuList} from "@/utils/common";
     export default {
         name: "Layout",
         components: { AppAside, AppHeader },
@@ -34,6 +34,9 @@
         },
         methods: {
             async loadingMenuName () {
+                if (!this.$store.state.user) {
+                    this.$router.push({name: 'Login'})
+                }
                 const { data } = await getMenuName()
                 const menus = data.data
                 this.$store.commit('setMenu',menus)

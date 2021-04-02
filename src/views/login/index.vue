@@ -48,7 +48,7 @@
 </template>
 
 <script>
-    import { login } from '@/services/login'
+    import { login } from '@/services/common'
 
     export default {
         name: 'LoginIndex',

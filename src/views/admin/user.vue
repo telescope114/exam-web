@@ -34,21 +34,22 @@
                                     inactive-color="#ff4949"
                                     :active-value="1"
                                     :inactive-value="0"
+                                    @click.native="enableOrDisable(scope.row)"
                                 ></el-switch>
                             </el-tooltip>
                         </template>
                     </el-table-column>
                     <el-table-column
                             label="操作"
-                            width="250">
+                            width="300">
                         <template slot-scope="scope">
                             <el-button @click="editUser(scope.row)" type="primary" size="small">编辑</el-button>
                             <el-button @click="setUser(scope.row)" type="info" size="small">授予角色</el-button>
-                            <el-button @click="delUser(scope.row)" type="danger" size="small">删除</el-button>
+                            <el-button @click="reset(scope.row)" type="danger" size="small">重置密码</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>
+<!--                <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>-->
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -85,10 +86,11 @@
 </template>
 
 <script>
-    import {systemUser} from '../../services/admin';
+    import {systemUser, systemUserDisable, systemUserEnable} from '../../services/admin';
     import dateFormat from '@/utils/dateFormat'
     import CreateOrEditUser from "./component/CreateOrEditUser";
     import SetRole from "./component/SetRole";
+    import {resetPassword} from "../../services/common";
 
     export default {
         name: "AdminUser",
@@ -140,9 +142,27 @@
                 this.dialogSetRole = true
                 this.userInfo = row
             },
-            // 删除用户
-            delUser (row) {
-                console.log(row)
+            // 重置用户密码
+            reset (row) {
+                this.$confirm(`警告：你正在重置 ${row.username} 的密码`,'重置密码',{
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'error'
+                }).then(() => {
+                    this.resetPassword(row)
+                }).catch(() => {
+                    this.$message.info('取消重置')
+                })
+            },
+            async resetPassword (row) {
+              const { data } = await resetPassword({userId: row.id})
+              if (data.code === '200') {
+                  this.$message.success('重置成功')
+              } else if (data.code === '302') {
+                  this.$message.error('不能重置管理员密码')
+              } else {
+                  this.$message.error('无权操作')
+              }
             },
             // 添加、编辑成功
             success () {
@@ -151,6 +171,45 @@
                 this.dialogSetRole = false
                 this.userInfo = {}
                 this.loadUser()
+            },
+            // 启用禁用
+            enableOrDisable (row) {
+                if (row.status === 0) {
+                    this.$confirm(`警告：你正在重置 ${row.username} 的密码`,'重置密码',{
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'error'
+                    }).then(() => {
+                        this.disableUser(row)
+                    }).catch(() => {
+                        row.status = 1
+                    })
+                } else {
+                    this.ableUser(row)
+                }
+            },
+            async ableUser (row) {
+                const { data } = await systemUserEnable({userId: row.id})
+                if (data.code === '200') {
+                    this.$message.success('启用成功')
+                    row.status = 1
+                } else {
+                    this.$message.error('无权操作')
+                    row.status = 0
+                }
+            },
+            async disableUser (row) {
+                const { data } = await systemUserDisable({userId: row.id})
+                if (data.code === '200') {
+                    this.$message.warning('禁用成功')
+                    row.status = 0
+                } else if (data.code ==='304') {
+                    this.$message.error('不能禁用管理员！！！')
+                    row.status = 1
+                } else {
+                    this.$message.error('无权操作')
+                    row.status = 1
+                }
             },
             // 取消添加、编辑
             cancel () {

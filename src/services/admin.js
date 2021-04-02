@@ -9,7 +9,7 @@ import qs from 'qs'
 export const getMenuName = () => {
     return request({
         method: 'GET',
-        url: '/system/menu/getUserHasMenu'
+        url: '/common/getUserHasMenu'
     })
 }
 
@@ -101,10 +101,10 @@ export const systemRoleAdd = (form) => {
     return request({
         method: 'POST',
         url: '/system/role/add',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-        },
-        data: qs.stringify(form)
+        // headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        // },
+        data: JSON.stringify(form)
     })
 }
 
@@ -117,10 +117,10 @@ export const systemRoleEdit = (form) => {
     return request({
         method: 'POST',
         url: '/system/role/edit',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-        },
-        data: qs.stringify(form)
+        // headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        // },
+        data: JSON.stringify(form)
     })
 }
 
@@ -202,8 +202,6 @@ export const systemUser = () => {
 
 /**
  * 用户管理-添加用户
- * @param form 请求：username, realName
- * @returns {AxiosPromise}
  */
 export const systemUserAddUser = (form) => {
     return request({
@@ -213,6 +211,20 @@ export const systemUserAddUser = (form) => {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8;'
         },
         data: qs.stringify(form)
+    })
+}
+
+/**
+ * 用户管理-编辑用户
+ */
+export const systemUserEditUser = (form) => {
+    return request({
+        method: 'POST',
+        url: '/system/user/edit',
+        // headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8;'
+        // },
+        data: JSON.stringify(form)
     })
 }
 
@@ -234,13 +246,39 @@ export const systemUserAssignRoles = (form) => {
 
 /**
  * 用户管理-访问用户扮演角色
- * @param form 请求： id, rid
- * @returns {AxiosPromise}
  */
 export const systemUserGetRole = (form) => {
     return request({
         method: 'POST',
         url: '/system/user/getRole',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 用户管理-启用用户
+ */
+export const systemUserEnable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/system/user/enable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 用户管理-禁用用户
+ */
+export const systemUserDisable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/system/user/disable',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },

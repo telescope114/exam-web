@@ -28,13 +28,13 @@ export const layout = () => {
 }
 
 /**
- * 教师修改密码
+ * 教师、主任、管理员修改密码
  * @returns 响应：
  */
 export const teacherChangePassword = (form) => {
     return request({
         method: 'POST',
-        url: '/teacher/teacher/changePassword',
+        url: '/common/changePassword',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         },
@@ -49,7 +49,18 @@ export const teacherChangePassword = (form) => {
 export const studentChangePassword = (form) => {
     return request({
         method: 'POST',
-        url: '/student/changePassword',
+        url: '/common/changePassword',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+export const resetPassword = (form) => {
+    return request({
+        method: 'POST',
+        url: '/common/resetPassword',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         },

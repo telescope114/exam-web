@@ -3,10 +3,10 @@
         <h3>当前目录：{{parent.menuName}}</h3>
         <el-form :model="menuInfo" :rules="rules" ref="menuInfo">
             <el-form-item label="菜单名称" prop="menuName" label-width="120px">
-                <el-input v-model="menuInfo.menuName" clearable></el-input>
+                <el-input @keydown.native.enter="submit" v-model="menuInfo.menuName" clearable></el-input>
             </el-form-item>
             <el-form-item label="菜单URL" prop="menuUrl" label-width="120px">
-                <el-input v-model="menuInfo.menuUrl" autocomplete="off" clearable></el-input>
+                <el-input @keydown.native.enter="submit" v-model="menuInfo.menuUrl" autocomplete="off" clearable></el-input>
             </el-form-item>
             <el-form-item label="菜单类型" prop="type" label-width="120px">
                 <el-select v-model="menuInfo.type" placeholder="请选择" autocomplete="off">
@@ -24,6 +24,7 @@
 
 <script>
     import { systemMenuAdd } from "@/services/admin";
+    import {systemMenuEdit} from "../../../services/admin";
 
     export default {
         name: "AdminCreateOrEditMenu",
@@ -54,11 +55,16 @@
                         { required: true, message: '请输入菜单URL', trigger: 'blur' }
                     ]
                 },
-                loadingSubmit: false
+                loadingSubmit: false,
+                checkMenu: {}
             }
         },
         created() {
-            console.log(this.parent)
+            if (this.isEdit) {
+                this.checkMenu.menuName = this.menuInfo.menuName
+                this.checkMenu.menuUrl = this.menuInfo.menuUrl
+                this.checkMenu.type = this.menuInfo.type
+            }
         },
         methods: {
             submit () {
@@ -93,15 +99,19 @@
             },
             // 编辑菜单
             async editMenu () {
-                // this.menuInfo.parentId = this.parent.id
-                // const { data } = await systemMenuAdd(this.menuInfo)
-                // console.log(data)
-                // if (data.code === '200') {
-                this.$message.success('修改成功！')
-                this.$emit('success')
-                // } else {
-                //     this.$message.warning('添加失败！！')
-                // }
+                if (this.menuInfo.menuName !== this.checkMenu.menuName || this.menuInfo.menuUrl !== this.checkMenu.menuUrl || this.menuInfo.type !== this.checkMenu.type) {
+                    this.menuInfo.parentId = this.parent.id
+                    const { data } = await systemMenuEdit(this.menuInfo)
+                    console.log(data)
+                    if (data.code === '200') {
+                        this.$message.success('修改成功！')
+                        this.$emit('success')
+                    } else {
+                        this.$message.warning('修改失败！！')
+                    }
+                } else {
+                    this.$message.error('没有任何修改！！！')
+                }
             },
             cancel () {
                 this.$emit('cancel')
