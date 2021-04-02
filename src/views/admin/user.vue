@@ -135,7 +135,10 @@
             editUser (row) {
                 this.isEdit = true
                 this.dialogCreateOrEditUser = true
-                this.userInfo = row
+                this.userInfo = {
+                    id: row.id,
+                    username: row.username
+                }
             },
             // 授予用户角色
             setUser (row) {
@@ -175,7 +178,7 @@
             // 启用禁用
             enableOrDisable (row) {
                 if (row.status === 0) {
-                    this.$confirm(`警告：你正在重置 ${row.username} 的密码`,'重置密码',{
+                    this.$confirm(`警告：你正在禁用 ${row.username} `,'禁用警告',{
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'error'

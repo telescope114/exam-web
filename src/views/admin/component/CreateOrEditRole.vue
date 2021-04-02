@@ -76,6 +76,8 @@
                 if (data.code === '200') {
                     this.$message.success('添加成功')
                     this.$emit('success')
+                } else if (data.code === '403') {
+                    this.$message.error('该角色名已经被注册！！！')
                 } else {
                     this.$message.error('添加失败！！！！！')
                 }
@@ -86,6 +88,8 @@
                     if (data.code === '200') {
                         this.$message.success('修改成功')
                         this.$emit('success')
+                    } else if (data.code === '403') {
+                        this.$message.error('该角色名已经被注册！！！')
                     } else {
                         this.$message.error('修改失败！！！！！')
                     }

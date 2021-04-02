@@ -24,6 +24,9 @@ export const teacherCollege = () => {
     })
 }
 
+/**
+ * 获取专业列表
+ */
 export const teacherGetMajor = (form) => {
     return request({
         method: 'POST',
@@ -35,6 +38,10 @@ export const teacherGetMajor = (form) => {
     })
 }
 
+/**
+ * 添加学院
+ * @param form
+ */
 export const teacherCollegeAddCollege = (form) => {
     return request({
         method: 'POST',
@@ -46,6 +53,36 @@ export const teacherCollegeAddCollege = (form) => {
     })
 }
 
+/**
+ * 编辑学院
+ * @param form
+ */
+export const teacherCollegeEditCollege = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/college/editCollege',
+        data: JSON.stringify(form)
+    })
+}
+
+/**
+ * 删除学院
+ * @param form
+ */
+export const teacherCollegeDelCollege = (form) => {
+    return request({
+        method: 'DELETE',
+        url: '/teacher/college/delCollege',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 添加专业
+ */
 export const teacherCollegeAddMajor = (form) => {
     return request({
         method: 'POST',
@@ -57,6 +94,37 @@ export const teacherCollegeAddMajor = (form) => {
     })
 }
 
+/**
+ * 编辑专业
+ */
+export const teacherCollegeEditMajor = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/college/editMajor',
+        // headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded'
+        // },
+        data: JSON.stringify(form)
+    })
+}
+
+/**
+ * 删除专业
+ */
+export const teacherCollegedelMajor = (form) => {
+    return request({
+        method: 'DELETE',
+        url: '/teacher/college/delMajor',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 按专业添加班级
+ */
 export const teacherCollegeAddClass = (form) => {
     return request({
         method: 'POST',
@@ -68,6 +136,9 @@ export const teacherCollegeAddClass = (form) => {
     })
 }
 
+/**
+ * 获取班级列表
+ */
 export const teacherCollegeGetClassName = (form) => {
     return request({
         method: 'POST',
@@ -79,6 +150,19 @@ export const teacherCollegeGetClassName = (form) => {
     })
 }
 
+/**
+ * 删除班级
+ */
+export const teacherCollegedelClass = (form) => {
+    return request({
+        method: 'DELETE',
+        url: '/teacher/college/delClass',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
 
 export const teacherTeacher = () => {
     return request({
@@ -128,6 +212,9 @@ export const teacherTeacherAssignClass = (form) => {
     })
 }
 
+/**
+ * 学生管理-获取学院
+ */
 export const teacherStudent = () => {
     return request({
         method: 'GET',
@@ -135,6 +222,9 @@ export const teacherStudent = () => {
     })
 }
 
+/**
+ * 获取学生列表
+ */
 export const teacherStudentGetStudentList = (form) => {
     return request({
         method: 'POST',
@@ -146,6 +236,37 @@ export const teacherStudentGetStudentList = (form) => {
     })
 }
 
+/**
+ * 启用学生
+ */
+export const teacherStudentEnable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/student/enable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 禁用学生
+ */
+export const teacherStudentDisable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/student/disable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 添加学生
+ */
 export const teacherStudentAddStudent = (form) => {
     return request({
         method: 'POST',
@@ -154,6 +275,9 @@ export const teacherStudentAddStudent = (form) => {
     })
 }
 
+/**
+ * 题库管理-获取题库列表
+ */
 export const teacherQuestionBank = () => {
     return request({
         method: 'GET',

@@ -146,7 +146,12 @@
             // 编辑
             editMenu (row) {
                 this.isEdit = true
-                this.createOrEditMenuInfo = row
+                this.createOrEditMenuInfo = {
+                    id: row.id,
+                    menuName: row.menuName,
+                    menuUrl: row.menuUrl,
+                    type: row.type
+                }
                 this.dialogFormVisible = true
             },
             // 启用禁用

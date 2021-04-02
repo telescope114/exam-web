@@ -73,8 +73,8 @@
                             label="操作"
                             width="130">
                         <template slot-scope="scope">
-                            <el-button @click="editMajor(scope.row)" type="info" icon="el-icon-edit" size="small" circle></el-button>
-                            <el-button @click="delMajor(scope.row)" type="danger" icon="el-icon-delete" size="small" circle></el-button>
+<!--                            <el-button @click="editClass(scope.row)" type="info" icon="el-icon-edit" size="small" circle></el-button>-->
+                            <el-button @click="delClass(scope.row)" type="danger" icon="el-icon-delete" size="small" circle></el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -114,7 +114,11 @@
         teacherCollege,
         teacherCollegeAddCollege,
         teacherCollegeAddMajor,
-        teacherGetMajor, teacherCollegeGetClassName, teacherCollegeAddClass
+        teacherGetMajor,
+        teacherCollegeGetClassName,
+        teacherCollegeAddClass,
+        teacherCollegeEditCollege,
+        teacherCollegeEditMajor, teacherCollegeDelCollege, teacherCollegedelMajor, teacherCollegedelClass
     } from "../../services/teacher";
 
     export default {
@@ -151,6 +155,8 @@
                 if (data.code === '200') {
                     console.log(data.data)
                     this.collegeList = data.data
+                    this.majorList = []
+                    this.classList = []
                 }
                 this.loadingCollege = false
             },
@@ -177,13 +183,17 @@
                 this.isEdit = false
                 this.formInfo = {}
             },
-            // 查看学院
+            // 查看专业
             async seeMajor (row) {
                 this.loadingMajor = true
-                this.collegeInfo = row
+                this.collegeInfo = {
+                    collegeName: row.collegeName,
+                    id: row.id
+                }
                 const { data } = await teacherGetMajor({ collegeId: row.id})
                 if (data.code === '200') {
                     this.majorList = data.data
+                    this.classList = []
                 }
                 this.loadingMajor = false
             },
@@ -194,13 +204,34 @@
                 this.isEdit = true
                 this.formInfo = row
             },
-            // 未完成 删除班级
+            // 删除学院
             delCollege (row) {
-                console.log(row)
+                this.$confirm(`警告：你正在删除 ${row.collegeName} ，确认么？？？`,'删除警告', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'error'
+                }).then(() => {
+                    this.delCollegeReq(row)
+                }).catch(() => {
+                    this.$message.info('已经取消')
+                })
+            },
+            async delCollegeReq (row) {
+                const { data } = await teacherCollegeDelCollege({collegeId: row.id})
+                if (data.code === '200') {
+                    this.$message.warning('删除成功！')
+                    this.loadCollege()
+                } else {
+                    this.$message.error('删除失败！')
+                }
             },
             // 查询班级
             async seeClass (row) {
-                this.majorInfo = row
+                this.majorInfo = {
+                    collegeId: row.collegeId,
+                    majorName: row.majorName,
+                    id: row.id
+                }
                 this.loadingClass = true
                 // console.log(row)
                 const { data } = await teacherCollegeGetClassName({majorId: row.id})
@@ -210,16 +241,62 @@
                 }
                 this.loadingClass = false
             },
-            // 未完成 编辑专业
+            // 编辑专业
             editMajor (row) {
                 this.dialog = true
                 this.dialogType = 3
                 this.isEdit = true
                 this.formInfo = row
             },
-            // 未完成 删除专业
+            // 删除专业
             delMajor (row) {
-                console.log(row)
+                this.$confirm(`警告：你正在删除 ${row.majorName} ，确认么？？？`,'删除警告', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'error'
+                }).then(() => {
+                    this.delMajorReq(row)
+                }).catch(() => {
+                    this.$message.info('已经取消')
+                })
+            },
+            async delMajorReq (row) {
+                const { data } = await teacherCollegedelMajor({majorId: row.id})
+                if (data.code === '200') {
+                    this.$message.warning('删除成功！')
+                    this.seeMajor(row)
+                    // this.loadCollege()
+                } else {
+                    this.$message.error('删除失败！')
+                }
+            },
+            /*// 未完成 编辑班级
+            editClass (row) {
+                this.dialog = true
+                this.dialogType = 5
+                this.isEdit = true
+                this.formInfo = row
+            },*/
+            // 删除班级
+            delClass (row) {
+                this.$confirm(`警告：你正在删除 ${row.className} ，确认么？？？`,'删除警告', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'error'
+                }).then(() => {
+                    this.delClassReq(row)
+                }).catch(() => {
+                    this.$message.info('已经取消')
+                })
+            },
+            async delClassReq (row) {
+                const { data } = await teacherCollegedelClass({classId: row.id})
+                if (data.code === '200') {
+                    this.$message.warning('删除成功！')
+                    this.loadCollege()
+                } else {
+                    this.$message.error('删除失败！')
+                }
             },
             // 取消
             cancel () {
@@ -230,13 +307,14 @@
                 this.wat = false
                 switch (this.dialogType) {
                     case 0: this.createCollege(); break;
+                    case 1: this.editCollegeReq(); break;
                     case 2: this.createMajor(); break;
+                    case 3: this.editMajorReq(); break;
                     case 4: this.createClass(); break;
                 }
                 // console.log(this.wat)
                 // if (this.wat) {
                 //     this.$message.success('添加成功')
-                    this.dialog = false
                 // }
             },
             // 添加学院请求
@@ -246,9 +324,30 @@
                     this.$message.success('添加成功')
                     this.loadingCollege = true
                     this.loadCollege()
+                    this.dialog = false
                     this.wat = true
+                } else if (data.code === '403') {
+                    this.$message.error('学院重名!!!')
+                    this.wat = false
                 } else {
                     this.$message.error('添加h失败!!!')
+                    this.wat = false
+                }
+            },
+            // 编辑学院请求
+            async editCollegeReq () {
+                const { data } = await teacherCollegeEditCollege(this.formInfo)
+                if (data.code === '200') {
+                    this.$message.success('编辑成功')
+                    this.loadingCollege = true
+                    this.loadCollege()
+                    this.dialog = false
+                    this.wat = true
+                } else if (data.code === '403') {
+                    this.$message.error('学院重名!!!')
+                    this.wat = false
+                } else {
+                    this.$message.error('添加失败!!!')
                     this.wat = false
                 }
             },
@@ -264,8 +363,36 @@
                     this.$message.success('添加成功')
                     this.seeMajor(this.collegeInfo)
                     this.wat = true
+                    this.dialog = false
+                } else if (data.code === '403') {
+                    this.loadingMajor = false
+                    this.$message.error('专业重名！！')
+                    this.wat = true
                 } else {
                     this.$message.error('添加失败!!!')
+                    this.wat = false
+                }
+            },
+            // 编辑专业请求
+            async editMajorReq () {
+                this.loadingMajor = true
+                const {data} = await teacherCollegeEditMajor(/*{
+                    collegeId: this.collegeInfo.id,
+                    majorId: this.formInfo.majorId,
+                    majorName: this.formInfo.majorName
+                }*/this.formInfo)
+                if (data.code === '200') {
+                    this.loadingMajor = false
+                    this.$message.success('编辑成功')
+                    this.seeMajor(this.collegeInfo)
+                    this.wat = true
+                    this.dialog = false
+                } else if (data.code === '403') {
+                    this.loadingMajor = false
+                    this.$message.error('专业重名！！')
+                    this.wat = true
+                } else {
+                    this.$message.error('编辑失败!!!')
                     this.wat = false
                 }
             },
@@ -284,6 +411,7 @@
                         this.$message.success('添加成功')
                         this.seeClass(this.majorInfo)
                         this.wat = true
+                        this.dialog = false
                     } else {
                         this.$message.error('添加失败!!!')
                         this.wat = false

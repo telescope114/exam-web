@@ -70,6 +70,8 @@
                 if (data.code === '200') {
                     this.$message.success('添加成功')
                     this.$emit('success')
+                } else if (data.code === '403') {
+                    this.$message.error('该用户名已经被注册')
                 } else {
                     this.$message.error('添加失败！！！')
                 }
@@ -82,6 +84,8 @@
                         this.$emit('success')
                     } else if (data.code === '303') {
                         this.$message.error('不能修改管理员！！！')
+                    } else if (data.code === '403') {
+                        this.$message.error('该用户名已经被注册')
                     } else {
                         this.$message.error('编辑失败！！！')
                     }

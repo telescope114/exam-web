@@ -87,13 +87,18 @@
                 const { data } = await teacherClass()
                 if (data.code === '200') {
                     this.classList = data.data
+                    this.classListPagination = this.classListPagination.sort()
                     this.classListPagination = this.classList.slice(0,this.pageSize)
                 }
                 this.loading = false
             },
             // 查看班级
             async seeClass (row) {
-                console.log(row)
+                // console.log(row)
+                if (!row.id) {
+                    this.$message.error('没有该班级')
+                    return
+                }
                 const { data } = await teacherStudentGetStudentList({classId: row.id})
                 if (data.code === '200') {
                     this.$store.commit('setStudentList',data.data)

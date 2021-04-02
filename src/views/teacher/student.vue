@@ -57,6 +57,7 @@
                                 <el-tooltip :content="'当前状态：'+(scope.row.status?'启用':'禁用')" placement="top">
                                     <el-switch
                                         v-model="scope.row.status"
+                                        @click.native="ableOrDisableStatus(scope.row)"
                                         :active-value="1"
                                         :inactive-value="0"
                                         inactive-color="#ff4949"
@@ -107,7 +108,12 @@
 </template>
 
 <script>
-    import {teacherStudent, teacherStudentGetStudentList} from "../../services/teacher";
+    import {
+        teacherStudent,
+        teacherStudentDisable,
+        teacherStudentEnable,
+        teacherStudentGetStudentList
+    } from "../../services/teacher";
     import {collegeMajorClass} from "../../utils/teacher";
     import CreateOrEditStudent from "./component/CreateOrEditStudent";
 
@@ -138,41 +144,79 @@
             }
         },
         methods: {
-            async loadClassList () {
+            async loadClassList() {
                 this.loadingClassList = true
-                const { data } = await teacherStudent()
+                const {data} = await teacherStudent()
                 this.loadingClassList = false
                 if (data.code === '200') {
                     this.classList = collegeMajorClass(data.data)
                 }
             },
-            loadStudentList () {
+            loadStudentList() {
                 if (this.$store.studentList !== '') {
                     this.studentList = this.$store.state.studentList
                     // this.$message.warning('当前为查看状态,若是要添加学生,请选则到对应为班级')
-                    this.$store.commit('setStudentList',null)
+                    this.$store.commit('setStudentList', null)
                 }
             },
-            addStudent () {
+            addStudent() {
                 // console.log(this.classInfo)
                 this.studentInfo = {}
                 this.isEdit = false
                 this.dialogCreateOrEditStudent = true
             },
-            handleNodeClick (data) {
-                if (typeof(data.classId) === "number") {
+            handleNodeClick(data) {
+                if (typeof (data.classId) === "number") {
                     this.classInfo = data
                     // console.log(data)
                     this.getStudentList(this.classInfo)
                 }
             },
             // 获取学生列表
-            async getStudentList (row) {
+            async getStudentList(row) {
                 this.loadingStudentList = true
-                const { data } = await teacherStudentGetStudentList({classId: row.classId})
+                const {data} = await teacherStudentGetStudentList({classId: row.classId})
                 this.loadingStudentList = false
                 if (data.code === '200') {
                     this.studentList = data.data
+                }
+            },
+            // 启用/禁用
+            ableOrDisableStatus(row) {
+                if (row.status === 0) {
+                    this.$confirm(`警告：你正在禁用 ${row.realName} `,'禁用警告',{
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'error'
+                    }).then(() => {
+                        this.disableStudent(row)
+                    }).catch(() => {
+                        row.status = 1
+                    })
+                } else {
+                    this.ableStudent(row)
+                }
+            },
+            // 启用
+            async ableStudent (row) {
+                const { data } = await teacherStudentEnable({studentId: row.id})
+                if (data.code === '200') {
+                    this.$message.success('启用成功！！')
+                    row.status = 1
+                } else {
+                    this.$message.error('无权操作！！')
+                    row.status = 0
+                }
+            },
+            // 禁用
+            async disableStudent (row) {
+                const { data } = await teacherStudentDisable({studentId: row.id})
+                if (data.code === '200') {
+                    this.$message.success('禁用成功！！')
+                    row.status = 0
+                } else {
+                    this.$message.error('无权操作！！')
+                    row.status = 1
                 }
             },
             // 编辑学生

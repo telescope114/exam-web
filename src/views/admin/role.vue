@@ -143,7 +143,11 @@
             // 编辑角色
             editRole (row) {
                 this.isEdit = true
-                this.roleInfo = row
+                this.roleInfo = {
+                    id: row.id,
+                    roleName: row.roleName,
+                    description: row.description,
+                }
                 this.dialogFormVisible=true
             },
             // 添加、编辑成功

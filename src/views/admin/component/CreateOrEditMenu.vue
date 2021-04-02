@@ -93,7 +93,7 @@
                     this.$emit('success')
                     this.loadingSubmit = false
                 } else {
-                    this.$message.warning('添加失败！！')
+                    this.$message.error('添加失败！！')
                     this.loadingSubmit = false
                 }
             },
