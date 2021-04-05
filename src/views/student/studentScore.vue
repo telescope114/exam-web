@@ -84,7 +84,7 @@
                 }
             },
             getScoreAllInformation (row) {
-                this.$router.push('score/'+row.id)
+                // this.$router.push('score/'+row.id)
                 this.$router.push({name: 'StudentScore',params:{id: row.id}})
             },
             handleSizeChange(val) {

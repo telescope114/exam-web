@@ -20,7 +20,7 @@
                          element-loading-spinner="el-icon-loading"
                          element-loading-background="rgba(255,255,255)">
                     <h1>基本信息</h1>
-                    <el-form-item label="题库名称" label-width="200px">
+                    <el-form-item label="考试名称" label-width="200px">
                         <el-input v-model="createOrEditExamInfo.examName"></el-input>
                     </el-form-item>
                     <el-form-item label="题库名称" label-width="200px">
@@ -35,18 +35,27 @@
             <div class="content-exam-info">
                 <el-form :label-position="'right'" :model="createOrEditExamInfo">
                     <h1>{{aimQuestionBank.questionBankName}}</h1>
-                    <el-form-item label="选择题数量" label-width="200px">
-                        <el-tooltip :content="'选择题总共：'+aimQuestionBank.choiceQuestion+'题，每题2分'"  placement="right">
+                    <el-form-item label="选择题单题分数/数量" label-width="200px">
+                        <el-tooltip content="选择题单题分数" placement="left">
+                            <el-input type="number" v-model="createOrEditExamInfo.choiceQuestionScore" style="width:100px;" @blur="outNumber"></el-input>
+                        </el-tooltip>
+                        <el-tooltip :content="'选择题总共：'+aimQuestionBank.choiceQuestion+'题，每题'+createOrEditExamInfo.choiceQuestionScore+'分'"  placement="right">
                             <el-input type="number" v-model="createOrEditExamInfo.choiceQuestion" style="width:100px;" @blur="outNumber"></el-input>
                         </el-tooltip>
                     </el-form-item>
-                    <el-form-item label="判断题数量" label-width="200px">
-                        <el-tooltip :content="'判断题总共：'+aimQuestionBank.judgmentQuestion+'题，每题2分'"  placement="right">
+                    <el-form-item label="判断题单题分数/数量" label-width="200px">
+                        <el-tooltip content="判断题题单题分数" placement="left">
+                            <el-input type="number" v-model="createOrEditExamInfo.judgmentQuestionScore" style="width:100px;" @blur="outNumber"></el-input>
+                        </el-tooltip>
+                        <el-tooltip :content="'判断题总共：'+aimQuestionBank.judgmentQuestion+'题，每题'+createOrEditExamInfo.judgmentQuestionScore+'分'"  placement="right">
                             <el-input type="number" v-model="createOrEditExamInfo.judgmentQuestion" style="width:100px;" @blur="outNumber"></el-input>
                         </el-tooltip>
                     </el-form-item>
-                    <el-form-item label="填空题数量" label-width="200px">
-                        <el-tooltip :content="'填空题总共：'+aimQuestionBank.fillQuestion+'题，每题2分'"  placement="right">
+                    <el-form-item label="填空题单题分数/数量" label-width="200px">
+                        <el-tooltip content="填空题题单题分数" placement="left">
+                            <el-input type="number" v-model="createOrEditExamInfo.fillQuestionScore" style="width:100px;" @blur="outNumber"></el-input>
+                        </el-tooltip>
+                        <el-tooltip :content="'填空题总共：'+aimQuestionBank.fillQuestion+'题，每题'+createOrEditExamInfo.fillQuestionScore+'分'"  placement="right">
                             <el-input type="number" v-model="createOrEditExamInfo.fillQuestion" style="width:100px;" @blur="outNumber"></el-input>
                         </el-tooltip>
                     </el-form-item>
@@ -71,6 +80,9 @@
                                 type="datetime"
                                 placeholder="选择日期时间">
                         </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="考试时长(分钟)" label-width="200px">
+                        <el-input type="number" v-model="createOrEditExamInfo.duration" @blur="outNumber"></el-input>
                     </el-form-item>
                 </el-form>
             </div>
@@ -106,9 +118,9 @@
 
 <script>
     import {
-        teacherExamAddExamSubmit,
-        teacherExamGetClass,
-        teacherQuestionBank
+        teacherExamAddExamAdd,
+        teacherExamAddExamSubmit, teacherExamEditExamGetExamInfo, teacherExamEditExamSubmit,
+        teacherExamGetClass
     } from "../../../services/teacher";
     import questionBank from "../questionBank";
 
@@ -151,16 +163,12 @@
         created() {
             this.loadQuestionBank()
             this.loadClassList()
-            if (this.isEdit) {
-                // 编辑时再请求一次
-                console.log(this.isEdit)
-            }
         },
         methods: {
             async loadQuestionBank () {
                 this.loadingQuestionBank = true
                 this.loadingClassList = true
-                const { data } = await teacherQuestionBank()
+                const { data } = await teacherExamAddExamAdd()
                 this.loadingQuestionBank = false
                 this.loadingClassList = false
                 if (data.code === '200') {
@@ -172,14 +180,62 @@
                 const { data } = await teacherExamGetClass()
                 if (data.code === '200') {
                     this.classList = data.data
-                    console.log(questionBank)
+                    // console.log(questionBank)
+                    if (this.isEdit) {
+                        this.loadEdit()
+                    }
+                }
+            },
+            async loadEdit () {
+                const { data } = await teacherExamEditExamGetExamInfo({examId: this.examInfo.id})
+                if (data.code === '200') {
+                    console.log(data)
+                    this.createOrEditExamInfo = {
+                        // 考试信息
+                        eid: data.data.examType.eid,    // 考试ID
+                        examId: data.data.examType.eid,    // 考试ID
+                        examName: data.data.exam.examName,
+                        id: data.data.examType.qid,
+                        // 题库信息
+                        choiceQuestion: data.data.examType.choiceQuestion,
+                        choiceQuestionScore: data.data.examType.choiceQuestionScore,
+                        fillQuestion: data.data.examType.fillQuestion,
+                        fillQuestionScore: data.data.examType.fillQuestionScore,
+                        judgmentQuestion: data.data.examType.judgmentQuestion,
+                        judgmentQuestionScore: data.data.examType.judgmentQuestionScore,
+                        totalScore: data.data.exam.totalScore,
+                        // 时间信息
+                        closeTime: data.data.exam.closeTime,
+                        openTime: data.data.exam.openTime,
+                        duration: data.data.exam.duration,
+                        ids: []
+                    }
+                    this.questionBankList.forEach(item => {
+                        console.log('ID = '+item.id)
+                        console.log('id = '+this.createOrEditExamInfo.id)
+                        if (item.id === this.createOrEditExamInfo.id) {
+                            this.aimQuestionBank = item
+                            console.log(this.aimQuestionBank)
+                        }
+                    })
+                    // 班级信息
+                    data.data.classList.forEach(item => {
+                        if (item.hasClass) {
+                            this.createOrEditExamInfo.ids.push(item.id)
+                        }
+                    })
+                } else if (data.code === '405') {
+                    this.$message.error('该场考试已经开考，不可编辑！！')
+                    this.$emit('cancel')
                 }
             },
             cancel () {
                 this.$emit('cancel')
             },
             enterStep (num) {
-                switch (this.step) {
+                // console.log(num)
+                this.step = num
+                /*switch (this.step) {
                     case 1: {
                         if (this.createOrEditExamInfo.examName && this.createOrEditExamInfo.id) {
                             this.step = num
@@ -219,22 +275,22 @@
                         }
                         break
                     }
-                }
+                }*/
             },
             submit () {
                 this.loadingSubmit = true
-                const form = this.createOrEditExamInfo
-                if (form.examName && form.id) {
+                // const form = this.createOrEditExamInfo
+                if (this.createOrEditExamInfo.examName && this.createOrEditExamInfo.id) {
                     if (
-                        form.choiceQuestion >= 0 &&
-                        form.judgmentQuestion >= 0 &&
-                        form.fillQuestion >= 0 &&
-                        form.choiceQuestion <= this.aimQuestionBank.choiceQuestion &&
-                        form.judgmentQuestion <= this.aimQuestionBank.judgmentQuestion &&
-                        form.fillQuestion <= this.aimQuestionBank.fillQuestion
+                        this.createOrEditExamInfo.choiceQuestion >= 0 &&
+                        this.createOrEditExamInfo.judgmentQuestion >= 0 &&
+                        this.createOrEditExamInfo.fillQuestion >= 0 &&
+                        this.createOrEditExamInfo.choiceQuestion <= this.aimQuestionBank.choiceQuestion &&
+                        this.createOrEditExamInfo.judgmentQuestion <= this.aimQuestionBank.judgmentQuestion &&
+                        this.createOrEditExamInfo.fillQuestion <= this.aimQuestionBank.fillQuestion
                     ) {
-                        if (form.openTime && form.closeTime && form.duration) {
-                            if (this.createOrEditExamInfo.ids !== []) {
+                        if (this.createOrEditExamInfo.openTime && this.createOrEditExamInfo.closeTime && this.createOrEditExamInfo.duration) {
+                            if (this.createOrEditExamInfo.ids.length > 0 && this.createOrEditExamInfo.ids) {
                                 if (this.isEdit) {
                                     this.editExam()
                                 } else {
@@ -265,7 +321,11 @@
                 this.createOrEditExamInfo.choiceQuestion = parseInt(this.createOrEditExamInfo.choiceQuestion )
                 this.createOrEditExamInfo.judgmentQuestion = parseInt(this.createOrEditExamInfo.judgmentQuestion )
                 this.createOrEditExamInfo.fillQuestion = parseInt(this.createOrEditExamInfo.fillQuestion )
-                this.createOrEditExamInfo.totalScore = ( this.createOrEditExamInfo.choiceQuestion + this.createOrEditExamInfo.judgmentQuestion + this.createOrEditExamInfo.fillQuestion ) * 2
+                this.createOrEditExamInfo.choiceQuestionScore = parseInt(this.createOrEditExamInfo.choiceQuestionScore )
+                this.createOrEditExamInfo.judgmentQuestionScore = parseInt(this.createOrEditExamInfo.judgmentQuestionScore )
+                this.createOrEditExamInfo.fillQuestionScore = parseInt(this.createOrEditExamInfo.fillQuestionScore )
+                this.createOrEditExamInfo.totalScore = this.createOrEditExamInfo.choiceQuestion * this.createOrEditExamInfo.choiceQuestionScore + this.createOrEditExamInfo.judgmentQuestion * this.createOrEditExamInfo.judgmentQuestionScore + this.createOrEditExamInfo.fillQuestion * this.createOrEditExamInfo.fillQuestionScore
+                this.createOrEditExamInfo.duration = parseInt(this.createOrEditExamInfo.duration)
             },
             async addExam () {
                 console.log(this.createOrEditExamInfo)
@@ -274,9 +334,19 @@
                 if (data.code === '200') {
                     this.$message.success('添加成功！')
                     this.$emit('success')
+                } else {
+                    this.$message.error('无权操作！！！')
                 }
             },
-            async editExam () {}
+            async editExam () {
+                const { data } = await teacherExamEditExamSubmit(this.createOrEditExamInfo)
+                if (data.code === '200') {
+                    this.$message.success('编辑成功！')
+                    this.$emit('success')
+                } else {
+                    this.$message.error('无权操作！！！')
+                }
+            }
         }
     }
 </script>

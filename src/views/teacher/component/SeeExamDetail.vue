@@ -4,7 +4,7 @@
             <el-table-column prop="collegeName" label="学院"></el-table-column>
             <el-table-column prop="className" label="班级"></el-table-column>
         </el-table>
-        <div slot="footer">
+        <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="cancel">确定</el-button>
         </div>
     </div>
@@ -46,5 +46,7 @@
 </script>
 
 <style lang="scss" scoped>
-
+    .dialog-footer {
+        margin-top: 5px;
+    }
 </style>

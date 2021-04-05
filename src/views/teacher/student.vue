@@ -1,7 +1,7 @@
 <template>
     <div class="teacher-student">
         <div class="teacher-student-aside">
-            <el-card style="height: 68vh">
+            <el-card class="el-card-aside">
                 <el-tree
                     v-loading="loadingClassList"
                     element-loading-text="拼命加载中"
@@ -17,17 +17,17 @@
             </el-card>
         </div>
         <div class="teacher-student-main">
-            <el-card>
+            <el-card class="el-card-search">
                 <div class="teacher-student-header">
                     <el-button @click="addStudent" :disabled="!classInfo" size="small" type="primary">添加学生</el-button>
                     <div class="select">
                         <label>学生姓名</label>
                         <el-input placeholder="请输入年级" style="width: 150px" v-model="selectForm.studentName" clearable></el-input>
-                        <el-button type="primary" icon="el-icon-search" circle></el-button>
+                        <el-button type="primary" icon="el-icon-search" @click="selectStudentName" circle></el-button>
                     </div>
                 </div>
             </el-card>
-            <el-card>
+            <el-card class="el-card-content">
                 <div class="teacher-student-content">
                     <h5 style="text-align: left">{{this.classInfo.name}}</h5>
                     <el-table
@@ -99,6 +99,7 @@
                 v-if="dialogCreateOrEditStudent"
                 :classInfo="classInfo"
                 :studentInfo="studentInfo"
+                :classList="classList"
                 :isEdit="isEdit"
                 @success="success"
                 @cancel="cancel"
@@ -112,7 +113,7 @@
         teacherStudent,
         teacherStudentDisable,
         teacherStudentEnable,
-        teacherStudentGetStudentList
+        teacherStudentGetStudentList, teacherStudentResetPassword, teacherStudentSearchStudentName
     } from "../../services/teacher";
     import {collegeMajorClass} from "../../utils/teacher";
     import CreateOrEditStudent from "./component/CreateOrEditStudent";
@@ -159,6 +160,22 @@
                     this.$store.commit('setStudentList', null)
                 }
             },
+            // 搜索学生
+            selectStudentName () {
+                if (!this.selectForm.studentName) {
+                    return
+                } else {
+                    this.selectStudentNameReq()
+                }
+            },
+            async selectStudentNameReq () {
+                const { data } = await teacherStudentSearchStudentName({studentName: this.selectForm.studentName})
+                if (data.code === '200') {
+                    this.studentList = data.data
+                } else if (data.code === '402') {
+                    console.log(data)
+                }
+            },
             addStudent() {
                 // console.log(this.classInfo)
                 this.studentInfo = {}
@@ -199,7 +216,7 @@
             },
             // 启用
             async ableStudent (row) {
-                const { data } = await teacherStudentEnable({studentId: row.id})
+                const { data } = await teacherStudentEnable({userId: row.userId})
                 if (data.code === '200') {
                     this.$message.success('启用成功！！')
                     row.status = 1
@@ -210,9 +227,10 @@
             },
             // 禁用
             async disableStudent (row) {
-                const { data } = await teacherStudentDisable({studentId: row.id})
+                // console.log('userId='+row.userId)
+                const { data } = await teacherStudentDisable({userId: row.userId})
                 if (data.code === '200') {
-                    this.$message.success('禁用成功！！')
+                    this.$message.warning('禁用成功！！')
                     row.status = 0
                 } else {
                     this.$message.error('无权操作！！')
@@ -222,10 +240,37 @@
             // 编辑学生
             editStudent (row) {
                 console.log(row)
+                this.studentInfo = {
+                    collegeId: this.classInfo.collegeId,
+                    majorId: this.classInfo.majorId,
+                    classId: this.classInfo.classId,
+                    id: row.id,
+                    realName: row.realName,
+                    userId: row.userId
+                }
+                // this.classInfo = this.classList
+                this.isEdit = true
+                this.dialogCreateOrEditStudent = true
             },
             // 重置密码
             resetStudentPassword (row) {
-                console.log(row)
+                this.$confirm(`警告！你正在重置 ${row.realName} 的密码`,`警告`,{
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'error'
+                }).then(() => {
+                    this.resetStudentPasswordReq(row)
+                }).catch(() => {
+                    this.$message.info('已经取消了')
+                })
+            },
+            async resetStudentPasswordReq (row) {
+                const { data } = await teacherStudentResetPassword({userId: row.userId})
+                if (data.code === '200') {
+                    this.$message.warning('重置成功，初始密码为 123456')
+                } else {
+                    this.$message.error('无权操作')
+                }
             },
             success () {
                 this.dialogCreateOrEditStudent = false
@@ -247,13 +292,13 @@
     .teacher-student-aside {
         width: 20%;
         margin-right: 10px;
-        .el-card {
+        /*.el-card {
             height: 60vh;
-        }
+        }*/
     }
     .teacher-student-main {
         width: 75%;
-        .el-card {
+        /*.el-card {
             .el-card__body {
                 .teacher-student-header {
                     height: 8vh;
@@ -270,11 +315,38 @@
                         }
                     }
                 }
-                .teacher-student-content {
-                    height: 60vh;
-                    overflow: auto;
+
+            }
+        }*/
+    }
+    .el-card-aside {
+        height: 70vh;
+        padding-bottom: 5px;
+    }
+    .el-card-search {
+        height: 10vh;
+        .teacher-student-header {
+            padding: 0;
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            .select {
+                label {
+                    margin-left: 10px;
+                    margin-right: 10px;
+                }
+                .el-button {
+                    margin-left: 20px;
                 }
             }
+        }
+    }
+    .el-card-content {
+        height: 60vh;
+        margin-top: 5px;
+        overflow: auto;
+        .teacher-student-content {
+            /*height: 60vh;*/
         }
     }
 }

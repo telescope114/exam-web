@@ -96,15 +96,18 @@
                         this.isLoginLoading = false
                         this.$store.commit('setUser',data.token)
                         if (data.role === 2) {
+                            this.$store.commit('setRole',data.role)
                             this.$router.push({ name: 'StudentInfo' } )
                         } else if (data.role === 0|| data.role === 1) {
-                            this.$router.push(this.$route.query.redirect || {name: 'Layout'})
+                            this.$store.commit('setRole',data.role)
+                            this.$router.push(this.$route.query.redirect || {name: 'Index'})
                         }
                     } else if (data.code === '0') {
                         this.$message.error("账号密码不匹配")
                     }
                 } catch (err) {
                     // 校验失败后的功能
+                    // console.log(err)
                     console.log('校验未通过')
                     this.isLoginLoading = false
                 }

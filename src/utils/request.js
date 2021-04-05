@@ -82,6 +82,9 @@ request.interceptors.response.use(function (res) {
     } else if (res.data.code === '101') {
         // token 无效
         toLogin()
+    } else if (res.data.code === '401') {
+        // token 无效
+        Message.error('系统错误，请联系运维人员')
     }
 /*    else if (res.data.code === '101') {
         toLogin()

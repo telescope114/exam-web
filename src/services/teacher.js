@@ -164,6 +164,9 @@ export const teacherCollegedelClass = (form) => {
     })
 }
 
+/**
+ * 教师管理-获取教师列表
+ */
 export const teacherTeacher = () => {
     return request({
         method: 'GET',
@@ -171,6 +174,23 @@ export const teacherTeacher = () => {
     })
 }
 
+/**
+ * 查询教师
+ */
+export const teacherTeacherSearchTeacher = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/teacher/searchTeacher',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 添加教师
+ */
 export const teacherTeacherAddTeacher = (form) => {
     return request({
         method: 'POST',
@@ -182,6 +202,65 @@ export const teacherTeacherAddTeacher = (form) => {
     })
 }
 
+/**
+ * 编辑教师
+ */
+export const teacherTeacherEditTeacher = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/teacher/editTeacher',
+        // headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded'
+        // },
+        data: JSON.stringify(form)
+    })
+}
+
+/**
+ * 重置教师密码
+ */
+export const teacherTeacherResetPassword = (form) => {
+    return request({
+        method: 'POST',
+        url: '/common/resetPassword',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 启用教师
+ */
+export const teacherTeacherEnable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/teacher/enable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 禁用教师
+ */
+export const teacherTeacherDisable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/teacher/disable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 获取所有学院、班级
+ */
 export const teacherTeacherGetClassName = (form) => {
     return request({
         method: 'POST',
@@ -193,6 +272,9 @@ export const teacherTeacherGetClassName = (form) => {
     })
 }
 
+/**
+ * 获取教师拥有的班级
+ */
 export const teacherTeacherGetAllClassByTeacherId = (form) => {
     return request({
         method: 'POST',
@@ -204,6 +286,9 @@ export const teacherTeacherGetAllClassByTeacherId = (form) => {
     })
 }
 
+/**
+ * 给教师分配班级
+ */
 export const teacherTeacherAssignClass = (form) => {
     return request({
         method: 'POST',
@@ -265,12 +350,51 @@ export const teacherStudentDisable = (form) => {
 }
 
 /**
+ * 搜索学生
+ */
+export const teacherStudentSearchStudentName = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/student/searchStudentName',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 重置学生密码
+ */
+export const teacherStudentResetPassword = (form) => {
+    return request({
+        method: 'POST',
+        url: '/common/resetPassword',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
  * 添加学生
  */
 export const teacherStudentAddStudent = (form) => {
     return request({
         method: 'POST',
         url: '/teacher/student/addStudent',
+        data: JSON.stringify(form)
+    })
+}
+
+/**
+ * 编辑学生
+ */
+export const teacherStudentEditStudent = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/student/editStudent',
         data: JSON.stringify(form)
     })
 }
@@ -285,6 +409,9 @@ export const teacherQuestionBank = () => {
     })
 }
 
+/**
+ * 添加题库
+ */
 export const teacherQuestionBankAddQuestionBank = (form) => {
     return request({
         method: 'POST',
@@ -296,6 +423,79 @@ export const teacherQuestionBankAddQuestionBank = (form) => {
     })
 }
 
+/**
+ * 启用题库
+ */
+export const teacherQuestionBankEnable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/questionBank/enable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 禁用题库
+ */
+export const teacherQuestionBankDisable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/questionBank/disable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 编辑题库
+ */
+export const teacherQuestionBankImportQuestionBank = (data) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/questionBank/importQuestionBank',
+        headers: {
+            'Content-Type':' multipart/form-data; boundary=----WebKitFormBoundaryAlmClKFW3cmPvi5Y'
+        },
+        data
+    })
+}
+
+/**
+ * 编辑题库
+ */
+export const teacherQuestionBankEditQuestionBank = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/questionBank/editQuestionBank',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 搜索题库名称
+ */
+export const teacherQuestionBankSearchQuestionBankName = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/questionBank/searchQuestionBank',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 试题管理-获取试题
+ */
 export const teacherExamQuestion = () => {
     return request({
         method: 'GET',
@@ -303,6 +503,9 @@ export const teacherExamQuestion = () => {
     })
 }
 
+/**
+ * 获取题库名称
+ */
 export const teacherExamQuestionGetAllQuestionBank = () => {
     return request({
         method: 'GET',
@@ -310,6 +513,9 @@ export const teacherExamQuestionGetAllQuestionBank = () => {
     })
 }
 
+/**
+ * 添加试题
+ */
 export const teacherExamQuestionAddExamQuestion = (form) => {
     return request({
         method: 'POST',
@@ -321,6 +527,51 @@ export const teacherExamQuestionAddExamQuestion = (form) => {
     })
 }
 
+/**
+ * 启用试题
+ */
+export const teacherExamQuestionEnable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examQuestion/enable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 禁用试题
+ */
+export const teacherExamQuestionDisable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examQuestion/disable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 编辑试题
+ */
+export const teacherExamQuestionEditExamQuestion = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examQuestion/editExamQuestion',
+        // headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded'
+        // },
+        data: JSON.stringify(form)
+    })
+}
+
+/**
+ * 获取选择题的选项
+ */
 export const teacherExamQuestionGetExamQuestionOption = (form) => {
     return request({
         method: 'POST',
@@ -332,6 +583,36 @@ export const teacherExamQuestionGetExamQuestionOption = (form) => {
     })
 }
 
+
+/**
+ * 获取题库名称
+ */
+export const teacherExamAddExamAdd = () => {
+    return request({
+        method: 'GET',
+        url: '/teacher/exam/addExam/add'
+    })
+}
+
+
+/**
+ * 获取选择题的选项
+ */
+export const teacherExamQuestionSearchTitle = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examQuestion/searchTitle',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+
+/**
+ * 考试管理-获取所有考试列表
+ */
 export const teacherExam = () => {
     return request({
         method: 'GET',
@@ -339,6 +620,9 @@ export const teacherExam = () => {
     })
 }
 
+/**
+ * 获取教师管理的班级
+ */
 export const teacherExamGetClass = () => {
     return request({
         method: 'GET',
@@ -346,21 +630,64 @@ export const teacherExamGetClass = () => {
     })
 }
 
+/**
+ *
+ * @param form
+ */
 export const teacherExamDetails = (form) => {
     return request({
         method: 'POST',
         url: '/teacher/exam/details',
         headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    data: qs.stringify(form)
+        },
+        data: qs.stringify(form)
     })
 }
 
+/**
+ * 添加考试
+ */
 export const teacherExamAddExamSubmit = (form) => {
     return request({
         method: 'POST',
         url: '/teacher/exam/addExam/submit',
+        data: JSON.stringify(form)
+    })
+}
+
+/**
+ * 获取考试详情
+ */
+export const teacherExamEditExamGetExamInfo = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/exam/editExam/getExamInfo',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 搜索考试
+ */
+export const teacherExamSearchExam = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/exam/searchExam',
+        data: JSON.stringify(form)
+    })
+}
+
+/**
+ * 编辑考试
+ */
+export const teacherExamEditExamSubmit = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/exam/editExam/submit',
         data: JSON.stringify(form)
     })
 }
@@ -431,7 +758,7 @@ export const teacherScoreDownloadClassScore = (fileName) => {
         data: qs.stringify(form)
     })*/
     return request({
-        method: 'GET',
+        method: 'POST',
         url: '/common/download?fileName='+fileName,
         responseType: 'blob'
     })

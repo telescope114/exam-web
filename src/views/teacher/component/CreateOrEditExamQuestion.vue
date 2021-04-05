@@ -54,7 +54,7 @@
 
 <script>
     import {
-        teacherExamQuestionAddExamQuestion,
+        teacherExamQuestionAddExamQuestion, teacherExamQuestionEditExamQuestion,
         teacherExamQuestionGetAllQuestionBank,
         teacherExamQuestionGetExamQuestionOption
     } from "../../../services/teacher";
@@ -63,7 +63,7 @@
         name: "CreateOrEditExamQuestion",
         created() {
             this.loadQuestionBank()
-            if (this.isEdit) {
+            if (this.isEdit && this.examQuestionInfo.type === 0) {
                 this.loadExamQuestionOption()
             }
         },
@@ -106,7 +106,7 @@
             },
             async loadExamQuestionOption () {
                 this.loadingExamQuestionOption = true
-                const { data } = await teacherExamQuestionGetExamQuestionOption({eid: this.examQuestionInfo.id})
+                const { data } = await teacherExamQuestionGetExamQuestionOption({eid: this.examQuestionInfo.eid})
                 this.loadingExamQuestionOption = false
                 if (data.code === '200') {
                     data.data.forEach(item => {
@@ -153,16 +153,18 @@
                         title: this.examQuestionInfo.title,
                         type: this.examQuestionInfo.type,
                         answer: this.examQuestionInfo.answer,
-                        optionA: this.optionList.A.option,
-                        optionB: this.optionList.B.option,
-                        optionC: this.optionList.C.option,
-                        optionD: this.optionList.D.option,
+                        optionA: 'A、'+this.optionList.A.option,
+                        optionB: 'B、'+this.optionList.B.option,
+                        optionC: 'C、'+this.optionList.C.option,
+                        optionD: 'D、'+this.optionList.D.option,
                     }
                     const { data } = await teacherExamQuestionAddExamQuestion(form)
                     if (data.code === '200') {
                         this.$message.success('添加成功')
                         this.$emit('success')
-                    } else {
+                    } else if (data.code === '403') {
+                        this.$message.error('试题重复（已经拥有该试题）！！')
+                    }  else {
                         this.$message.error('添加失败')
                     }
                     // console.log(form)
@@ -177,15 +179,19 @@
                     if (data.code === '200') {
                         this.$message.success('添加成功')
                         this.$emit('success')
+                    } else if (data.code === '403') {
+                        this.$message.error('试题重复（已经拥有该试题）！！')
                     } else {
                         this.$message.error('添加失败')
                     }
                 }
             },
             async editExamQuestion () {
+                let form
                 if (this.examQuestionInfo.type === 0) {
-                    const form = {
+                    form = {
                         qid: this.examQuestionInfo.qid,
+                        eid: this.examQuestionInfo.eid,
                         title: this.examQuestionInfo.title,
                         type: this.examQuestionInfo.type,
                         answer: this.examQuestionInfo.answer,
@@ -198,15 +204,24 @@
                         optionDId: this.optionList.D.id,
                         optionD: 'D、'+this.optionList.D.option
                     }
-                    console.log(form)
                 } else {
-                    const form = {
+                    form = {
                         qid: this.examQuestionInfo.qid,
+                        examQuestionId: this.examQuestionInfo.eid,
                         title: this.examQuestionInfo.title,
                         type: this.examQuestionInfo.type,
                         answer: this.examQuestionInfo.answer
                     }
-                    console.log(form)
+                    // console.log(form)
+                }
+                const { data } = await teacherExamQuestionEditExamQuestion(form)
+                if (data.code === '200') {
+                    this.$message.success('编辑成功')
+                    this.$emit('success')
+                } else if (data.code === '403') {
+                    this.$message.error('试题重复（已经拥有该试题）！！')
+                }  else {
+                    this.$message.error('编辑失败')
                 }
             }
         }

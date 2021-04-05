@@ -160,7 +160,7 @@
             async resetPassword (row) {
               const { data } = await resetPassword({userId: row.id})
               if (data.code === '200') {
-                  this.$message.success('重置成功')
+                  this.$message.success('重置成功，初始密码 123456')
               } else if (data.code === '302') {
                   this.$message.error('不能重置管理员密码')
               } else {

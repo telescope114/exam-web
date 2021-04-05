@@ -138,6 +138,12 @@
     }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    .dialog-footer {
+        display: flex;
+        justify-content: center;
+        button {
+            margin: 0 5px;
+        }
+    }
 </style>

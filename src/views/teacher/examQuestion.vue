@@ -6,23 +6,33 @@
                 <div class="search-main">
                     <label>试题类型：</label>
                     <el-select v-model="selectForm.examQuestionType" style="width: 100px">
-                        <el-option v-for="item of examQuestionTypeTitle" :key="item.value" :label="item.title" :value="item.value" @click.native="checkExamQuestionType"></el-option>
+                        <el-option v-for="item of examQuestionTypeTitle" :key="item.value" :label="item.title" :value="item.value" @click.native="choiceList"></el-option>
                     </el-select>
                     <label>题库名称：</label>
-                    <el-input v-model="selectForm.questionBankName" style="width: 150px" clearable></el-input>
+                    <el-select v-model="selectForm.questionBankId" filterable placeholder="请选择" style="width: 150px">
+                        <el-option label="全部" :value="''" @click.native="choiceList"></el-option>
+                        <el-option
+                            v-for="item in questionBankList"
+                            :key="item.id"
+                            :label="item.questionBankName"
+                            :value="item.id"
+                            @click.native="choiceList">
+                        </el-option>
+                    </el-select>
+<!--                    <el-input v-model="selectForm.questionBankName" style="width: 150px" clearable></el-input>-->
                     <label>试题名称：</label>
-                    <el-input v-model="selectForm.examQuestionName" style="width: 150px" clearable></el-input>
-                    <el-button type="primary" circle icon="el-icon-search"></el-button>
+                    <el-input v-model="selectForm.examQuestionName" @keydown.native.enter="searchExamquestionName" style="width: 150px" clearable></el-input>
+                    <el-button type="primary" circle @click="searchExamquestionName" icon="el-icon-search"></el-button>
                 </div>
             </div>
         </el-card>
         <el-card>
             <div class="exam-question-content">
                 <el-table :data="pageList" border style="width: 100%;" v-loading="loadingExamQuestion" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(255,255,255,0.8)">
-                    <el-table-column label="题库" prop="questionBankName" width="180"></el-table-column>
-                    <el-table-column label="题型" width="100">
+                    <el-table-column label="题库" prop="questionBankName"></el-table-column>
+                    <el-table-column label="题型">
                         <template slot-scope="scope">
-                            <p>{{scope.row.type > 0 ? ( scope.row.type > 1 ? '填空题' : '判断题') : '选择题'}}</p>
+                            <p>{{scope.row.type > 0 ? ( scope.row.type > 1 ? '判断题' : '填空题') : '选择题'}}</p>
                         </template>
                     </el-table-column>
                     <el-table-column label="试题题目" width="200">
@@ -92,7 +102,11 @@
 </template>
 
 <script>
-    import {teacherExamQuestion, teacherExamQuestionGetExamQuestionOption} from "../../services/teacher";
+    import {
+        teacherExamQuestion, teacherExamQuestionDisable, teacherExamQuestionEnable,
+        teacherExamQuestionGetAllQuestionBank,
+        teacherExamQuestionGetExamQuestionOption, teacherExamQuestionSearchTitle
+    } from "../../services/teacher";
     import dateFormat from "../../utils/dateFormat";
     import { hideString } from "../../utils/teacher";
     import CreateOrEditExamQuestion from "./component/CreateOrEditExamQuestion";
@@ -102,12 +116,14 @@
         components: {CreateOrEditExamQuestion},
         created() {
             this.loadExamQuestion()
+            this.loadQuestionBank()
         },
         data () {
             return {
+                examQuestionAllList: [],
                 examQuestionList: [],
                 selectForm: {
-                    questionBankName: '',
+                    questionBankId: '',
                     examQuestionName: '',
                     examQuestionType: ''
                 },
@@ -122,13 +138,14 @@
                     },
                     {
                         value: 1,
-                        title:'判断题'
+                        title:'填空题'
                     },
                     {
                         value: 2,
-                        title:'填空题'
+                        title:'判断题'
                     }
                 ],
+                questionBankList: [],
                 optionList: [],
                 dialogExamQuestion: false,
                 dialogExamQuestionOption: false,
@@ -146,13 +163,65 @@
                 this.loadingExamQuestion = true
                 const { data } = await teacherExamQuestion()
                 if (data.code === '200') {
-                    this.examQuestionList = data.data
+                    this.loadingExamQuestion = false
+                    this.examQuestionAllList = data.data
+                    this.examQuestionList = this.examQuestionAllList
                     this.handleSizeChange(10)
                 }
-                this.loadingExamQuestion = false
             },
-            checkExamQuestionType () {
-                console.log(this.selectForm.examQuestionType)
+            async loadQuestionBank () {
+                const { data } = await teacherExamQuestionGetAllQuestionBank()
+                if (data.code === '200') {
+                    this.questionBankList = data.data
+                }
+            },
+            choiceList () {
+                const type = this.selectForm.examQuestionType
+                const questionBankId = this.selectForm.questionBankId
+                // console.log('type:' + type)
+                // console.log(questionBankId)
+                let list = []
+                this.examQuestionAllList.forEach(item => {
+                    if (typeof(type) === 'number') {
+                        if (typeof (questionBankId)==='number') {
+                            if (type === item.type && questionBankId === item.qid) {
+                                list.push(item)
+                            }
+                        } else {
+                            console.log(type)
+                            if (type === item.type) {
+                                console.log(item)
+                                list.push(item)
+                            }
+                        }
+                    } else {
+                        console.log(0)
+                        if (typeof (questionBankId)==='number') {
+                            if (questionBankId === item.qid) {
+                                list.push(item)
+                            }
+                        } else {
+                            list.push(item)
+                        }
+                    }
+                })
+                // console.log(list)
+                this.examQuestionList = list
+                this.handleSizeChange(10)
+            },
+            searchExamquestionName () {
+                if (this.selectForm.examQuestionName) {
+                    this.searchExamQuestionNameReq()
+                } else {
+                    this.loadExamQuestion()
+                }
+            },
+            async searchExamQuestionNameReq () {
+                const { data } = await teacherExamQuestionSearchTitle({title: this.selectForm.examQuestionName})
+                if (data.code === '200') {
+                    this.examQuestionAllList = data.data
+                    this.choiceList()
+                }
             },
             addExamQuestion () {
                 this.examQuestionInfo = {}
@@ -167,16 +236,30 @@
                 }
             },
             editExamQuestion (row) {
-                console.log(row)
-                this.examQuestionInfo = row
+                const form =  {
+                    qid: row.qid,
+                    eid: row.id,
+                    title: row.title,
+                    type: row.type,
+                    answer: row.answer
+                }
+                this.examQuestionInfo = form
                 this.isEdit = true
                 this.dialogExamQuestion = true
             },
             ableOrDisable (row) {
                 if (row.status === 0) {
-                    this.disableExamQuestion()
+                    this.$confirm(`禁用警告：你正在禁用 ${row.questionBankName} 的 ${row.title}`,'警告',{
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'success'
+                    }).then(() => {
+                        this.disableExamQuestion(row)
+                    }).catch(() => {
+                        this.$message.info('已经取消')
+                    })
                 } else {
-                    this.enableExamQuestion()
+                    this.enableExamQuestion(row)
                 }
             },
             success () {
@@ -188,20 +271,36 @@
                 this.dialogExamQuestion = false
                 this.dialogExamQuestionOption = false
             },
-            async disableExamQuestion () {
-                this.$message.warning('已经禁用')
+            async disableExamQuestion (row) {
+                const { data } = await teacherExamQuestionDisable({examQuestionId: row.id})
+                if (data.code === '200') {
+                    this.$message.warning('禁用成功')
+                    row.status = 0
+                } else {
+                    this.$message.error('无权操作！！！！')
+                    row.status = 1
+                }
+                // this.$message.warning('已经禁用')
             },
-            async enableExamQuestion () {
-                this.$message.success('已经启用')
+            async enableExamQuestion (row) {
+                const { data } = await teacherExamQuestionEnable({examQuestionId: row.id})
+                if (data.code === '200') {
+                    this.$message.success('启用成功')
+                    row.status = 1
+                } else {
+                    this.$message.error('无权操作！！！！')
+                    row.status = 0
+                }
+                // this.$message.success('已经启用')
             },
             handleSizeChange(val) {
                 // console.log(`每页 ${val} 条`);
                 this.pageSize = val
-                this.pageExamQuestion = 1
-                this.pageList = this.examQuestionList.slice(0,val)
+                this.handleCurrentChange(1)
             },
             handleCurrentChange(val) {
                 // console.log(`当前页: ${val}`);
+                this.pageExamQuestion = val
                 this.pageList = this.examQuestionList.slice((val-1)*this.pageSize,val*this.pageSize)
             }
         },

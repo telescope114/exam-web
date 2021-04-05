@@ -74,7 +74,11 @@
             }
         },
         created() {
-            this.loadRoutePath()
+            if (this.$store.state.role === 0 || this.$store.state.role === 1) {
+                this.$router.push({name: 'Index'})
+            } else {
+                this.loadRoutePath()
+            }
         },
         methods: {
             loadRoutePath () {
@@ -112,8 +116,9 @@
             async logout () {
                 const { data } = await layout()
                 if (data.code === '200') {
-                    this.$store.commit('setUser', '')
-                    this.$store.commit('setMenu', '')
+                    this.$store.commit('setUser','')
+                    this.$store.commit('setMenu',new Set())
+                    this.$store.commit('setRole', '')
                     this.$router.push('/login')
                 } else {
                     this.$message.error("登出错误")

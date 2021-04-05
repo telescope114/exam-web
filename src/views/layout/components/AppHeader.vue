@@ -68,8 +68,9 @@
             async logout () {
                 const { data } = await layout()
                 if (data.code === '200') {
-                    this.$store.commit('setUser', '')
-                    this.$store.commit('setMenu', '')
+                    this.$store.commit('setUser','')
+                    this.$store.commit('setMenu',new Set())
+                    this.$store.commit('setRole', '')
                     this.$router.push('/login')
                 } else {
                     this.$message.error("登出错误")
@@ -109,6 +110,9 @@
                     this.$alert('密码修改成功，请重新登录', '修改成功', {
                         confirmButtonText: '确定',
                         callback: () => {
+                            this.$store.commit('setUser','')
+                            this.$store.commit('setMenu',new Set())
+                            this.$store.commit('setRole', '')
                             this.$router.push({name: 'Login'})
                         }
                     })

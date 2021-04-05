@@ -9,12 +9,18 @@
                         <el-option v-for="item of examQuestionTypeTitle" :key="item.value" :label="item.title" :value="item.value" @click.native="checkExamQuestionType"></el-option>
                     </el-select>-->
                     <label>考试名称：</label>
-                    <el-input v-model="selectForm.examName" style="width: 150px" clearable></el-input>
-                    <label>考试日期：</label>
+                    <el-input v-model="selectForm.examName" style="width: 150px" clearable @keydown.native.enter="select"></el-input>
+                    <label>开始考试日期：</label>
                         <el-date-picker
-                            v-model="selectForm.date"
+                            v-model="selectForm.openTime"
                             type="date"
-                            placeholder="选择日期">
+                            placeholder="选择日期" @keydown.native.enter="select">
+                        </el-date-picker>
+                    <label>最迟考试日期：</label>
+                        <el-date-picker
+                            v-model="selectForm.closeTime"
+                            type="date"
+                            placeholder="选择日期" @keydown.native.enter="select">
                         </el-date-picker>
                     <el-button type="primary" @click="select" circle icon="el-icon-search"></el-button>
                 </div>
@@ -46,7 +52,8 @@
                     <el-table-column width="180" label="操作" fixed="right">
                         <template slot-scope="scope">
                             <el-button size="mini" type="primary" @click="seeExam(scope.row)">详情</el-button>
-                            <el-button size="mini" type="info" @click="editExam(scope.row)">编辑</el-button>
+<!--                            <el-button size="mini" type="info" @click="editExam(scope.row)" >编辑</el-button>-->
+                            <el-button size="mini" type="info" @click="editExam(scope.row)" :disabled="checkExamTime(scope.row)!==0">编辑</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -80,7 +87,7 @@
 </template>
 
 <script>
-    import {teacherExam} from "../../services/teacher";
+    import {teacherExam, teacherExamSearchExam} from "../../services/teacher";
     import dateFormat from "../../utils/dateFormat";
     import CreateOrEditExam from "./component/CreateOrEditExam";
     import SeeExamDetail from "./component/SeeExamDetail";
@@ -90,12 +97,18 @@
         components: {CreateOrEditExam, SeeExamDetail},
         created() {
             this.loadExam()
+            if (this.isEdit) {
+                for (const item in this.examInfo) {
+                    console.log(item)
+                }
+            }
         },
         data () {
             return {
                 selectForm: {
                     examName: '',
-                    date: ''
+                    openTime: '',
+                    closeTime: ''
                 },
                 examList: [],
                 examInfo: {},
@@ -135,21 +148,44 @@
             },
             select () {
                 console.log(this.selectForm)
+                let form = {}
+                for (const item in this.selectForm) {
+                    if (this.selectForm[item]) {
+                        form[item] = this.selectForm[item]
+                    }
+                }
+                if (form) {
+                    this.selectReq(form)
+                } else {
+                    this.loadExam()
+                }
+            },
+            async selectReq (form) {
+                this.loadingExam = true
+                const { data } = await teacherExamSearchExam(form)
+                this.loadingExam = false
+                if (data.code === '200') {
+                    this.examList = data.data
+                    // console.log(this.examList)
+                    this.handleSizeChange(this.pageSize)
+                }
             },
             addExam () {
                 this.examInfo = {}
+                this.isEdit = false
                 this.dialogSeeExamDetail = false
                 this.dialogCreateOrEditExam = true
             },
             // 查看考试详情
             seeExam (row) {
                 this.examInfo = row
+                this.isEdit = true
                 this.dialogSeeExamDetail = true
                 this.dialogCreateOrEditExam = false
             },
             editExam (row) {
-                console.log('row:')
-                console.log(row)
+                // console.log('row:')
+                // console.log(row)
                 this.isEdit = true
                 this.examInfo = row
                 this.dialogSeeExamDetail = false
@@ -167,11 +203,11 @@
             handleSizeChange(val) {
                 // console.log(`每页 ${val} 条`);
                 this.pageSize = val
-                this.pageExam = 1
-                this.pageList = this.examList.slice(0,val)
+                this.handleCurrentChange(1)
             },
             handleCurrentChange(val) {
                 // console.log(`当前页: ${val}`);
+                this.pageExam = val
                 this.pageList = this.examList.slice((val-1)*this.pageSize,val*this.pageSize)
             }
         },

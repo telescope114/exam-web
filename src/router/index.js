@@ -16,6 +16,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "admin" */'@/views/layout'),
     meta: { requiresAuth: true },
     children: [
+      {
+        path: '/',
+        name: 'Index',
+        component: () => import(/* webpackChunkName: "index" */'@/views/teacher/')
+      },
       //  系统管理
       {
         path: 'system/menu',
@@ -84,6 +89,11 @@ const routes = [
         name: 'Score',
         component: () => import(/* webpackChunkName: "score" */'@/views/teacher/score'),
         meta: { title: '成绩管理' }
+      },
+      {
+        path: '*',
+        name: 'LayoutErrorPage',
+        component: () => import(/* webpackChunkName: "404" */'@/views/errorPage')
       }
       // 教师管理结束
     ],
@@ -113,6 +123,11 @@ const routes = [
         path: 'score/:id/',
         name: 'StudentScore',
         component: () => import(/* webpackChunkNameL "getExamScore" */'@/views/student/getExamScore')
+      },
+      {
+        path: '*',
+        name: 'StudentErrorPage',
+        component: () => import(/* webpackChunkName: "404" */'@/views/errorPage')
       }
     ]
   },
@@ -144,7 +159,26 @@ router.beforeEach((to,from,next) => {
         }
       })
     } else {
-      next()
+      if (store.state.role === 0 || store.state.role === 1) {
+        if (to.fullPath === '/login' || to.fullPath === '/') {
+          next()
+        } else if (store.state.menus.has(to.fullPath)) {
+          console.log('跳转：')
+          console.log(to.fullPath)
+          next()
+        } else {
+          console.log(store.state.menus)
+          console.log(from)
+          next(from.fullPath)
+        }
+      } else if (store.state.role === 2) {
+        if (to.fullPath.startsWith('/student') || to.fullPath.startsWith('/examInfo')) {
+          next()
+        } else {
+          console.log(from)
+          next({name: 'ExamForStudent'})
+        }
+      }
     }
   } else {
     next()
