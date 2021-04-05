@@ -752,14 +752,15 @@ export const teacherScoreDownloadClassScore = (fileName) => {
     /*return request({
         method: 'POST',
         url: '/download',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
         data: qs.stringify(form)
     })*/
     return request({
         method: 'POST',
-        url: '/common/download?fileName='+fileName,
+        url: '/common/download?fileName=',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(fileName),
         responseType: 'blob'
     })
 }

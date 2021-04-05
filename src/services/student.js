@@ -99,7 +99,11 @@ export const studentDownLoadScore = (fileName) => {
     })*/
     return request({
         method: 'POST',
-        url: '/common/download?fileName='+fileName,
+        url: '/common/download?fileName=',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(fileName),
         responseType: 'arraybuffer'
     })
 }

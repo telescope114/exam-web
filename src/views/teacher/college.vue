@@ -151,14 +151,16 @@
         },
         methods: {
             async loadCollege () {
+                this.loadingCollege = true
                 const { data } = await teacherCollege()
+                this.loadingCollege = false
+                console.log(data)
                 if (data.code === '200') {
                     console.log(data.data)
                     this.collegeList = data.data
                     this.majorList = []
                     this.classList = []
                 }
-                this.loadingCollege = false
             },
             // 添加学院的弹窗
             addCollege () {

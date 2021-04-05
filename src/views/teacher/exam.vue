@@ -13,13 +13,13 @@
                     <label>开始考试日期：</label>
                         <el-date-picker
                             v-model="selectForm.openTime"
-                            type="date"
+                            type="date"  style="width: 150px"
                             placeholder="选择日期" @keydown.native.enter="select">
                         </el-date-picker>
                     <label>最迟考试日期：</label>
                         <el-date-picker
                             v-model="selectForm.closeTime"
-                            type="date"
+                            type="date"  style="width: 150px"
                             placeholder="选择日期" @keydown.native.enter="select">
                         </el-date-picker>
                     <el-button type="primary" @click="select" circle icon="el-icon-search"></el-button>

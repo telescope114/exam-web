@@ -152,23 +152,26 @@ const router = new VueRouter({
 router.beforeEach((to,from,next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.state.user) {
+      console.log('null')
       next({
         name: 'Login',
         query: {
           redirect: to.fullPath
         }
       })
+      // next({name: 'Login'})
     } else {
+      console.log(store.state.user)
       if (store.state.role === 0 || store.state.role === 1) {
         if (to.fullPath === '/login' || to.fullPath === '/') {
           next()
         } else if (store.state.menus.has(to.fullPath)) {
-          console.log('跳转：')
-          console.log(to.fullPath)
+          // console.log('跳转：')
+          // console.log(to.fullPath)
           next()
         } else {
-          console.log(store.state.menus)
-          console.log(from)
+          // console.log(store.state.menus)
+          // console.log(from)
           next(from.fullPath)
         }
       } else if (store.state.role === 2) {

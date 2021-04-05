@@ -157,7 +157,15 @@
             // 启用禁用
             ableOrDisable (row) {
                 if (row.status === 0) {
-                    this.disableMenu(row)
+                    this.$confirm(`警告：你正在禁用 ${row.menuName} 功能`,'警告',{
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'error'
+                    }).then(() => {
+                        this.disableMenu(row)
+                    }).catch(() => {
+                        this.$message.info('已经取消')
+                    })
                 } else {
                     this.ableMenu(row)
                 }
@@ -187,13 +195,15 @@
                 const { data } = await systemMenuDisable({menuIds: ids.join(',')})
                 if (data.code === '200') {
                     this.$message.warning('已经禁用！')
+                    row.status = 0
                     this.refreshMenuStatus(row,0)
                 } else if (data.code === '201') {
                     this.$message.warning('已经禁用！')
+                    row.status = 0
                     this.refreshMenuStatus(row,0)
                 } else{
                     this.$message.error('无权操作！')
-                    this.row.status = 1
+                    row.status = 1
                 }
                 // console.log(row)
             },
@@ -204,13 +214,15 @@
                 const { data } = await systemMenuEnable({menuIds: ids.join(',')})
                 if (data.code === '200') {
                     this.$message.success('已经启用！')
+                    this.status = 1
                     this.refreshMenuStatus(row,1)
                 } else if (data.code === '201') {
                     this.$message.success('已经启用！')
+                    this.status = 1
                     this.refreshMenuStatus(row,1)
                 } else{
                     this.$message.error('无权操作！')
-                    this.row.status = 0
+                    row.status = 0
                 }
             }
         }
