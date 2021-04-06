@@ -20,7 +20,7 @@ export const getMenuName = () => {
 export const systemMenu = () => {
     return request({
         method: 'GET',
-        url: '/system/menu'
+        url: '/system/menu/list'
     })
 }
 
@@ -88,7 +88,7 @@ export const systemMenuDisable = (form) => {
 export const systemRole = () => {
     return request({
         method: 'GET',
-        url: '/system/role'
+        url: '/system/role/list'
     })
 }
 
@@ -196,7 +196,7 @@ export const systemRoleAssignPermissions = (form) => {
 export const systemUser = () => {
     return request({
         method: 'GET',
-        url: '/system/user'
+        url: '/system/user/list'
     })
 }
 

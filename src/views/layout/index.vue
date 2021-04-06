@@ -31,6 +31,7 @@
             } else {
                 this.loadingMenuName()
             }
+
         },
         data () {
             return {

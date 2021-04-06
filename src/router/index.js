@@ -153,13 +153,13 @@ router.beforeEach((to,from,next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.state.user) {
       console.log('null')
-      next({
+      /*next({
         name: 'Login',
         query: {
           redirect: to.fullPath
         }
-      })
-      // next({name: 'Login'})
+      })*/
+      next({name: 'Login'})
     } else {
       console.log(store.state.user)
       if (store.state.role === 0 || store.state.role === 1) {

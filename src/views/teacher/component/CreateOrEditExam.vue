@@ -184,6 +184,9 @@
                     if (this.isEdit) {
                         this.loadEdit()
                     }
+                } else {
+                    this.$message.error('无权操作')
+                    this.$emit('cancel')
                 }
             },
             async loadEdit () {

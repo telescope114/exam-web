@@ -67,7 +67,7 @@
                 } else if (data.code === '305') {
                     this.$message.error('不能修改管理员角色！！！')
                 } else {
-                    this.$message.error('修改失败!!!')
+                    this.$message.error('无权操作!!!')
                 }
             },
             cancel () {

@@ -79,7 +79,7 @@
                 } else if (data.code === '403') {
                     this.$message.error('该角色名已经被注册！！！')
                 } else {
-                    this.$message.error('添加失败！！！！！')
+                    this.$message.error('无权操作！！！！！')
                 }
             },
             async editRole () {
@@ -91,7 +91,7 @@
                     } else if (data.code === '403') {
                         this.$message.error('该角色名已经被注册！！！')
                     } else {
-                        this.$message.error('修改失败！！！！！')
+                        this.$message.error('无权操作！！！！！')
                     }
                 } else {
                     this.$message.error('没有任何修改！！')

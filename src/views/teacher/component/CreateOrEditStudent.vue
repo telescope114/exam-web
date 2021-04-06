@@ -131,7 +131,7 @@
                     this.$message.success('添加成功!!!')
                     this.$emit('success')
                 } else {
-                    this.$message.error('添加失败!!!')
+                    this.$message.error('无权操作!!!')
                 }
             },
             async editStudent () {

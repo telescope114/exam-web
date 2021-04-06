@@ -34,6 +34,9 @@ request.interceptors.request.use(function (config) {
 
 // 返回登录界面
  function toLogin() {
+    store.commit('setUser','')
+    store.commit('setMenu',new Set())
+    store.commit('setRole','')
     return router.push({
         name: 'Login',
         query: {
@@ -87,9 +90,16 @@ request.interceptors.response.use(function (res) {
     } *!/else */if (res.data.code === '103') {
         // token 无效
         toLogin()
+    } if (res.data.code === '104') {
+        // token 无效
+        Message.error('该账号已经在别处登录了')
+        toLogin()
     } else if (res.data.code === '401') {
         // token 系统错误
         Message.error('系统错误，请联系运维人员')
+    } else if (res.data.code === '306') {
+        // token 系统错误
+        Message.error('你没有权限！！！')
     }
 /*    else if (res.data.code === '101') {
         toLogin()
@@ -102,9 +112,9 @@ request.interceptors.response.use(function (res) {
         // 请求发送成功，响应接收完毕，但是状态码为失败的情况
         // 1.判断失败的状态码情况（主要处理401的情况）
         const { status } = err.response
-        let errorMessage = ''
+        // let errorMessage = ''
         if (status === 400) {
-            errorMessage = '请求参数错误'
+            Message.error('请求参数错误')
         } else if (status === 401) {
             /*// 2.Token无效（过期）处理
             // 第一，无token信息
@@ -201,15 +211,19 @@ request.interceptors.response.use(function (res) {
             } else if (err.response.data.code === '103') {
                 Message.error('token无效，请重新登录')
                 toLogin()
+            } if (err.response.data.code === '104') {
+                // token 无效
+                Message.error('该账号已经在别处登录了')
+                toLogin()
             }
         }/* else if (status === 403) {
             errorMessage = '没有权限，请联系管理员'
         } */else if (status === 404) {
-            errorMessage = '请求资源不存在'
+            Message.error('请求资源不存在')
         } else if (status >= 500) {
-            errorMessage = '服务器错误，请联系管理员'
+            Message.error('服务器错误，请联系管理员')
         }
-        Message.error(errorMessage)
+        // Message.error(errorMessage)
     } else if (err.request) {
         // 请求发送成功，未收到响应
         Message.error('请求超时请重试')

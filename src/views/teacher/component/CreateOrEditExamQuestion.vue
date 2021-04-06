@@ -165,7 +165,7 @@
                     } else if (data.code === '403') {
                         this.$message.error('试题重复（已经拥有该试题）！！')
                     }  else {
-                        this.$message.error('添加失败')
+                        this.$message.error('无权操作！！')
                     }
                     // console.log(form)
                 } else {
@@ -182,7 +182,7 @@
                     } else if (data.code === '403') {
                         this.$message.error('试题重复（已经拥有该试题）！！')
                     } else {
-                        this.$message.error('添加失败')
+                        this.$message.error('无权操作！！')
                     }
                 }
             },
@@ -221,7 +221,7 @@
                 } else if (data.code === '403') {
                     this.$message.error('试题重复（已经拥有该试题）！！')
                 }  else {
-                    this.$message.error('编辑失败')
+                    this.$message.error('无权操作！！')
                 }
             }
         }

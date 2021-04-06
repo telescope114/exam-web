@@ -10,7 +10,7 @@ import qs from 'qs'
 export const teacherClass = () => {
     return request({
         method: 'GET',
-        url: '/teacher/class'
+        url: '/teacher/class/list'
     })
 }
 
@@ -20,7 +20,7 @@ export const teacherClass = () => {
 export const teacherCollege = () => {
     return request({
         method: 'GET',
-        url: '/teacher/college'
+        url: '/teacher/college/list'
     })
 }
 
@@ -170,7 +170,7 @@ export const teacherCollegedelClass = (form) => {
 export const teacherTeacher = () => {
     return request({
         method: 'GET',
-        url: '/teacher/teacher'
+        url: '/teacher/teacher/list'
     })
 }
 
@@ -303,7 +303,7 @@ export const teacherTeacherAssignClass = (form) => {
 export const teacherStudent = () => {
     return request({
         method: 'GET',
-        url: '/teacher/student'
+        url: '/teacher/student/list'
     })
 }
 
@@ -405,7 +405,7 @@ export const teacherStudentEditStudent = (form) => {
 export const teacherQuestionBank = () => {
     return request({
         method: 'GET',
-        url: '/teacher/questionBank'
+        url: '/teacher/questionBank/list'
     })
 }
 
@@ -499,7 +499,7 @@ export const teacherQuestionBankSearchQuestionBankName = (form) => {
 export const teacherExamQuestion = () => {
     return request({
         method: 'GET',
-        url: '/teacher/examQuestion'
+        url: '/teacher/examQuestion/list'
     })
 }
 
@@ -616,7 +616,7 @@ export const teacherExamQuestionSearchTitle = (form) => {
 export const teacherExam = () => {
     return request({
         method: 'GET',
-        url: '/teacher/exam'
+        url: '/teacher/exam/list'
     })
 }
 
@@ -702,7 +702,7 @@ export const teacherExamEditExamSubmit = (form) => {
 export const teacherScore = () => {
     return request({
         method: 'GET',
-        url: '/teacher/score'
+        url: '/teacher/score/list'
     })
 }
 
@@ -756,11 +756,11 @@ export const teacherScoreDownloadClassScore = (fileName) => {
     })*/
     return request({
         method: 'POST',
-        url: '/common/download?fileName=',
+        url: '/common/download',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        data: qs.stringify(fileName),
+        data: qs.stringify({fileName: fileName}),
         responseType: 'blob'
     })
 }

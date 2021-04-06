@@ -1,13 +1,13 @@
 <template>
     <div class="create-or-edit-teacher">
-        <el-form :model="teacherInfo" ref="classInfo">
+        <el-form :model="teacherInfo" :rules="rules" ref="classInfo">
             <el-form-item label="教职工编号" label-width="120px" v-if="isEdit">
                 <el-input v-model="teacherInfo.teacherNumber" disabled></el-input>
             </el-form-item>
-            <el-form-item label="教职工姓名" label-width="120px">
+            <el-form-item label="教职工姓名" label-width="120px" prop="realName">
                 <el-input v-model="teacherInfo.realName" clearable></el-input>
             </el-form-item>
-            <el-form-item label="隶属学院" label-width="120px">
+            <el-form-item label="隶属学院" label-width="120px" prop="collegeId">
 <!--                <el-input v-model="teacherInfo.collegeId" clearable></el-input>-->
                 <el-select v-model="teacherInfo.collegeId">
                     <el-option
@@ -47,7 +47,11 @@
         data () {
             return {
                 form: {},
-                collegeList: []
+                collegeList: [],
+                rules: {
+                    realName: [{required: true, message: '不能为空！！！', trigger: 'blur'}],
+                    collegeId: [{required: true, message: '不能为空！！！', trigger: 'blur'}]
+                }
             }
         },
         methods: {

@@ -97,7 +97,7 @@
                     this.$message.success('分配成功!!')
                     this.$emit('success')
                 } else {
-                    this.$message.error('分配失败!!!')
+                    this.$message.error('无权操作!!!')
                 }
             },
             cancel () {

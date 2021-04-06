@@ -224,7 +224,7 @@
                     this.$message.warning('删除成功！')
                     this.loadCollege()
                 } else {
-                    this.$message.error('删除失败！')
+                    this.$message.error('无权操作')
                 }
             },
             // 查询班级
@@ -269,7 +269,7 @@
                     this.seeMajor(row)
                     // this.loadCollege()
                 } else {
-                    this.$message.error('删除失败！')
+                    this.$message.error('无权操作')
                 }
             },
             /*// 未完成 编辑班级
@@ -297,7 +297,7 @@
                     this.$message.warning('删除成功！')
                     this.loadCollege()
                 } else {
-                    this.$message.error('删除失败！')
+                    this.$message.error('无权操作')
                 }
             },
             // 取消

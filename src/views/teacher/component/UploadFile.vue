@@ -85,6 +85,8 @@
                         this.$emit('success')
                     }
                     this.precentage = 0
+                } else {
+                    this.$message.error('无权操作！！')
                 }
             }
         }
