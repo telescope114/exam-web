@@ -121,7 +121,7 @@
             },
             async downloadClassScoreList (fileName) {
                 const data = await teacherScoreDownloadClassScore(fileName)
-                console.log(data)
+                // console.log(data)
                 this.pdfUrl = window.URL.createObjectURL(new Blob([data.data], { type: `application/ms-excel` }));
                 const fname = `${this.examInfo.majorName+this.examInfo.grade+this.examInfo.classNumber+this.examInfo.examName}成绩表.xlsx`
                 const link = document.createElement('a')

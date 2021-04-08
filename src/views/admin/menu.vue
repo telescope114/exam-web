@@ -27,8 +27,10 @@
                         label="菜单名称">
                 </el-table-column>
                 <el-table-column
-                        prop="menuUrl"
-                        label="菜单URL">
+                    label="菜单URL">
+                    <template slot-scope="scope">
+                        <p>{{scope.row.menuUrl?scope.row.menuUrl:'******'}}</p>
+                    </template>
                 </el-table-column>
                 <el-table-column
                         label="当前状态">

@@ -37,6 +37,11 @@
                     </el-upload>
                 </el-form-item>
             </el-form>
+            <div class="upload-message">
+                <h1>上传细节说明</h1>
+                <p>严格按照样式文件格式上传文件</p>
+                <el-button type="text" @click="downloadTemplateFile">示例文件</el-button>
+            </div>
         </div>
         <div slot="footer" class="dialog-footer">
             <el-button @click="$emit('cancel')">返回</el-button>
@@ -45,7 +50,11 @@
 </template>
 
 <script>
-    import {teacherQuestionBankImportQuestionBank} from "../../../services/teacher";
+    import {
+        teacherQuestionBankImportQuestionBank,
+        teacherQuestionBankTemplateDownload,
+    } from "../../../services/teacher";
+    import {serve} from "../../../config";
 
     export default {
         name: 'UploadFile',
@@ -54,10 +63,12 @@
                 fileUrl: '',
                 isUpload: false,
                 isUploadSuccess: false,
-                precentage: 0
+                precentage: 0,
+                serverUrl: ''
             }
         },
         created() {
+            this.serverUrl = serve
         },
         methods: {
             successUploadFile (res,file) {
@@ -88,6 +99,18 @@
                 } else {
                     this.$message.error('无权操作！！')
                 }
+            },
+            async downloadTemplateFile () {
+                const data = await teacherQuestionBankTemplateDownload('questionBankTemplate.xlsx')
+                // console.log(data)
+                this.pdfUrl = window.URL.createObjectURL(new Blob([data.data], { type: `application/ms-excel` }));
+                const fname = `示例文件.xlsx`
+                const link = document.createElement('a')
+                link.href = this.pdfUrl
+                link.setAttribute('download', fname)
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
             }
         }
     }
@@ -116,5 +139,8 @@
         width: 178px;
         height: 178px;
         display: block;
+    }
+    .dialog-footer {
+        margin-top: 20px;
     }
 </style>

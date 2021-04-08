@@ -494,6 +494,21 @@ export const teacherQuestionBankSearchQuestionBankName = (form) => {
 }
 
 /**
+ * 获取模板文件
+ */
+export const teacherQuestionBankTemplateDownload = (fileName) => {
+    return request({
+        method: 'POST',
+        url: '/common/download',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify({fileName: fileName}),
+        responseType: 'blob'
+    })
+}
+
+/**
  * 试题管理-获取试题
  */
 export const teacherExamQuestion = () => {

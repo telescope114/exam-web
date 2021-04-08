@@ -15,8 +15,10 @@
                     border
                     style="width: 100%">
                     <el-table-column
-                        prop="username"
                         label="账号">
+                    <template slot-scope="scope">
+                        <p>{{scope.row.username?scope.row.username:'******'}}</p>
+                    </template>
                     </el-table-column>
                     <el-table-column
                         label="创建时间">

@@ -45,10 +45,13 @@
                             width="100"
                         ></el-table-column>
                         <el-table-column
-                            prop="studentNumber"
                             label="学号"
                             width="150"
-                        ></el-table-column>
+                        >
+                            <template slot-scope="scope">
+                                <p>{{scope.row.studentNumber?scope.row.studentNumber:'******'}}</p>
+                            </template>
+                        </el-table-column>
                         <el-table-column
                             label="状态"
                             width="100"

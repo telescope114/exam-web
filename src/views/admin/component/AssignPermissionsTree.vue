@@ -47,6 +47,7 @@
                 },
                 // 给予权限的菜单ID
                 ids: [],
+                noIds: new Set(),
                 loadingCreateOrEditMenu: true,
                 loadingSubmit: false
             }
@@ -72,9 +73,16 @@
                 }
             },
             getMenuList (list) {
+                this.noIds = new Set()
                 list.forEach(item => {
                     if (item.hasPermission) {
+                        this.noIds.add(item.parentId)
                         this.ids.push(item.id)
+                    }
+                })
+                this.ids.forEach((item,index) => {
+                    if (this.noIds.has(item)) {
+                        this.ids.splice(index,1)
                     }
                 })
             },
@@ -107,6 +115,7 @@
                     id: this.roleInfo.id,
                     ids: this.$refs.assignData.getCheckedKeys().concat(this.$refs.assignData.getHalfCheckedKeys())
                 }
+                console.log(form)
                 const { data } = await systemRoleAssignPermissions(form)
                 if (data.code === '200') {
                     this.$message.success('设置成功！！')

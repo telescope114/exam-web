@@ -73,7 +73,7 @@
                         password: '123456',
                         role: '主任'
                     },{
-                        username: '551502',
+                        username: '123456',
                         password: '123456',
                         role: '教师'
                     },{
@@ -163,6 +163,7 @@
                 if (data.code === '200') {
                     this.isLoginLoading = false
                     this.$store.commit('setUser',data)
+                    console.log(data)
                     if (data.role === 2) {
                         this.$store.commit('setRole',data.role)
                         this.$router.push({ name: 'StudentInfo' } )

@@ -178,7 +178,7 @@ export const systemRoleGetRolePermission = (form) => {
  * @returns {AxiosPromise}
  */
 export const systemRoleAssignPermissions = (form) => {
-    console.log(form)
+    // console.log(form)
     return request({
         method: 'POST',
         url: '/system/role/assignPermissions',

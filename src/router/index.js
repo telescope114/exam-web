@@ -17,7 +17,7 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       {
-        path: '/',
+        path: '',
         name: 'Index',
         component: () => import(/* webpackChunkName: "index" */'@/views/teacher/')
       },
@@ -52,7 +52,8 @@ const routes = [
         path: 'teacher/teacher',
         name: 'Teacher',
         component: () => import(/* webpackChunkName: "teacher" */'@/views/teacher/teacher'),
-        meta: { title: '教师管理' }
+        meta: { title: '教师管理' },
+        // alias: '/'
       },
       {
         path: 'teacher/questionBank',
@@ -153,13 +154,13 @@ router.beforeEach((to,from,next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.state.user) {
       console.log('null')
-      /*next({
+      next({
         name: 'Login',
         query: {
           redirect: to.fullPath
         }
-      })*/
-      next({name: 'Login'})
+      })
+      // next({name: 'Login'})
     } else {
       console.log(store.state.user)
       if (store.state.role === 0 || store.state.role === 1) {
@@ -178,7 +179,7 @@ router.beforeEach((to,from,next) => {
         if (to.fullPath.startsWith('/student') || to.fullPath.startsWith('/examInfo')) {
           next()
         } else {
-          console.log(from)
+          // console.log(from)
           next({name: 'ExamForStudent'})
         }
       }

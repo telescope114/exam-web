@@ -166,7 +166,7 @@ request.interceptors.response.use(function (res) {
                 // 请求发送完毕，响应处理完毕，刷新状态更改为false就行了
                 isRefreshToken = false
             })*/
-            if (err.response.data.code === '102') {
+            if (err.response.data.code === '102' || err.response.data.data === '102') {
                 Message.error('请重新登录')
                 toLogin()
                 return Promise.reject(err)
