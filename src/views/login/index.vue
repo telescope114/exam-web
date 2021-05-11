@@ -56,13 +56,14 @@
 
 <script>
     import { login } from '@/services/common'
+    import base_64 from 'base-64'
 
     export default {
         name: 'LoginIndex',
         data () {
             return {
                 // 存储表单数据的对象
-                dialogText: true,
+                dialogText: false,
                 textForm: [
                     {
                         username: '123456789',
@@ -110,8 +111,8 @@
                         this.isLoginLoading = true
                         // 清空token
                         this.$store.commit('setUser','')
-                        this.$store.commit('setMenu','')
-                        this.$store.commit('setRole',new Set())
+                        this.$store.commit('setMenu',new Set())
+                        this.$store.commit('setRole','')
                         this.onSubmitReq()
                     } else {
                         this.$message.error('账号密码输入有误！！')
@@ -155,7 +156,8 @@
             },
             async onSubmitReq () {
                 // {}解构对象内的data
-                const { data } = await login(this.loginForm)
+                const { data } = await login({...this.loginForm, password: base_64.encode(this.loginForm.password)})
+                // const { data } = await login(this.loginForm)
                 // 请求处理完毕之后
                 this.isLoginLoading = false
                 // 响应处理
@@ -163,7 +165,7 @@
                 if (data.code === '200') {
                     this.isLoginLoading = false
                     this.$store.commit('setUser',data)
-                    console.log(data)
+                    // console.log(data)
                     if (data.role === 2) {
                         this.$store.commit('setRole',data.role)
                         this.$router.push({ name: 'StudentInfo' } )

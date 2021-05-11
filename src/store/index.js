@@ -7,17 +7,12 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     user: localStorage.getItem('user')?qs.parse(localStorage.getItem('user')) : null,
-    menus: new Set(),
+    menus: localStorage.getItem('menus')?new Set(JSON.parse(localStorage.getItem('menus'))): new Set(),
     studentList: [],
     role: 1
   },
   mutations: {
     setUser (state, payload) {
-      // console.log(payload)
-      /*state.user = {
-        access_token: payload.access_token,
-        refresh_token: payload.refresh_token
-      }*/
       state.user = payload
       localStorage.setItem('user', qs.stringify(payload))
     },
@@ -25,13 +20,14 @@ export default new Vuex.Store({
       if (payload.constructor === Set) {
         state.menus = payload
       } else if (payload.constructor === Array) {
-        // state.menus = payload
         for (const item in payload) {
-          // console.log(payload[item])
+          // console.log(payload)
           state.menus.add(payload[item].menuUrl)
         }
       }
-      // console.log(payload)
+      localStorage.setItem('menus', JSON.stringify(Array.from(state.menus)))
+      // const testData = localStorage.getItem('menus')
+      // console.log(JSON.parse(testData))
     },
     setStudentList (state, payload) {
       state.studentList = payload

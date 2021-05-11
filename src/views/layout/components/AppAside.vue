@@ -2,7 +2,7 @@
     <div class="admin-aside">
         <el-col>
             <el-menu
-                    default-active="2"
+                    :default-active="this.$route.path"
                     class="el-menu-vertical-demo"
                     router
                     unique-opened
@@ -39,21 +39,9 @@
     export default {
         name: "AdminAside",
         created() {
-            // this.loadMenus()
         },
         props: {
             menusList: Array
-        },
-        // data () {
-        //     return {
-        //         menusList: []
-        //     }
-        // },
-        methods: {
-            // 获取当前菜单列表
-            // loadMenus () {
-            //     this.menusList = this.$store.state.menus
-            // }
         }
     }
 </script>
