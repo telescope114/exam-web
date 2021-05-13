@@ -91,7 +91,7 @@
             <div class="content-exam-info">
                 <el-form :label-position="'right'" :model="createOrEditExamInfo">
                     <el-form-item label="参加考试班级" label-width="200px">
-                        <el-select v-model="createOrEditExamInfo.ids" multiple placeholder="请选择" clearable>
+                        <el-select v-model="createOrEditExamInfo.ids" multiple placeholder="请选择">
                             <el-option
                                 v-for="item in classList"
                                 :key="item.id"
@@ -108,8 +108,7 @@
         <el-button type="info" @click="cancel">取消</el-button>
         <el-button :disabled="step===1" type="primary" @click="enterStep(step-1)">上一步</el-button>
         <el-button v-show="step!==4" type="primary" @click="enterStep(step+1)"
-                   v-loading="loadingQuestionBank||loadingClassList||loadingEdit"
-                   element-loading-text="拼命加载中">下一步</el-button>
+                   v-loading="loadingQuestionBank||loadingClassList||loadingEdit">下一步</el-button>
         <el-button v-show="step===4" type="primary" @click="submit"
                    v-loading="loadingSubmit">确定</el-button>
     </div>

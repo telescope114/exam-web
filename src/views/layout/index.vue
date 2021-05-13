@@ -26,8 +26,8 @@
         components: { AppAside, AppHeader },
         created() {
             if (this.$store.state.role === 2) {
-                this.$store.commit('setRole',2)
-                this.$router.push({ name: 'ExamForStudent' } )
+                // console.log(100)
+                this.$router.push({ name: 'StudentInfo' })
             } else {
                 this.loadingMenuName()
             }
@@ -40,16 +40,20 @@
         },
         methods: {
             async loadingMenuName () {
+                // console.log(101)
                 if (!this.$store.state.user) {
+                    // console.log(102)
                     this.$router.push({name: 'Login'})
                 }
                 const { data } = await getMenuName()
                 // console.log(data)
                 if (data.code === '0') {
+                    // console.log(103)
                     this.$store.commit('setUser','')
                     this.$store.commit('setMenu','')
                     this.$router.push({name: 'Login'})
                 } else if (data.code === '200') {
+                    // console.log(104)
                     const menus = data.data
                     for (let i = 0;i < menus.length; i++) {
                         if (menus[i].menuName === '系统树') {

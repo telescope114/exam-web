@@ -34,9 +34,9 @@ request.interceptors.request.use(function (config) {
 
 // 返回登录界面
  function toLogin() {
-    store.commit('setUser','')
-    store.commit('setMenu',new Set())
-    store.commit('setRole','')
+    store.commit('setRole', '')
+    store.commit('setMenu', new Set())
+    store.commit('setUser', '')
     return router.push({
         name: 'Login',
         query: {

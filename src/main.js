@@ -5,6 +5,7 @@ import store from './store'
 import element from 'element-ui'
 // import './styles/variables.scss'
 import './styles/index.scss'
+// import './styles/test.scss'
 
 Vue.config.productionTip = false
 Vue.use(element)

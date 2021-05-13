@@ -77,6 +77,7 @@
                 }
             },
             changePassword () {
+                this.passwordForm = {}
                 this.dialogChangePassword = true
             },
             cancel () {

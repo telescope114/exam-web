@@ -636,6 +636,28 @@ export const teacherExam = () => {
 }
 
 /**
+ * 考试管理-获取全部试卷
+ */
+export const teacherExamCustomExamPaperGetExamPaper = () => {
+    return request({
+        method: 'GET',
+        url: '/teacher/exam/customExamPaper/getExamPaper'
+    })
+}
+
+/**
+ * 考试管理-提交自定义考试
+ * @param form 考试信息
+ */
+export const teacherExamCustomExamPaperSubmit = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/exam/customExamPaper/submit',
+        data: JSON.stringify(form)
+    })
+}
+
+/**
  * 获取教师管理的班级
  */
 export const teacherExamGetClass = () => {
@@ -763,12 +785,6 @@ export const teacherScorePrintClassScore = (form) => {
  * @returns {AxiosPromise}
  */
 export const teacherScoreDownloadClassScore = (fileName) => {
-// export const studentDownLoadScore = (form) => {
-    /*return request({
-        method: 'POST',
-        url: '/download',
-        data: qs.stringify(form)
-    })*/
     return request({
         method: 'POST',
         url: '/common/download',
@@ -777,5 +793,43 @@ export const teacherScoreDownloadClassScore = (fileName) => {
         },
         data: qs.stringify({fileName: fileName}),
         responseType: 'blob'
+    })
+}
+
+/**
+ * 试卷管理-获取题库对应的全部试题
+ * @param form
+ * @returns {AxiosPromise}
+ */
+export const teacherExamPaperGetExamQuestion = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examPaper/getExamQuestion',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 试卷管理-提交试卷
+ * @param form
+ */
+export const teacherExamPaperSubmitExamPaper = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examPaper/submitExamPaper',
+        data: JSON.stringify(form)
+    })
+}
+
+/**
+ * 试卷管理-获取全部试卷
+ */
+export const teacherExamPaperList = () => {
+    return request({
+        method: 'GET',
+        url: '/teacher/examPaper/list'
     })
 }

@@ -2,7 +2,8 @@
     <div class="teacher-exam">
         <el-card>
             <div class="search" slot="header">
-                <el-button type="primary" @click="addExam">添加试题</el-button>
+                <el-button type="primary" @click="choiceExamType">添加考试</el-button>
+<!--                <el-button type="primary" @click="addExam">添加考试</el-button>-->
                 <div class="search-main">
                     <!--<label>试题类型：</label>
                     <el-select v-model="selectForm.examQuestionType" style="width: 100px">
@@ -28,6 +29,7 @@
             <div>
                 <el-table :data="pageList" border style="width: 100%" v-loading="loadingExam" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(255,255,255,0.8)">
                     <el-table-column fixed width="200" prop="examName" label="考试名称"></el-table-column>
+                    <el-table-column v-if="isDirector" width="100" prop="realName" label="发布人"></el-table-column>
                     <el-table-column label="开始时间">
                         <template slot-scope="scope">
                             <p>{{scope.row.openTime|dateFormat}}</p>
@@ -83,6 +85,24 @@
                 @cancel="cancel"
             ></see-exam-detail>
         </el-dialog>
+        <el-dialog :visible.sync="dialogChoiceExamType" width="20%" :show-close="false">
+            <div class="choice-exam-type">
+                <h1>请设置出题类型</h1>
+                <div class="choice-exam-type-footer">
+                    <el-button type="success" @click="addCustomExam">自定义出题</el-button>
+                    <el-button type="primary" @click="addExam">随机出题</el-button>
+                </div>
+            </div>
+        </el-dialog>
+        <el-dialog :title="isEdit?'编辑':'添加'+'考试'" :visible.sync="dialogCreateOrEditCustomExam">
+            <create-or-edit-custom-exam
+                v-if="dialogCreateOrEditCustomExam"
+                :examInfo="examInfo"
+                :isEdit="isEdit"
+                @cancel="cancel"
+                @success="success"
+            ></create-or-edit-custom-exam>
+        </el-dialog>
     </div>
 </template>
 
@@ -91,10 +111,11 @@
     import dateFormat from "../../utils/dateFormat";
     import CreateOrEditExam from "./component/CreateOrEditExam";
     import SeeExamDetail from "./component/SeeExamDetail";
+    import CreateOrEditCustomExam from "./component/CreateOrEditCustomExam";
 
     export default {
         name: "TeacherExam",
-        components: {CreateOrEditExam, SeeExamDetail},
+        components: {CreateOrEditExam, SeeExamDetail, CreateOrEditCustomExam},
         created() {
             this.loadExam()
             if (this.isEdit) {
@@ -112,6 +133,8 @@
                 },
                 examList: [],
                 examInfo: {},
+                dialogChoiceExamType: false,
+                dialogCreateOrEditCustomExam: false,
                 dialogCreateOrEditExam: false,
                 dialogSeeExamDetail: false,
                 isEdit: false,
@@ -119,7 +142,8 @@
                 pageList: [],
                 pageExam: 1,
                 pageSize: 5,
-                pageSizes: [5,10,20,50,100]
+                pageSizes: [5,10,20,50,100],
+                isDirector: false
             }
         },
         methods: {
@@ -128,10 +152,16 @@
                 const { data } = await teacherExam()
                 if (data.code === '200') {
                     this.examList = data.data
-                    // console.log(this.examList)
+                    if (data.data[0].realName) {
+                        this.isDirector = true
+                    }
                     this.handleSizeChange(5)
                 }
                 this.loadingExam = false
+            },
+            // 选择添加考试类型
+            choiceExamType () {
+                this.dialogChoiceExamType = true
             },
             // 判断考试当前状态 0:未开考 1:开考 2:考完
             checkExamTime (row) {
@@ -173,30 +203,53 @@
             addExam () {
                 this.examInfo = {}
                 this.isEdit = false
+                this.dialogChoiceExamType = false
                 this.dialogSeeExamDetail = false
+                this.dialogCreateOrEditCustomExam = false
                 this.dialogCreateOrEditExam = true
+            },
+            addCustomExam () {
+                this.examInfo = {}
+                this.isEdit = false
+                this.dialogChoiceExamType = false
+                this.dialogSeeExamDetail = false
+                this.dialogCreateOrEditExam = false
+                this.dialogCreateOrEditCustomExam = true
             },
             // 查看考试详情
             seeExam (row) {
                 this.examInfo = row
                 this.isEdit = true
-                this.dialogSeeExamDetail = true
+                this.dialogChoiceExamType = false
+                this.dialogCreateOrEditCustomExam = false
                 this.dialogCreateOrEditExam = false
+                this.dialogSeeExamDetail = true
             },
             editExam (row) {
                 // console.log('row:')
                 // console.log(row)
                 this.isEdit = true
-                this.examInfo = row
+                this.examInfo = {...row}
+                this.dialogChoiceExamType = false
                 this.dialogSeeExamDetail = false
-                this.dialogCreateOrEditExam = true
+                this.dialogCreateOrEditCustomExam = false
+                this.dialogCreateOrEditExam = false
+                if (row.isCustom) {
+                    this.dialogCreateOrEditCustomExam = true
+                } else {
+                    this.dialogCreateOrEditExam = true
+                }
             },
             cancel () {
+                this.dialogChoiceExamType = false
                 this.dialogSeeExamDetail = false
+                this.dialogCreateOrEditCustomExam = false
                 this.dialogCreateOrEditExam = false
             },
             success () {
+                this.dialogChoiceExamType = false
                 this.dialogSeeExamDetail = false
+                this.dialogCreateOrEditCustomExam = false
                 this.dialogCreateOrEditExam = false
                 this.loadExam()
             },
@@ -229,6 +282,16 @@
                 margin-left: 20px;
             }
         }
+    }
+}
+.choice-exam-type {
+    h1 {
+        font-size: 30px;
+        margin-bottom: 50px;
+    }
+    .choice-exam-type-footer {
+        display: flex;
+        justify-content: space-between;
     }
 }
 .exam-status-0 {

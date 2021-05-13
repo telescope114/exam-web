@@ -347,5 +347,8 @@
             align-items: center;
         }
     }
+    .el-tag {
+        cursor: pointer;
+    }
 }
 </style>

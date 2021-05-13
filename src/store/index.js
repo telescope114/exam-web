@@ -6,10 +6,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: localStorage.getItem('user')?qs.parse(localStorage.getItem('user')) : null,
-    menus: localStorage.getItem('menus')?new Set(JSON.parse(localStorage.getItem('menus'))): new Set(),
+    user: localStorage.getItem('user')? qs.parse(localStorage.getItem('user')) : null,
+    menus: localStorage.getItem('menus')? new Set(JSON.parse(localStorage.getItem('menus'))): new Set(),
     studentList: [],
-    role: 1
+    role: localStorage.getItem('role')? parseInt(localStorage.getItem('role')):1
   },
   mutations: {
     setUser (state, payload) {
@@ -33,6 +33,7 @@ export default new Vuex.Store({
       state.studentList = payload
     },
     setRole (state, payload) {
+      localStorage.setItem('role', payload)
       state.role = payload
     }
   },

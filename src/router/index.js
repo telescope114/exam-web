@@ -11,8 +11,8 @@ const routes = [
     component: () => import(/* webpackChunkName: "login" */'@/views/login')
   },
   {
-    path: '/',
-    name: 'Layout',
+    path: '',
+    // name: 'Layout',
     component: () => import(/* webpackChunkName: "admin" */'@/views/layout'),
     meta: { requiresAuth: true },
     children: [
@@ -92,6 +92,18 @@ const routes = [
         meta: { title: '成绩管理' }
       },
       {
+        path: 'teacher/examPaper',
+        name: 'ExamPaper',
+        component: () => import(/* webpackChunkName: "examPaper" */'@/views/teacher/examPaper'),
+        meta: { title: '试卷管理' }
+      },
+      {
+        path: 'teacher/examPaper/addExamPaper',
+        name: 'AddExamPaper',
+        component: () => import(/* webpackChunkName: "CreateOrEditExamPaper" */'@/views/teacher/component/CreateOrEditExamPaper'),
+        meta: { title: '添加试卷' }
+      },
+      {
         path: '*',
         name: 'LayoutErrorPage',
         component: () => import(/* webpackChunkName: "404" */'@/views/errorPage')
@@ -101,7 +113,7 @@ const routes = [
   },
   {
     path: '/student',
-    name: 'ExamForStudent',
+    // name: 'ExamForStudent',
     component: () => import(/* webpackChunkName: "student" */'@/views/student'),
     meta: { requiresAuth: true },
     children: [
@@ -150,10 +162,14 @@ const router = new VueRouter({
   routes
 })
 
+// 路由守卫判定
+// let oneRun = true
 router.beforeEach((to,from,next) => {
+  // console.log(100)
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.state.user) {
       // console.log('null')
+      // // console.log(101)
       next({
         name: 'Login',
         query: {
@@ -163,28 +179,41 @@ router.beforeEach((to,from,next) => {
       // next({name: 'Login'})
     } else {
       // console.log(store.state.user)
-      if (store.state.role === 0 || store.state.role === 1) {
+      if (parseInt(store.state.role) === 0 || parseInt(store.state.role) === 1) {
         if (to.fullPath === '/login' || to.fullPath === '/') {
+          // console.log(102)
           next()
         } else if (store.state.menus.has(to.fullPath)) {
           // console.log('跳转：')
           // console.log(to.fullPath)
+          // console.log(103)
           next()
         } else {
           // console.log(store.state.menus)
           // console.log(from)
-          next(from.fullPath)
+          // console.log(104)
+          next(-1)
         }
-      } else if (store.state.role === 2) {
-        if (to.fullPath.startsWith('/student') || to.fullPath.startsWith('/examInfo')) {
+      } else if (parseInt(store.state.role) === 2) {
+        if (to.fullPath.startsWith('/student')) {
+          console.log(to)
+          // console.log(105)
           next()
-        } else {
+        } else if (to.fullPath.startsWith('/examInfo')) {
+          next()
+        }else {
           // console.log(from)
-          next({name: 'ExamForStudent'})
+          // next({name: 'ExamForStudent'})
+          // console.log(106)
+          next({name: 'StudentInfo'})
         }
-      }
+      } /*else {
+        // console.log(108)
+        next()
+      }*/
     }
   } else {
+    // console.log(107)
     next()
   }
 })
