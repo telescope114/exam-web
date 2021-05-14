@@ -2,7 +2,7 @@
     <div class="exam-paper">
         <el-card>
             <div class="search" slot="header">
-                <el-button type="primary" @click="addExamPaper">添加试卷</el-button>
+                <el-button type="primary" v-if="!isDirector" @click="addExamPaper">添加试卷</el-button>
                 <div class="search-main">
                     <!--<label>试题类型：</label>
                     <el-select v-model="selectForm.examQuestionType" style="width: 100px">
@@ -17,6 +17,7 @@
                 <el-table :data="pageList" border>
 <!--                    <el-table-column label="试卷名" prop="id" fixed></el-table-column>-->
                     <el-table-column label="试卷名" prop="examPaperName" fixed></el-table-column>
+                    <el-table-column v-if="isDirector" label="出题人" prop="realName"></el-table-column>
                     <el-table-column label="总分" width="100" prop="totalScore"></el-table-column>
                     <el-table-column label="选择题">
                         <template slot-scope="scope">
@@ -62,9 +63,9 @@
                         </template>
                     </el-table-column>
                     <el-table-column label="操作" fixed="right">
-                        <template>
-                            <el-button type="primary" icon="el-icon-view" size="medium" circle></el-button>
-                            <el-button type="info" icon="el-icon-edit" size="medium" circle></el-button>
+                        <template slot-scope="scope">
+                            <el-button type="primary" icon="el-icon-view" @click="seeExamPaper(scope.row)" size="medium" circle></el-button>
+                            <el-button type="info" icon="el-icon-edit" @click="editExamPaper(scope.row)" size="medium" circle></el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -79,14 +80,23 @@
                 </el-pagination>
             </div>
         </el-card>
+        <el-dialog :title="examPaperInfo.examPaperName" :visible.sync="dialogSeeEditExamPaper">
+            <see-exam-paper
+                v-if="dialogSeeEditExamPaper"
+                @cancel="cancel"
+                :examPaperInfo="examPaperInfo"
+            ></see-exam-paper>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-    import {teacherExamPaperList} from "../../services/teacher";
+    import {teacherExamPaperDisable, teacherExamPaperEnable, teacherExamPaperList} from "../../services/teacher";
     import dateFormat from "../../utils/dateFormat";
+    import SeeExamPaper from "./component/SeeExamPaper";
     export default {
         name: "examPaper",
+        components: {SeeExamPaper},
         data () {
             return {
                 selectForm: {},
@@ -94,17 +104,11 @@
                 pageList: [],
                 page: 1,
                 pageSize: 5,
-                pageSizes: [5, 10, 20, 50]
+                pageSizes: [5, 10, 20, 50],
+                isDirector: false,
+                dialogSeeEditExamPaper: false,
+                examPaperInfo: {}
             }
-        },
-        computed: {
-            /*totalPage: function() {
-                return Math.ceil(this.examPaperList.length / this.pagesize)
-            }*/
-// 总分
-            /*totalScore: function () {
-                return item.fillQuestion * item.fillQuestionScore + item.judgmentQuestion * item.judgmentQuestionScore + item.choiceQuestion * item.choiceQuestionScore
-            },*/
         },
         created() {
             this.loadExamPaperList()
@@ -117,6 +121,9 @@
                     this.examPaperList = data.data.map(item => {
                         return { ...item,  totalScore: item.fillQuestion * item.fillQuestionScore + item.judgmentQuestion * item.judgmentQuestionScore + item.choiceQuestion * item.choiceQuestionScore }
                     })
+                    if (this.examPaperList[this.examPaperList.length - 1].realName) {
+                        this.isDirector = true
+                    }
                     this.handleCurrentChange(1)
                 }
             },
@@ -125,7 +132,53 @@
             },
 // 禁用/启用
             ableOrDisable (row) {
-                console.log(row)
+                if (row.status === 0) {
+                    this.$confirm(`警告，你正在禁用 ${row.examPaperName}`, `警告`, {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'error'
+                    }).then(() => {
+                        this.disable(row)
+                    }).catch(() => {
+                        this.$message.info('已经取消')
+                        row.status = 1
+                    })
+                } else {
+                    this.enable(row)
+                }
+            },
+            async enable (row) {
+                // console.log(row)
+                const { data } = await teacherExamPaperEnable({examPaperId: row.id})
+                if (data.code === '200') {
+                    this.$message.success('启用成功')
+                    row.status = 1
+                } else {
+                    this.$message.error('无权操作！')
+                    row.status = 0
+                }
+            },
+            async disable (row) {
+                const { data } = await teacherExamPaperDisable({examPaperId: row.id})
+                if (data.code === '200') {
+                    this.$message.warning('禁用成功')
+                    row.status = 0
+                } else {
+                    this.$message.error('无权操作！')
+                    row.status = 1
+                }
+            },
+            seeExamPaper (row) {
+                this.examPaperInfo = {...row}
+                this.dialogSeeEditExamPaper = true
+            },
+            cancel () {
+                this.examPaperInfo = {}
+                this.dialogSeeEditExamPaper = false
+            },
+            editExamPaper (row) {
+                // console.log(row)
+                this.$router.push({name: 'EditExamPaper', params: {id: row.id}})
             },
 // 分页-每页显示数量
             handleSizeChange(val) {
@@ -135,7 +188,7 @@
 // 分页——跳转第几页
             handleCurrentChange(val) {
                 this.pageList = this.examPaperList.slice((val-1)*this.pageSize, val * this.pageSize)
-                console.log( this.pageList )
+                // console.log( this.pageList )
             }
         },
         filters: {

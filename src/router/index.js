@@ -104,6 +104,12 @@ const routes = [
         meta: { title: '添加试卷' }
       },
       {
+        path: 'teacher/examPaper/editExamPaper/:id',
+        name: 'EditExamPaper',
+        component: () => import(/* webpackChunkName: "CreateOrEditExamPaper" */'@/views/teacher/component/CreateOrEditExamPaper'),
+        meta: { title: '编辑试卷' }
+      },
+      {
         path: '*',
         name: 'LayoutErrorPage',
         component: () => import(/* webpackChunkName: "404" */'@/views/errorPage')
@@ -165,55 +171,47 @@ const router = new VueRouter({
 // 路由守卫判定
 // let oneRun = true
 router.beforeEach((to,from,next) => {
-  // console.log(100)
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.state.user) {
-      // console.log('null')
-      // // console.log(101)
       next({
         name: 'Login',
         query: {
           redirect: to.fullPath
         }
       })
-      // next({name: 'Login'})
     } else {
-      // console.log(store.state.user)
-      if (parseInt(store.state.role) === 0 || parseInt(store.state.role) === 1) {
+      if (parseInt(store.state.role) === 0) {
         if (to.fullPath === '/login' || to.fullPath === '/') {
           // console.log(102)
           next()
         } else if (store.state.menus.has(to.fullPath)) {
-          // console.log('跳转：')
-          // console.log(to.fullPath)
-          // console.log(103)
           next()
         } else {
-          // console.log(store.state.menus)
-          // console.log(from)
-          // console.log(104)
-          next(-1)
+          next({name: 'LayoutErrorPage'})
+        }
+      }else if (parseInt(store.state.role) === 1) {
+        if (to.fullPath === '/login' || to.fullPath === '/') {
+          next()
+        } else if (to.fullPath.startsWith('/teacher/examPaper/addExamPaper') || to.fullPath.startsWith('/teacher/examPaper/editExamPaper')) {
+          next()
+        }else if (store.state.menus.has(to.fullPath)) {
+          next()
+        } else {
+          console.log(123)
+          next({name: 'LayoutErrorPage'})
         }
       } else if (parseInt(store.state.role) === 2) {
         if (to.fullPath.startsWith('/student')) {
           console.log(to)
-          // console.log(105)
           next()
         } else if (to.fullPath.startsWith('/examInfo')) {
           next()
         }else {
-          // console.log(from)
-          // next({name: 'ExamForStudent'})
-          // console.log(106)
           next({name: 'StudentInfo'})
         }
-      } /*else {
-        // console.log(108)
-        next()
-      }*/
+      }
     }
   } else {
-    // console.log(107)
     next()
   }
 })

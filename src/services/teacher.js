@@ -833,3 +833,74 @@ export const teacherExamPaperList = () => {
         url: '/teacher/examPaper/list'
     })
 }
+
+/**
+ * 试卷管理-启用试卷
+ * @param form 试卷id
+ */
+export const teacherExamPaperEnable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examPaper/enable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 试卷管理-禁用试卷
+ * @param form 试卷id
+ */
+export const teacherExamPaperDisable = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examPaper/disable',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 试卷管理-查看试卷
+ * @param form 试卷id
+ */
+export const teacherExamPaperSeeExamPaper = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examPaper/seeExamPaperQuestion',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+/**
+ * 试卷管理-获取编辑试卷
+ * @param form 试卷id
+ */
+export const teacherExamPaperGetExamPaperQuestion = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examPaper/getExamPaperQuestion',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
+ * 试卷管理-提交编辑后试卷
+ * @param form 试卷id
+ */
+export const teacherExamPaperEditExamPaper = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examPaper/editExamPaper',
+        data: JSON.stringify(form)
+    })
+}

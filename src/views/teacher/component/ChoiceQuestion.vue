@@ -78,16 +78,24 @@
                 this.toggleSelection([...this.checkedList])
             },
             toggleSelection(rows) {
+                // console.log(rows)
+                const checked = new Set(this.backQuestionList.map(item => item.id))
+                // console.log(this.$refs.multipleTable)
                 if (rows) {
                     rows.forEach(row => {
-                        this.$refs.multipleTable.toggleRowSelection(row);
-                    });
+                        if (checked.has(row.id)) {
+                            checked.delete(row.id)
+                            console.log(123)
+                            this.$refs.multipleTable.toggleRowSelection(row, true)
+                        }
+                    })
                 } else {
-                    this.$refs.multipleTable.clearSelection();
+                    this.$refs.multipleTable.clearSelection()
                 }
             },
             handleSelectionChange(val) {
-                this.backQuestionList = val;
+                // console.log(val)
+                this.backQuestionList = [...val];
             },
             success () {
                 this.$emit('success', this.backQuestionList)

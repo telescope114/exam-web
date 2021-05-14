@@ -7,7 +7,7 @@
             </div>
             <div class="el-card-item">
                 <h1>题库名称</h1>
-                <el-select v-model="examPaperForm.questionBankId" @change="getExamQuestionListReq">
+                <el-select v-model="examPaperForm.questionBankId" @change="getExamQuestionListReq(true)">
                     <el-option
                         v-for="item in questionBankList"
                         :key="item.id"
@@ -86,7 +86,7 @@
 <script>
     import {
         teacherExamAddExamAdd,
-        teacherExamPaperGetExamQuestion,
+        teacherExamPaperGetExamQuestion, teacherExamPaperGetExamPaperQuestion,
         teacherExamPaperSubmitExamPaper
     } from "../../../services/teacher";
     import ChoiceQuestion from "./ChoiceQuestion";
@@ -98,6 +98,7 @@
             return {
                 isEdit: false,
                 examPaperForm: {
+                    examPaperId: '',
                     examPaperName: '',
                     questionBankId: '',
                     choiceQuestionScore: 2,
@@ -112,7 +113,8 @@
                 questionList: [],
                 questionListType: 0,
                 checkedList: [],
-                dialogQuestion: false
+                dialogQuestion: false,
+                editCheck: {}
             }
         },
         computed: {
@@ -130,17 +132,39 @@
             }
         },
         created() {
-            this.isEdit = false
+            // this.isEdit = false
+            this.loadQuestionBank()
             if (this.$route.params.id) {
                 this.loadExamPaper(this.$route.params.id)
             }
-            this.loadQuestionBank()
         },
         methods: {
 // 编辑时的后续操作
             async loadExamPaper (id) {
-                console.log(id)
                 this.isEdit = true
+                const { data } = await teacherExamPaperGetExamPaperQuestion({examPaperId: id})
+                // console.log(data)
+                if (data.code === '200') {
+                    this.examPaperForm = {
+                        examPaperId: id,
+                        questionBankId: data.data.questionBankId.qid,
+                        examPaperName: data.data.info.examPaperName,
+                        choiceQuestionScore: data.data.info.choiceQuestionScore,
+                        choiceQuestionList: [],
+                        judgementQuestionScore: data.data.info.judgmentQuestionScore,
+                        judgementQuestionList: [],
+                        fillQuestionScore: data.data.info.fillQuestionScore,
+                        fillQuestionList: []
+                    }
+                    data.data.examQuestion.filter(item => item.hasExamQuestion).forEach(item => {
+                        switch (item.type) {
+                            case 0: this.examPaperForm.choiceQuestionList.push(item); break;
+                            case 2: this.examPaperForm.judgementQuestionList.push(item); break;
+                            case 1: this.examPaperForm.fillQuestionList.push(item); break;
+                        }
+                    })
+                    this.getExamQuestionListReq(false)
+                }
             },
 // 获取题库列表
             async loadQuestionBank () {
@@ -150,16 +174,14 @@
                 }
             },
 // 请求试题
-            async getExamQuestionListReq () {
-                this.examPaperForm = {
-                    examPaperName: this.examPaperForm.examPaperName,
-                    questionBankId: this.examPaperForm.questionBankId,
-                    choiceQuestionScore: 2,
-                    choiceQuestionList: [],
-                    judgementQuestionScore: 2,
-                    judgementQuestionList: [],
-                    fillQuestionScore: 2,
-                    fillQuestionList: []
+            async getExamQuestionListReq (check) {
+                if (check) {
+                    this.examPaperForm.choiceQuestionScore = 2
+                    this.examPaperForm.choiceQuestionList = []
+                    this.examPaperForm.judgementQuestionScore = 2
+                    this.examPaperForm.judgementQuestionList = []
+                    this.examPaperForm.fillQuestionScore = 2
+                    this.examPaperForm.fillQuestionList = []
                 }
                 const { data } = await teacherExamPaperGetExamQuestion({questionBankId: this.examPaperForm.questionBankId})
                 // console.log(data)
@@ -169,10 +191,64 @@
             },
 // 添加试题弹窗
             choiceQuestion (QuestionType) {
-                switch (QuestionType) {
-                    case 0: this.checkedList = [...this.examPaperForm.choiceQuestionList]; this.questionListType = 0; this.questionList = [...this.questionBankInfo.choiceQuestion]; break;
-                    case 1: this.checkedList = [...this.examPaperForm.fillQuestionList]; this.questionListType = 1; this.questionList = [...this.questionBankInfo.fillQuestion]; break;
-                    case 2: this.checkedList = [...this.examPaperForm.judgementQuestionList]; this.questionListType = 2; this.questionList = [...this.questionBankInfo.judgementQuestion]; break;
+                if (this.isEdit) {
+                    switch (QuestionType) {
+                        case 0:
+                            this.checkedList = [...this.examPaperForm.choiceQuestionList].map(item => {
+                                return {
+                                    answer: item.answer,
+                                    id: item.id,
+                                    title: item.title,
+                                    type: 0,
+                                    option: item.option
+                                }
+                            });
+                            this.questionListType = 0;
+                            this.questionList = [...this.questionBankInfo.choiceQuestion];
+                            break;
+                        case 1:
+                            this.checkedList = [...this.examPaperForm.fillQuestionList].map(item => {
+                                return {
+                                    answer: item.answer,
+                                    id: item.id,
+                                    title: item.title,
+                                    type: 1
+                                }
+                            });
+                            this.questionListType = 1;
+                            this.questionList = [...this.questionBankInfo.fillQuestion];
+                            break;
+                        case 2:
+                            this.checkedList = [...this.examPaperForm.judgementQuestionList].map(item => {
+                                return {
+                                    answer: item.answer,
+                                    id: item.id,
+                                    title: item.title,
+                                    type: 2
+                                }
+                            });
+                            this.questionListType = 2;
+                            this.questionList = [...this.questionBankInfo.judgementQuestion];
+                            break;
+                    }
+                }else{
+                    switch (QuestionType) {
+                        case 0:
+                            this.checkedList = [...this.examPaperForm.choiceQuestionList];
+                            this.questionListType = 0;
+                            this.questionList = [...this.questionBankInfo.choiceQuestion];
+                            break;
+                        case 1:
+                            this.checkedList = [...this.examPaperForm.fillQuestionList];
+                            this.questionListType = 1;
+                            this.questionList = [...this.questionBankInfo.fillQuestion];
+                            break;
+                        case 2:
+                            this.checkedList = [...this.examPaperForm.judgementQuestionList];
+                            this.questionListType = 2;
+                            this.questionList = [...this.questionBankInfo.judgementQuestion];
+                            break;
+                    }
                 }
                 this.dialogQuestion = true
             },
@@ -190,7 +266,25 @@
                 this.dialogQuestion = false
             },
 // 提交
-            async submitExamPaper () {
+            submitExamPaper () {
+                this.checkSubmit()
+            },
+            checkSubmit () {
+                if (this.examPaperForm.examPaperName) {
+                    if (this.examPaperForm.questionBankId) {
+                        if (this.examPaperForm.choiceQuestionList.length + this.examPaperForm.judgementQuestionList.length + this.examPaperForm.fillQuestionList.length > 0) {
+                            this.submitExamPaperReq()
+                        }else {
+                            this.$message.error('至少选一道试题！！')
+                        }
+                    } else {
+                        this.$message.error('请选择题库！！')
+                    }
+                } else {
+                    this.$message.error('试卷名称不能为空！！')
+                }
+            },
+            async submitExamPaperReq () {
                 const form = {
                     examPaperName: this.examPaperForm.examPaperName,
                     questionBankId: this.examPaperForm.questionBankId,
