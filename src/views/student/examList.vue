@@ -28,8 +28,11 @@
                     </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button v-if="checkExamTime(scope.row)" type="primary" @click="toJoinExan(scope.row)">去考试</el-button>
-                            <el-button v-else type="success" @click="beforeExam" disabled>未开考</el-button>
+                            <div v-if="checkExamTime(scope.row)" >
+                                <el-button v-if="scope.row.isExam === 0" type="primary" @click="toJoinExan(scope.row)">参加考试</el-button>
+                                <el-button v-else type="primary" @click="toJoinExan(scope.row)">返回考试</el-button>
+                            </div>
+                            <el-button v-else type="success" @click="beforeExam" disabled>未到事件</el-button>
                         </template>
                     </el-table-column>
                 </el-table>

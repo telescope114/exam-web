@@ -452,7 +452,7 @@ export const teacherQuestionBankDisable = (form) => {
 }
 
 /**
- * 编辑题库
+ * 上传题库
  */
 export const teacherQuestionBankImportQuestionBank = (data) => {
     return request({

@@ -23,7 +23,7 @@
                         drag
                         v-else
                         class="avatar-uploader"
-                        action="https://jsonplaceholder.typicode.com/posts/"
+                        accept=".xls,.xlsx"
                         :show-file-list="false"
                         :on-success="successUploadFile"
                         :http-request="httpRequestFile"

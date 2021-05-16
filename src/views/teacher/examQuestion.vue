@@ -257,6 +257,7 @@
                         this.disableExamQuestion(row)
                     }).catch(() => {
                         this.$message.info('已经取消')
+                        row.status = 1
                     })
                 } else {
                     this.enableExamQuestion(row)
