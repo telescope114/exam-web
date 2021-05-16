@@ -719,7 +719,7 @@ export const teacherExamSearchExam = (form) => {
 }
 
 /**
- * 编辑考试
+ * 编辑随机题考试
  */
 export const teacherExamEditExamSubmit = (form) => {
     return request({
@@ -730,10 +730,20 @@ export const teacherExamEditExamSubmit = (form) => {
 }
 
 /**
+ * 编辑自定义考试
+ */
+export const teacherExamEditCustomExamSubmit = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/exam/editCustomExam/submit',
+        data: JSON.stringify(form)
+    })
+}
+
+/**
  * 成绩管理-成绩查询
  * @Author 郭瑞峰
  * @Date 2021/4/1 11:48
- * @param data
  * @returns
  **/
 export const teacherScore = () => {
@@ -747,7 +757,6 @@ export const teacherScore = () => {
  * 成绩管理-查看学生成绩
  * @Author 郭瑞峰
  * @Date 2021/4/1 11:48
- * @param data
  * @returns
  **/
 export const teacherScoreGetStudentScore = (form) => {
@@ -765,7 +774,6 @@ export const teacherScoreGetStudentScore = (form) => {
  * 成绩管理-打印学生成绩
  * @Author 郭瑞峰
  * @Date 2021/4/1 11:48
- * @param data
  * @returns
  **/
 export const teacherScorePrintClassScore = (form) => {
@@ -781,8 +789,6 @@ export const teacherScorePrintClassScore = (form) => {
 
 /**
  * 成绩管理-下载班级成绩
- * @param form
- * @returns {AxiosPromise}
  */
 export const teacherScoreDownloadClassScore = (fileName) => {
     return request({
@@ -799,7 +805,6 @@ export const teacherScoreDownloadClassScore = (fileName) => {
 /**
  * 试卷管理-获取题库对应的全部试题
  * @param form
- * @returns {AxiosPromise}
  */
 export const teacherExamPaperGetExamQuestion = (form) => {
     return request({
@@ -902,5 +907,45 @@ export const teacherExamPaperEditExamPaper = (form) => {
         method: 'POST',
         url: '/teacher/examPaper/editExamPaper',
         data: JSON.stringify(form)
+    })
+}
+
+/**
+ * 个人信息-获取班级信息可视化
+ */
+export const commonTeacherGetClassInfo = () => {
+    return request({
+        method: 'GET',
+        url: '/common/teacher/getClassInfo'
+    })
+}
+
+/**
+ * 个人信息-获取学院信息可视化
+ */
+export const commonTeacherGetCollegeNumber = () => {
+    return request({
+        method: 'GET',
+        url: '/common/teacher/getCollegeNumber'
+    })
+}
+
+/**
+ * 个人信息-获取题库信息可视化
+ */
+export const commonTeacherGetQuestionBankInfo = () => {
+    return request({
+        method: 'GET',
+        url: '/common/teacher/getQuestionBankInfo'
+    })
+}
+
+/**
+ * 个人信息-获取近期考试成绩可视化
+ */
+export const commonTeacherGetClassAverageScore = () => {
+    return request({
+        method: 'GET',
+        url: '/common/teacher/getClassAverageScore'
     })
 }

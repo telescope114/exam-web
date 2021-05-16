@@ -15,7 +15,7 @@
                         <span>四川轻化工大学</span>
                     </template>
                 </el-menu-item>
-                <el-submenu
+                <!--<el-submenu
                 v-for="menu in menusList"
                 :key="menu.id"
                 :index="menu.menuUrl+''"
@@ -23,13 +23,13 @@
                     <template slot="title">
                         <i class="el-icon-menu"></i>
                         <span>{{menu.menuName}}</span>
-                    </template>
+                    </template>-->
                     <el-menu-item
-                    v-for="kid in menu.children"
+                    v-for="kid in menusList[0].children"
                     :key="kid.id"
                     :index="kid.menuUrl+''"
                     >{{kid.menuName}}</el-menu-item>
-                </el-submenu>
+<!--                </el-submenu>-->
             </el-menu>
         </el-col>
     </div>

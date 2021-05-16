@@ -38,6 +38,7 @@
                 <h1>总分：{{totalScore}}</h1>
             </div>
             <div class="footer">
+                <el-button type="info" @click="$router.push({ name: 'ExamPaper' })">返回</el-button>
                 <el-button v-if="isEdit" type="primary" @click="submitExamPaper">修改</el-button>
                 <el-button v-else type="primary" @click="submitExamPaper">添加</el-button>
             </div>
@@ -87,7 +88,7 @@
     import {
         teacherExamAddExamAdd,
         teacherExamPaperGetExamQuestion, teacherExamPaperGetExamPaperQuestion,
-        teacherExamPaperSubmitExamPaper
+        teacherExamPaperSubmitExamPaper, teacherExamPaperEditExamPaper
     } from "../../../services/teacher";
     import ChoiceQuestion from "./ChoiceQuestion";
 
@@ -114,7 +115,8 @@
                 questionListType: 0,
                 checkedList: [],
                 dialogQuestion: false,
-                editCheck: {}
+                editCheck: {},
+                inspectExamPaperList: []
             }
         },
         computed: {
@@ -163,6 +165,12 @@
                             case 1: this.examPaperForm.fillQuestionList.push(item); break;
                         }
                     })
+                    this.inspectExamPaperList = [
+                        ...this.examPaperForm.choiceQuestionList.map(item => item.id),
+                        ...this.examPaperForm.judgementQuestionList.map(item => item.id),
+                        ...this.examPaperForm.fillQuestionList.map(item => item.id)
+                ]
+
                     this.getExamQuestionListReq(false)
                 }
             },
@@ -273,7 +281,27 @@
                 if (this.examPaperForm.examPaperName) {
                     if (this.examPaperForm.questionBankId) {
                         if (this.examPaperForm.choiceQuestionList.length + this.examPaperForm.judgementQuestionList.length + this.examPaperForm.fillQuestionList.length > 0) {
-                            this.submitExamPaperReq()
+                            if (this.isEdit) {
+                                const form = {
+                                    examPaperName: this.examPaperForm.examPaperName,
+                                    examPaperId: this.examPaperForm.examPaperId,
+                                    questionBankId: this.examPaperForm.questionBankId,
+                                    examQuestionIds: [...this.examPaperForm.choiceQuestionList.map(item => item.id),...this.examPaperForm.judgementQuestionList.map(item => item.id),...this.examPaperForm.fillQuestionList.map(item => item.id)],
+                                    choiceQuestion: this.examPaperForm.choiceQuestionList.length,
+                                    judgementQuestion: this.examPaperForm.judgementQuestionList.length,
+                                    fillQuestion: this.examPaperForm.fillQuestionList.length,
+                                    choiceQuestionScore: this.choiceScore,
+                                    judgementQuestionScore: this.judgementScore,
+                                    fillQuestionScore: this.fillScore,
+                                }
+                                if (new Set(this.inspectExamPaperList).toString() === new Set(form.examQuestionIds).toString()) {
+                                    this.$message.error('没有任何修改')
+                                } else {
+                                    this.submitEditExamPaperReq(form)
+                                }
+                            } else {
+                                this.submitExamPaperReq()
+                            }
                         }else {
                             this.$message.error('至少选一道试题！！')
                         }
@@ -304,6 +332,16 @@
                     this.$router.push({ name: 'ExamPaper' })
                 } else {
                     this.$message.error('添加失败')
+                }
+            },
+            async submitEditExamPaperReq (form) {
+                const { data } = await teacherExamPaperEditExamPaper(form)
+                // console.log(data)
+                if (data.code === '200') {
+                    this.$message.success('编辑成功')
+                    this.$router.push({ name: 'ExamPaper' })
+                } else {
+                    this.$message.error('编辑失败')
                 }
             }
         }
@@ -344,8 +382,8 @@
     }
     .footer {
         .el-button {
-            margin: 10px 0px;
-            width: 300px;
+            margin: 10px 10px;
+            width: 150px;
         }
     }
 }

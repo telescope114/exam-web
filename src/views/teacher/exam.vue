@@ -46,6 +46,11 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="totalScore" label="总分"></el-table-column>
+                    <el-table-column label="试卷类型">
+                        <template slot-scope="scope">
+                            <p>{{scope.row.examPaperId?'自定义试卷': '随机试卷'}}</p>
+                        </template>
+                    </el-table-column>
                     <el-table-column width="100" label="当前状态">
                         <template slot-scope="scope">
                             <p :class="'exam-status-'+checkExamTime(scope.row)">{{checkExamTime(scope.row)>0?(checkExamTime(scope.row)>1?'考试结束':'考试中'):'未开考'}}</p>
@@ -234,7 +239,7 @@
                 this.dialogSeeExamDetail = false
                 this.dialogCreateOrEditCustomExam = false
                 this.dialogCreateOrEditExam = false
-                if (row.isCustom) {
+                if (row.examPaperId) {
                     this.dialogCreateOrEditCustomExam = true
                 } else {
                     this.dialogCreateOrEditExam = true

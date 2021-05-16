@@ -88,6 +88,8 @@
     import {
         teacherExamCustomExamPaperGetExamPaper,
         teacherExamCustomExamPaperSubmit,
+        teacherExamEditCustomExamSubmit,
+        teacherExamEditExamGetExamInfo,
         teacherExamGetClass
     } from "../../../services/teacher";
 
@@ -136,7 +138,8 @@
                 if (data.code === '200') {
                     this.examPaperList = data.data
                     if (this.isEdit) {
-                        console.log('edit')
+                        // console.log('edit')
+                        this.loadEdit()
                     }
                 }
             },
@@ -148,6 +151,19 @@
                 }
             },
             async loadEdit () {
+                const { data } = await teacherExamEditExamGetExamInfo({examId: this.examInfo.id})
+                if (data.code === '200') {
+                    this.createOrEditCustomExamInfo = {
+                        eid: data.data.exam.id,
+                        examName: data.data.exam.examName,
+                        examPaperId: data.data.exam.examPaperId,
+                        totalScore: data.data.exam.totalScore,
+                        duration: parseInt(data.data.exam.duration),
+                        openTime: new Date(data.data.exam.openTime),
+                        closeTime: new Date(data.data.exam.closeTime),
+                        ids: data.data.classList.filter(item => item.hasClass).map(item => item.id)
+                    }
+                }
             },
 // 获取试卷总成绩
             getTotalScore (item) {
@@ -161,12 +177,11 @@
                 this.step = num
             },
             submit () {
-                // if (this.createOrEditCustomExamInfo)
-                /*if (this.isEdit) {
+                if (this.isEdit) {
                     this.editCustomExam()
                 } else {
                     this.addCustomExam()
-                }*/
+                }
             },
             async addCustomExam () {
                 // console.log(this.createOrEditCustomExamInfo)
@@ -179,7 +194,14 @@
                 }
             },
             async editCustomExam () {
-
+                console.log(this.createOrEditCustomExamInfo)
+                const { data } = await teacherExamEditCustomExamSubmit({...this.createOrEditCustomExamInfo, duration: parseInt(this.createOrEditCustomExamInfo.duration)})
+                if (data.code === '200') {
+                    this.$message.success('编辑成功')
+                    this.$emit('success')
+                } else {
+                    this.$message.error('编辑失败')
+                }
             }
         }
     }

@@ -11,6 +11,39 @@ const routes = [
     component: () => import(/* webpackChunkName: "login" */'@/views/login')
   },
   {
+    path: '/student',
+    // name: 'ExamForStudent',
+    component: () => import(/* webpackChunkName: "student" */'@/views/student'),
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'StudentInfo',
+        component: () => import(/* webpackChunkName: "studentInfo" */'@/views/student/studentInfo')
+      },
+      {
+        path: 'examList',
+        name: 'ExamList',
+        component: () => import(/* webpackChunkName: "examList" */'@/views/student/examList')
+      },
+      {
+        path: 'getStudentScore',
+        name: 'GetStudentScore',
+        component: () => import(/* webpackChunkName: "getStudentScore" */'@/views/student/studentScore')
+      },
+      {
+        path: 'score/:id/',
+        name: 'StudentScore',
+        component: () => import(/* webpackChunkNameL "getExamScore" */'@/views/student/getExamScore')
+      },
+      {
+        path: '*',
+        name: 'StudentErrorPage',
+        component: () => import(/* webpackChunkName: "404" */'@/views/errorPage')
+      }
+    ]
+  },
+  {
     path: '',
     // name: 'Layout',
     component: () => import(/* webpackChunkName: "admin" */'@/views/layout'),
@@ -116,39 +149,6 @@ const routes = [
       }
       // 教师管理结束
     ],
-  },
-  {
-    path: '/student',
-    // name: 'ExamForStudent',
-    component: () => import(/* webpackChunkName: "student" */'@/views/student'),
-    meta: { requiresAuth: true },
-    children: [
-      {
-        path: '',
-        name: 'StudentInfo',
-        component: () => import(/* webpackChunkName: "studentInfo" */'@/views/student/studentInfo')
-      },
-      {
-        path: 'examList',
-        name: 'ExamList',
-        component: () => import(/* webpackChunkName: "examList" */'@/views/student/examList')
-      },
-      {
-        path: 'getStudentScore',
-        name: 'GetStudentScore',
-        component: () => import(/* webpackChunkName: "getStudentScore" */'@/views/student/studentScore')
-      },
-      {
-        path: 'score/:id/',
-        name: 'StudentScore',
-        component: () => import(/* webpackChunkNameL "getExamScore" */'@/views/student/getExamScore')
-      },
-      {
-        path: '*',
-        name: 'StudentErrorPage',
-        component: () => import(/* webpackChunkName: "404" */'@/views/errorPage')
-      }
-    ]
   },
   {
     path: '/examInfo/:eid',

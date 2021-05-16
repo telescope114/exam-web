@@ -1,8 +1,8 @@
 <template>
     <div class="admin-header">
         <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item v-if="$route.path !== '/'">{{$route.meta.title}}</el-breadcrumb-item>
+            <!--<el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item v-if="$route.path !== '/'">{{$route.meta.title}}</el-breadcrumb-item>-->
         </el-breadcrumb>
         <el-dropdown>
             <span class="el-dropdown-link">
