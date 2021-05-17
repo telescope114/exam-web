@@ -24,7 +24,7 @@
     export default {
         name: "Layout",
         components: { AppAside, AppHeader },
-        created() {
+        mounted() {
             if (this.$store.state.role === 2) {
                 // console.log(100)
                 this.$router.push({ name: 'StudentInfo' })

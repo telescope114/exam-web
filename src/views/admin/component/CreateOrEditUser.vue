@@ -31,7 +31,8 @@
             return {
                 rules: {
                     username: [
-                        { required: true, message: '用户名称不能为空！！！', trigger: 'blur' }
+                        { required: true, message: '用户名称不能为空！！！', trigger: 'blur' },
+                        { min: 6, message: '账号长度至少6位', trigger: 'blur' }
                     ]
                 },
                 loadingSubmit: false,
