@@ -3,7 +3,7 @@
         <el-card>
             <div slot="header" class="teacher-teacher-header">
                 <el-button @click="addTeacher" type="primary">添加教师</el-button>
-                <el-input style="width: 200px;margin: 0 10px" placeholder="教师姓名" clearable v-model="searchTeacherName"></el-input>
+                <el-input style="width: 200px;margin: 0 10px" placeholder="教师姓名" clearable v-model="searchTeacherName" @keydown.native.enter="search"></el-input>
                 <el-button icon="el-icon-search" circle type="primary" @click="search" ></el-button>
             </div>
             <div slot="default">

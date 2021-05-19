@@ -883,6 +883,21 @@ export const teacherExamPaperSeeExamPaper = (form) => {
         data: qs.stringify(form)
     })
 }
+
+/**
+ * 试卷管理-搜索试卷
+ * @param form 试卷名称
+ */
+export const teacherExamPaperSearchExamPaper = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/examPaper/searchExamPaper',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
 /**
  * 试卷管理-获取编辑试卷
  * @param form 试卷id

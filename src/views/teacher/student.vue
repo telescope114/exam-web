@@ -22,7 +22,7 @@
                     <el-button @click="addStudent" :disabled="!classInfo" size="small" type="primary">添加学生</el-button>
                     <div class="select">
                         <label>学生姓名</label>
-                        <el-input placeholder="请输入年级" style="width: 150px" v-model="selectForm.studentName" clearable></el-input>
+                        <el-input placeholder="请输入学生姓名" style="width: 150px" v-model="selectForm.studentName" clearable></el-input>
                         <el-button type="primary" icon="el-icon-search" @click="selectStudentName" circle></el-button>
                     </div>
                 </div>

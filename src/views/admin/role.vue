@@ -189,6 +189,9 @@
                 } else if (data.code === '201') {
                     row.status = 0
                     this.$message.warning('禁用成功！')
+                }  else if (data.code === '304') {
+                    row.status = 1
+                    this.$message.error('不能禁用自己使用的角色！')
                 } else {
                     row.status = 1
                     this.$message.error('无权操作！')

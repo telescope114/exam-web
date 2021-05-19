@@ -90,7 +90,7 @@ request.interceptors.response.use(function (res) {
     } *!/else */if (res.data.code === '103') {
         // token 无效
         toLogin()
-    } if (res.data.code === '104') {
+    } else if (res.data.code === '104') {
         // token 无效
         Message.error('该账号已经在别处登录了')
         toLogin()

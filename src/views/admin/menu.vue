@@ -167,7 +167,7 @@
                         this.disableMenu(row)
                     }).catch(() => {
                         this.$message.info('已经取消')
-                        row.status = 0
+                        row.status = 1
                     })
                 } else {
                     this.ableMenu(row)

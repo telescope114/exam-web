@@ -121,7 +121,7 @@
                             name: '分数',
                             max: 100,
                             min: 0,
-                            interval: 50
+                            interval: 10
                         },
                         series: [{
                             data: [],
@@ -151,7 +151,7 @@
                             name: '分数',
                             max: 100,
                             min: 0,
-                            interval: 50
+                            interval: 10
                         },
                         series: [{
                             data: [],
@@ -181,7 +181,7 @@
                             name: '分数',
                             max: 100,
                             min: 0,
-                            interval: 50
+                            interval: 10
                         },
                         series: [{
                             data: [],
@@ -211,7 +211,7 @@
                             name: '分数',
                             max: 100,
                             min: 0,
-                            interval: 50
+                            interval: 10
                         },
                         series: [{
                             data: [],
@@ -326,7 +326,7 @@
                 .score-echarts {
                     width: 25%;
                     /*margin-top: 30px;*/
-                    height: 400px;
+                    height: 300px;
                 }
             }
         }

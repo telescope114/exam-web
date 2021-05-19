@@ -1,6 +1,7 @@
 <template>
-    <div class="examInfo" @mouseleave="checkMouseStatus">
-<!--    <div class="examInfo" @mouseleave="checkMouseStatus" @mouseenter="enterMouseStatus">-->
+<!--    <div class="examInfo">-->
+<!--    <div class="examInfo" @mouseleave="checkMouseStatus">-->
+    <div class="examInfo" @mouseleave="checkMouseStatus" @mouseenter="enterMouseStatus">
         <el-container>
             <el-header>
                 <div v-if="isExam"
@@ -57,6 +58,7 @@
     import {examGetExamDetails,examEndExam} from "../../services/exam";
     import Examming from "./components/Examming";
     import {setTime} from '@/utils/dateFormat'
+    import {SECOND} from "../../config";
 
     export default {
         name: "examInfo",
@@ -161,7 +163,7 @@
                     } else if (this.lastTime === 300) {
                         this.$message.error('还有5分钟')
                     }
-                },1000)
+                },/*1000*/SECOND)
             },
             async endExam (seid) {
                 this.loadingStratExam = false    //  开始考试按钮状态
@@ -195,7 +197,7 @@
                             } else {
                                 clearInterval(lastWarningTime)
                             }
-                        },1000)
+                        },1000/*SECOND*/)
                     } else {
                         this.dialogWarning = false
                         this.endExam(this.seid)

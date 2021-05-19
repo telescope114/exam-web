@@ -24,14 +24,13 @@
     export default {
         name: "Layout",
         components: { AppAside, AppHeader },
-        mounted() {
+        created() {
             if (this.$store.state.role === 2) {
                 // console.log(100)
                 this.$router.push({ name: 'StudentInfo' })
             } else {
                 this.loadingMenuName()
             }
-
         },
         data () {
             return {

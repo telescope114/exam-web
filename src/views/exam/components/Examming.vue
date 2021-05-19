@@ -48,7 +48,8 @@
                             <el-radio v-model="aimAnswer" @dblclick.native="page(aimQuestion + 2)" label="false">错误</el-radio>
                         </div>
                         <div v-else-if="aimType === 2">
-                            <el-input type="text" :class="aimAnswer?'':'input-no-answer'" v-model="aimAnswer" clearable></el-input>
+                            <el-input v-if="!isEnd" type="text" :class="aimAnswer?'':'input-no-answer'" @keydown.native.enter="page(aimQuestion + 2)" v-model="aimAnswer" clearable></el-input>
+                            <el-input v-else type="text" :class="aimAnswer?'':'input-no-answer'" @keydown.native.enter="dialogEndExam = true" v-model="aimAnswer" clearable></el-input>
                         </div>
                         <div>
                             <el-button type="primary" @click="page(aimQuestion)">上一题</el-button>

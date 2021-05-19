@@ -9,8 +9,8 @@
                         <el-option v-for="item of examQuestionTypeTitle" :key="item.value" :label="item.title" :value="item.value" @click.native="checkExamQuestionType"></el-option>
                     </el-select>-->
                     <label>试卷名称：</label>
-                    <el-input v-model="selectForm.examName" style="width: 150px" clearable ></el-input>
-                    <el-button type="primary" circle icon="el-icon-search"></el-button>
+                    <el-input v-model="selectForm.examPaperName" style="width: 150px" @keydown.native.enter="searchExamPaper" clearable ></el-input>
+                    <el-button type="primary" circle icon="el-icon-search" @click="searchExamPaper"></el-button>
                 </div>
             </div>
             <div>
@@ -91,7 +91,12 @@
 </template>
 
 <script>
-    import {teacherExamPaperDisable, teacherExamPaperEnable, teacherExamPaperList} from "../../services/teacher";
+    import {
+        teacherExamPaperDisable,
+        teacherExamPaperEnable,
+        teacherExamPaperList,
+        teacherExamPaperSearchExamPaper
+    } from "../../services/teacher";
     import dateFormat from "../../utils/dateFormat";
     import SeeExamPaper from "./component/SeeExamPaper";
     export default {
@@ -129,6 +134,25 @@
             },
             addExamPaper () {
                 this.$router.push({name: 'AddExamPaper'})
+            },
+            searchExamPaper () {
+                if (this.selectForm.examPaperName) {
+                    this.searchExamPaperReq()
+                } else {
+                    this.loadExamPaperList()
+                }
+            },
+            async searchExamPaperReq () {
+                const { data } = await teacherExamPaperSearchExamPaper(this.selectForm)
+                if ( data.code === '200' ) {
+                    this.examPaperList = data.data.map(item => {
+                        return { ...item,  totalScore: item.fillQuestion * item.fillQuestionScore + item.judgmentQuestion * item.judgmentQuestionScore + item.choiceQuestion * item.choiceQuestionScore }
+                    })
+                    if (this.examPaperList[this.examPaperList.length - 1].realName) {
+                        this.isDirector = true
+                    }
+                    this.handleCurrentChange(1)
+                }
             },
 // 禁用/启用
             ableOrDisable (row) {

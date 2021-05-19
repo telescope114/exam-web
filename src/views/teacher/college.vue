@@ -3,6 +3,8 @@
         <el-card>
             <div class="select-header">
                 <el-button @click="addCollege" type="primary">新建学院</el-button>
+                <el-button @click="addMajor" type="primary" :disabled="!collegeInfo">新建专业</el-button>
+                <el-button @click="addClass" type="primary" :disabled="!majorInfo">新建班级</el-button>
             </div>
         </el-card>
         <div class="teacher-college-main">
@@ -24,7 +26,7 @@
                             width="180">
                         <template slot-scope="scope">
                             <el-button @click="seeMajor(scope.row)" type="primary" size="small" icon="el-icon-search" circle></el-button>
-                            <el-button @click="addMajor(scope.row)" type="success" size="small" icon="el-icon-circle-plus" circle></el-button>
+<!--                            <el-button @click="addMajor(scope.row)" type="success" size="small" icon="el-icon-circle-plus" circle></el-button>-->
                             <el-button @click="editCollege(scope.row)" type="info" icon="el-icon-edit" size="small" circle></el-button>
                             <el-button @click="delCollege(scope.row)" type="danger" icon="el-icon-delete" size="small" circle></el-button>
                         </template>
@@ -49,7 +51,7 @@
                             width="180">
                         <template slot-scope="scope">
                             <el-button @click="seeClass(scope.row)" type="primary" size="small" icon="el-icon-search" circle></el-button>
-                            <el-button @click="addClass(scope.row)" type="success" size="small" icon="el-icon-circle-plus" circle></el-button>
+<!--                            <el-button @click="addClass(scope.row)" type="success" size="small" icon="el-icon-circle-plus" circle></el-button>-->
                             <el-button @click="editMajor(scope.row)" type="info" icon="el-icon-edit" size="small" circle></el-button>
                             <el-button @click="delMajor(scope.row)" type="danger" icon="el-icon-delete" size="small" circle></el-button>
                         </template>
@@ -96,6 +98,7 @@
                 <el-form :model="formInfo" v-else-if="dialogType===4">
                     <h1>学院：{{collegeInfo.collegeName}}</h1>
                     <h1>专业：{{majorInfo.majorName}}</h1>
+                    <span>只能填年份，如：2017</span>
                     <el-form-item label="年级" label-width="12rem">
                         <el-input v-model="formInfo.className" autocomplete="off"></el-input>
                     </el-form-item>
@@ -158,7 +161,9 @@
                 if (data.code === '200') {
                     console.log(data.data)
                     this.collegeList = data.data
+                    this.collegeInfo = ''
                     this.majorList = []
+                    this.majorInfo = ''
                     this.classList = []
                 }
             },
@@ -170,21 +175,36 @@
                 this.formInfo = {}
             },
             // 添加专业的弹窗
+            addMajor () {
+                // this.collegeInfo = row
+                this.dialog = true
+                this.dialogType = 2
+                this.isEdit = false
+                this.formInfo = {}
+            },
+            /*// 添加专业的弹窗
             addMajor ( row ) {
                 this.collegeInfo = row
                 this.dialog = true
                 this.dialogType = 2
                 this.isEdit = false
                 this.formInfo = {}
-            },
+            },*/
             // 添加班级
+            addClass () {
+                this.dialog = true
+                this.dialogType = 4
+                this.isEdit = false
+                this.formInfo = {}
+            },
+            /*// 添加班级
             addClass ( row ) {
                 this.majorInfo = row
                 this.dialog = true
                 this.dialogType = 4
                 this.isEdit = false
                 this.formInfo = {}
-            },
+            },*/
             // 查看专业
             async seeMajor (row) {
                 this.loadingMajor = true
@@ -266,7 +286,7 @@
                 const { data } = await teacherCollegedelMajor({majorId: row.id})
                 if (data.code === '200') {
                     this.$message.warning('删除成功！')
-                    this.seeMajor(row)
+                    this.seeMajor(this.collegeInfo)
                     // this.loadCollege()
                 } else {
                     this.$message.error('无权操作')
@@ -295,7 +315,7 @@
                 const { data } = await teacherCollegedelClass({classId: row.id})
                 if (data.code === '200') {
                     this.$message.warning('删除成功！')
-                    this.loadCollege()
+                    this.seeClass(this.majorInfo)
                 } else {
                     this.$message.error('无权操作')
                 }
@@ -332,7 +352,7 @@
                     this.$message.error('学院重名!!!')
                     this.wat = false
                 } else {
-                    this.$message.error('添加h失败!!!')
+                    this.$message.error('添加失败!!!')
                     this.wat = false
                 }
             },
@@ -378,11 +398,7 @@
             // 编辑专业请求
             async editMajorReq () {
                 this.loadingMajor = true
-                const {data} = await teacherCollegeEditMajor(/*{
-                    collegeId: this.collegeInfo.id,
-                    majorId: this.formInfo.majorId,
-                    majorName: this.formInfo.majorName
-                }*/this.formInfo)
+                const {data} = await teacherCollegeEditMajor(this.formInfo)
                 if (data.code === '200') {
                     this.loadingMajor = false
                     this.$message.success('编辑成功')
@@ -419,7 +435,7 @@
                         this.wat = false
                     }
                 } else {
-                    this.$message.error('年级有误！')
+                    this.$message.error('年级有误，请输入正确年份！')
                     this.wat = false
                 }
             }
