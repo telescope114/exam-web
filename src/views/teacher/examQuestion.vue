@@ -30,6 +30,11 @@
             <div class="exam-question-content">
                 <el-table :data="pageList" border style="width: 100%;" v-loading="loadingExamQuestion" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(255,255,255,0.8)">
                     <el-table-column label="题库" prop="questionBankName"></el-table-column>
+                    <el-table-column
+                            v-if="$store.state.role === 0"
+                            prop="teacherName"
+                            label="负责教师"
+                    ></el-table-column>
                     <el-table-column label="题型">
                         <template slot-scope="scope">
                             <p>{{scope.row.type > 0 ? ( scope.row.type > 1 ? '判断题' : '填空题') : '选择题'}}</p>
@@ -37,16 +42,18 @@
                     </el-table-column>
                     <el-table-column label="试题题目" width="200">
                         <template slot-scope="scope">
-                            <el-tooltip :content="scope.row.title" placement="top">
+                            <el-tooltip v-if="scope.row.title.length > 10" :content="scope.row.title" placement="top">
                                 <p>{{scope.row.title | hideString}}</p>
                             </el-tooltip>
+                            <p v-else>{{scope.row.title}}</p>
                         </template>
                     </el-table-column>
                     <el-table-column label="答案" width="200">
                         <template slot-scope="scope">
-                            <el-tooltip :content="scope.row.answer" placement="top">
-                                <p>{{scope.row.answer|hideString}}</p>
+                            <el-tooltip v-if="scope.row.answer.length >10" :content="scope.row.answer" placement="top">
+                                <p>{{scope.row.answer| hideString}}</p>
                             </el-tooltip>
+                            <p v-else>{{scope.row.answer}}</p>
                         </template>
                     </el-table-column>
                     <el-table-column label="创建时间" width="100">

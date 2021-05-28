@@ -22,10 +22,10 @@
                     <el-upload
                         drag
                         v-else
+                        action=""
                         class="avatar-uploader"
                         accept=".xls,.xlsx"
                         :show-file-list="false"
-                        :on-success="successUploadFile"
                         :http-request="httpRequestFile"
                         :before-upload="beforeUploadFile">
                         <div v-if="isUpload" >
@@ -71,17 +71,21 @@
             this.serverUrl = serve
         },
         methods: {
-            successUploadFile (res,file) {
+            /*successUploadFile (res,file) {
                 console.log(res)
                 console.log(file)
-            },
+            },*/
             // 上传文件前检验文件类型、大小
             beforeUploadFile (file) {
-                console.log(file)
+                // console.log(file)
+                if (!/(.xls |.xlsx)$/.test(file.name)) {
+                    this.$message.error('文件只能是excel文件(.xls或.xlsx)')
+                    return false
+                }
             },
             async httpRequestFile (option) {
                 const fd = new FormData()
-                console.log(option)
+                // console.log(option)
                 this.isUploadSuccess = true
                 // fd.append('questionBankName',option.file)
                 fd.append('file',option.file)
@@ -91,7 +95,7 @@
                     if (data.data.errorRow || data.data.errorQuestionBank) {
                         this.$alert(`导入失败：${data.data.errorRow?data.data.errorRow:''} ${(data.data.errorRow&&data.data.errorQuestionBank)||(data.data.errorRow&&data.data.error)?'、':''} ${data.data.errorQuestionBank?data.data.errorQuestionBank:''} ${data.data.errorQuestionBank&&data.data.error?'、':''} ${data.data.error}`,`上传错误`)
                     } else {
-                        this.$message.success('上传成功！！！')
+                        this.$message.success(data.data.error)
                         this.isUploadSuccess = true
                         this.$emit('success')
                     }

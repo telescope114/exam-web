@@ -11,7 +11,7 @@
 </template>
 
 <script>
-    import {teacherExamGetClass} from "../../../services/teacher";
+    import {teacherExamGetExamClass} from "../../../services/teacher";
 
     export default {
         name: "SeeExamDetail",
@@ -32,7 +32,7 @@
         methods: {
             async loadClassList () {
                 this.loadingClassList = true
-                const { data } = await teacherExamGetClass({id:this.examInfo.id})
+                const { data } = await teacherExamGetExamClass({examId: this.examInfo.id})
                 this.loadingClassList = false
                 if (data.code === '200') {
                     this.classList = data.data

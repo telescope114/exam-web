@@ -668,8 +668,21 @@ export const teacherExamGetClass = () => {
 }
 
 /**
+ * 获取考试参考班级
+ */
+export const teacherExamGetExamClass = (form) => {
+    return request({
+        method: 'POST',
+        url: '/teacher/exam/getExamClass',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify(form)
+    })
+}
+
+/**
  *
- * @param form
  */
 export const teacherExamDetails = (form) => {
     return request({

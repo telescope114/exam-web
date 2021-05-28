@@ -32,7 +32,7 @@
                                 <el-button v-if="scope.row.isExam === 0" type="primary" @click="toJoinExan(scope.row)">参加考试</el-button>
                                 <el-button v-else type="primary" @click="toJoinExan(scope.row)">返回考试</el-button>
                             </div>
-                            <el-button v-else type="success" @click="beforeExam" disabled>未到事件</el-button>
+                            <el-button v-else type="success" @click="beforeExam" disabled>未到时间</el-button>
                         </template>
                     </el-table-column>
                 </el-table>

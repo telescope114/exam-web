@@ -26,7 +26,18 @@
                         </div>
                         <div>
                             <div class="exam-notice">
+                                <h1>考试技巧</h1>
+                                <span>
+                                    <h4><span class="blue">选择题、填空题</span>可以<span class="blue">双击</span>进入下一题</h4>
+                                    <h4><span class="blue">填空题</span>按<span class="blue">“Enter”</span>可以进入下一题</h4>
+                                    <h4>即使做到<span class="blue">最后一道题</span>也会有下一题按钮</h4>
+                                </span>
                                 <h1>考试须知</h1>
+                                <span>
+                                    <h4 class="red">请在规定时间内答题</h4>
+                                    <h4 class="red">鼠标不能移除界面内，不然会有进入警告倒计时！！</h4>
+                                    <h4 class="red">警告只有三次</h4>
+                                </span>
                             </div>
                         </div>
                     </el-card>
@@ -269,5 +280,11 @@
             }
         }
     }
+}
+.blue {
+    color: $success-color;
+}
+.red {
+    color: $danger-color;
 }
 </style>

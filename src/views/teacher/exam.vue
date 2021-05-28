@@ -2,7 +2,7 @@
     <div class="teacher-exam">
         <el-card>
             <div class="search" slot="header">
-                <el-button type="primary" @click="choiceExamType">添加考试</el-button>
+                <el-button type="primary" @click="choiceExamType" v-if="$store.state.role">添加考试</el-button>
 <!--                <el-button type="primary" @click="addExam">添加考试</el-button>-->
                 <div class="search-main">
                     <!--<label>试题类型：</label>

@@ -6,7 +6,7 @@
                 <el-button type="success" icon="el-icon-upload2" @click="uploadQuestionBank">导入题库</el-button>
                 <div class="select">
                     <label>题库搜索</label>
-                    <el-input placeholder="请输入学院" style="width: 150px" v-model="selectForm.questionBankName" clearable></el-input>
+                    <el-input placeholder="请输入题库" style="width: 150px" v-model="selectForm.questionBankName" clearable></el-input>
                     <el-button type="primary" icon="el-icon-search" @click="search" circle></el-button>
                 </div>
             </div>
@@ -26,6 +26,11 @@
                     prop="questionBankName"
                     label="题库名称"
                     width="120"
+                ></el-table-column>
+                <el-table-column
+                    v-if="$store.state.role === 0"
+                    prop="teacherName"
+                    label="负责教师"
                 ></el-table-column>
                 <el-table-column
                     prop="choiceQuestion"
