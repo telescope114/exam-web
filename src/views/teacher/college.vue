@@ -212,6 +212,7 @@
                     collegeName: row.collegeName,
                     id: row.id
                 }
+                this.classList = {}
                 const { data } = await teacherGetMajor({ collegeId: row.id})
                 if (data.code === '200') {
                     this.majorList = data.data
