@@ -21,7 +21,7 @@
                             <p :class="checkExamTime(scope.row)?'examing':'before-exam'">{{scope.row.closeTime|dateFormat}}</p>
                         </template>
                     </el-table-column>
-                    <el-table-column label="考试科目">
+                    <el-table-column label="时长">
                         <template slot-scope="scope">
                             <p :class="checkExamTime(scope.row)?'examing':'before-exam'">{{scope.row.duration + '分钟'}}</p>
                         </template>

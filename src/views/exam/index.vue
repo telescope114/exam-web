@@ -1,7 +1,7 @@
 <template>
-<!--    <div class="examInfo">-->
+    <div class="examInfo">
 <!--    <div class="examInfo" @mouseleave="checkMouseStatus">-->
-    <div class="examInfo" @mouseleave="checkMouseStatus" @mouseenter="enterMouseStatus">
+<!--    <div class="examInfo" @mouseleave="checkMouseStatus" @mouseenter="enterMouseStatus">-->
         <el-container>
             <el-header>
                 <div v-if="isExam"
@@ -20,7 +20,7 @@
                             <div class="exam-info">
                                 <h3>开始考试时间：{{examMsg.openTime}}</h3>
                                 <h3>总分：{{examMsg.totalScore}}</h3>
-                                <h3>时长：{{examMsg.duration}}</h3>
+                                <h3>时长：{{examMsg.duration}}分钟</h3>
                                 <h3>最迟考试时间：{{examMsg.closeTime}}</h3>
                             </div>
                         </div>
@@ -101,9 +101,9 @@
                 this.isExam = false
                 this.isBeforeExam = false
                 const { data } = await examGetExamDetails({eid: this.$route.params.eid})
-                this.lastTime = 120 * 60
                 if (data.code === '200') {
                     this.examMsg = data.data.exam
+                    this.lastTime = parseInt(this.examMsg.duration) * 60
                     this.seid = data.data.seid
                     this.isBeforeExam = true
                     this.code = '200'
@@ -134,7 +134,12 @@
                 this.loadingStratExam = true
                 const { data } = await studentExamGetStartExam({eid: this.$route.params.eid})
                 if (data.code === '200') {
-                    this.$message.success('开始考试！！！')
+                    // this.$message.success('开始考试！！！')
+                    this.$notify({
+                        title: '',
+                        message: '开始考试！！！',
+                        type: 'success'
+                    })
                     this.seid = data.data.seid
                     this.questionList = data.data
                     this.isBeforeExam = false
@@ -166,13 +171,29 @@
                         this.$router.push({name: 'GetStudentScore'})*/
                         this.endExam(this.seid)
                     } else if (this.lastTime === 3600) {
-                        this.$message.success('还有60分钟')
+                        // this.$message.success('还有60分钟')
+                        this.$notify({
+                            message: '还有60分钟',
+                            type: 'success'
+                        })
                     } else if (this.lastTime === 1800) {
-                        this.$message.info('还有30分钟')
+                        // this.$message.info('还有30分钟')
+                        this.$notify({
+                            message: '还有30分钟',
+                            type: 'info'
+                        })
                     } else if (this.lastTime === 900) {
-                        this.$message.warning('还有15分钟')
+                        // this.$message.warning('还有15分钟')
+                        this.$notify({
+                            message: '还有15分钟',
+                            type: 'warning'
+                        })
                     } else if (this.lastTime === 300) {
-                        this.$message.error('还有5分钟')
+                        // this.$message.error('还有5分钟')
+                        this.$notify({
+                            message: '还有5分钟',
+                            type: 'error'
+                        })
                     }
                 },/*1000*/SECOND)
             },

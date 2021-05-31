@@ -52,7 +52,7 @@
                         { required: true, message: '请输入菜单URL', trigger: 'blur' }
                     ],
                     type: [
-                        { required: true, message: '请输入菜单URL', trigger: 'blur' }
+                        { required: true, message: '请输入菜单类型', trigger: 'blur' }
                     ]
                 },
                 loadingSubmit: false,
