@@ -55,21 +55,24 @@
         methods: {
             // 获取权限列表
             async loadAssign () {
-                // console.log(this.roleInfo.id)
-                this.loadingCreateOrEditMenu = true
-                const { data } = await systemRoleGetRolePermission({ rid: this.roleInfo.id })
-                // 生成树的数据
-                if (data.code === '200') {
-                    this.assignData = getMenuList(data.data)
+                try {
+                    this.loadingCreateOrEditMenu = true
+                    const {data} = await systemRoleGetRolePermission({rid: this.roleInfo.id})
                     this.loadingCreateOrEditMenu = false
-                    // 赋予的权限
-                    /* this.assignData.forEach(item => {
-                        this.getChecked(item)
-                    }) */
-                    this.getMenuList(data.data)
-                } else {
-                    this.$message.error('请求失败')
+                    // 生成树的数据
+                    if (data.code === '200') {
+                        this.assignData = getMenuList(data.data)
+                        // 赋予的权限
+                        /* this.assignData.forEach(item => {
+                            this.getChecked(item)
+                        }) */
+                        this.getMenuList(data.data)
+                    } else {
+                        this.$message.error('请求失败')
+                    }
+                } catch (e) {
                     this.loadingCreateOrEditMenu = false
+                    this.cancel()
                 }
             },
             getMenuList (list) {
@@ -86,43 +89,26 @@
                     }
                 })
             },
-            /* getChecked (list) {
-                if (list.children) {
-                    let checked = true
-                    list.children.forEach(item => {
-                        checked = this.getChecked(item) && checked
-                    })
-                    if (checked) {
-                        this.ids.push(list.id)
-                    }
-                    return checked
-                } else {
-                    if (list.hasPermission) {
-                        // console.log(list.id)
-                        this.ids.push(list.id)
-                    }
-                    return list.hasPermission
-                }
-            }, */
             // 点击树
             handleNodeClick (data) {
-                // console.log(this.$refs.assignData.getCheckedKeys())
                 console.log(data);
             },
             async submit () {
-                this.loadingSubmit = true
-                const form = {
-                    id: this.roleInfo.id,
-                    ids: this.$refs.assignData.getCheckedKeys().concat(this.$refs.assignData.getHalfCheckedKeys())
-                }
-                console.log(form)
-                const { data } = await systemRoleAssignPermissions(form)
-                if (data.code === '200') {
-                    this.$message.success('设置成功！！')
-                    this.$emit('success')
+                try {
+                    this.loadingSubmit = true
+                    const form = {
+                        id: this.roleInfo.id,
+                        ids: this.$refs.assignData.getCheckedKeys().concat(this.$refs.assignData.getHalfCheckedKeys())
+                    }
+                    const {data} = await systemRoleAssignPermissions(form)
                     this.loadingSubmit = false
-                } else {
-                    this.$message.error('无权操作！！')
+                    if (data.code === '200') {
+                        this.$message.success('设置成功！！')
+                        this.$emit('success')
+                    } else {
+                        this.$message.error('无权操作！！')
+                    }
+                } catch (e) {
                     this.loadingSubmit = false
                 }
             },

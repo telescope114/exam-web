@@ -35,7 +35,7 @@
                     <el-table-column
                             label="状态">
                         <template slot-scope="scope">
-                            <el-tooltip :content="'当前状态： ' + (scope.row.status === 1?'启用':'禁用')" placement="top">
+                            <el-tooltip :content="'当前状态： ' + (scope.row.status === 1?'启用':'禁用')" placement="top" :enterable="false">
                                 <el-switch
                                     v-model="scope.row.status"
                                     inactive-color="#ff4949"
@@ -125,12 +125,16 @@
         },
         methods: {
             async loadRole () {
-                this.loadingRole = true
-                const { data } = await systemRole()
-                // console.log(data)
-                if (data.code === '200') {
-                    this.roleList = data.data
-                    this.handleSizeChange(this.pageSize)
+                try {
+                    this.loadingRole = true
+                    const {data} = await systemRole()
+                    this.loadingRole = false
+                    // console.log(data)
+                    if (data.code === '200') {
+                        this.roleList = data.data
+                        this.handleSizeChange(this.pageSize)
+                    }
+                } catch (e) {
                     this.loadingRole = false
                 }
             },
@@ -181,34 +185,42 @@
                 }
             },
             async disableRole (row) {
-                const {data} = await systemRoleDisable({roleId:row.id})
-                // console.log(data)
-                if (data.code === '200') {
-                    row.status = 0
-                    this.$message.warning('禁用成功！')
-                } else if (data.code === '201') {
-                    row.status = 0
-                    this.$message.warning('禁用成功！')
-                }  else if (data.code === '304') {
+                try {
+                    const {data} = await systemRoleDisable({roleId: row.id})
+                    // console.log(data)
+                    if (data.code === '200') {
+                        row.status = 0
+                        this.$message.warning('禁用成功！')
+                    } else if (data.code === '201') {
+                        row.status = 0
+                        this.$message.warning('禁用成功！')
+                    } else if (data.code === '304') {
+                        row.status = 1
+                        this.$message.error('不能禁用自己使用的角色！')
+                    } else {
+                        row.status = 1
+                        this.$message.error('无权操作！')
+                    }
+                } catch (e) {
                     row.status = 1
-                    this.$message.error('不能禁用自己使用的角色！')
-                } else {
-                    row.status = 1
-                    this.$message.error('无权操作！')
                 }
             },
             async ableRole (row) {
-                const {data} = await systemRoleEnable({roleId:row.id})
-                // console.log(data)
-                if (data.code === '200') {
-                    row.status = 1
-                    this.$message.success('启用成功！')
-                } else if (data.code === '201') {
-                    row.status = 1
-                    this.$message.success('启用成功！')
-                } else {
+                try {
+                    const {data} = await systemRoleEnable({roleId: row.id})
+                    // console.log(data)
+                    if (data.code === '200') {
+                        row.status = 1
+                        this.$message.success('启用成功！')
+                    } else if (data.code === '201') {
+                        row.status = 1
+                        this.$message.success('启用成功！')
+                    } else {
+                        row.status = 0
+                        this.$message.error('无权操作！')
+                    }
+                } catch (e) {
                     row.status = 0
-                    this.$message.error('无权操作！')
                 }
             },
             /*seeRole (row) {

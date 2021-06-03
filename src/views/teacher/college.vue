@@ -154,17 +154,21 @@
         },
         methods: {
             async loadCollege () {
-                this.loadingCollege = true
-                const { data } = await teacherCollege()
-                this.loadingCollege = false
-                console.log(data)
-                if (data.code === '200') {
-                    console.log(data.data)
-                    this.collegeList = data.data
-                    this.collegeInfo = ''
-                    this.majorList = []
-                    this.majorInfo = ''
-                    this.classList = []
+                try {
+                    this.loadingCollege = true
+                    const {data} = await teacherCollege()
+                    this.loadingCollege = false
+                    console.log(data)
+                    if (data.code === '200') {
+                        console.log(data.data)
+                        this.collegeList = data.data
+                        this.collegeInfo = ''
+                        this.majorList = []
+                        this.majorInfo = ''
+                        this.classList = []
+                    }
+                } catch (e) {
+                    this.loadingCollege = false
                 }
             },
             // 添加学院的弹窗
@@ -207,25 +211,30 @@
             },*/
             // 查看专业
             async seeMajor (row) {
-                this.loadingMajor = true
-                this.collegeInfo = {
-                    collegeName: row.collegeName,
-                    id: row.id
+                this.majorInfo = ''
+                try {
+                    this.loadingMajor = true
+                    this.collegeInfo = {
+                        collegeName: row.collegeName,
+                        id: row.id
+                    }
+                    this.classList = {}
+                    const {data} = await teacherGetMajor({collegeId: row.id})
+                    if (data.code === '200') {
+                        this.majorList = data.data
+                        this.classList = []
+                    }
+                    this.loadingMajor = false
+                } catch (e) {
+                    this.loadingMajor = false
                 }
-                this.classList = {}
-                const { data } = await teacherGetMajor({ collegeId: row.id})
-                if (data.code === '200') {
-                    this.majorList = data.data
-                    this.classList = []
-                }
-                this.loadingMajor = false
             },
-            // 未完成 编辑学院
+            //
             editCollege (row) {
                 this.dialog = true
                 this.dialogType = 1
                 this.isEdit = true
-                this.formInfo = row
+                this.formInfo = {...row}
             },
             // 删除学院
             delCollege (row) {
@@ -250,26 +259,30 @@
             },
             // 查询班级
             async seeClass (row) {
-                this.majorInfo = {
-                    collegeId: row.collegeId,
-                    majorName: row.majorName,
-                    id: row.id
+                try {
+                    this.majorInfo = {
+                        collegeId: row.collegeId,
+                        majorName: row.majorName,
+                        id: row.id
+                    }
+                    this.loadingClass = true
+                    // console.log(row)
+                    const {data} = await teacherCollegeGetClassName({majorId: row.id})
+                    if (data.code === '200') {
+                        this.classList = data.data
+                        // console.log(this.classList)
+                    }
+                    this.loadingClass = false
+                } catch (e) {
+                    this.loadingClass = false
                 }
-                this.loadingClass = true
-                // console.log(row)
-                const { data } = await teacherCollegeGetClassName({majorId: row.id})
-                if (data.code === '200') {
-                    this.classList = data.data
-                    // console.log(this.classList)
-                }
-                this.loadingClass = false
             },
             // 编辑专业
             editMajor (row) {
                 this.dialog = true
                 this.dialogType = 3
                 this.isEdit = true
-                this.formInfo = row
+                this.formInfo = {...row}
             },
             // 删除专业
             delMajor (row) {
@@ -376,32 +389,36 @@
             },
             // 添加专业请求
             async createMajor () {
-                this.loadingMajor = true
-                const {data} = await teacherCollegeAddMajor({
-                    collegeId: this.collegeInfo.id,
-                    majorName: this.formInfo.majorName
-                })
-                if (data.code === '200') {
+                try {
+                    this.loadingMajor = true
+                    const {data} = await teacherCollegeAddMajor({
+                        collegeId: this.collegeInfo.id,
+                        majorName: this.formInfo.majorName
+                    })
+                    if (data.code === '200') {
+                        this.loadingMajor = false
+                        this.$message.success('添加成功')
+                        this.seeMajor(this.collegeInfo)
+                        this.wat = true
+                        this.dialog = false
+                    } else if (data.code === '403') {
+                        this.loadingMajor = false
+                        this.$message.error('专业重名！！')
+                        this.wat = true
+                    } else {
+                        this.$message.error('添加失败!!!')
+                        this.wat = false
+                    }
+                } catch (e) {
                     this.loadingMajor = false
-                    this.$message.success('添加成功')
-                    this.seeMajor(this.collegeInfo)
-                    this.wat = true
-                    this.dialog = false
-                } else if (data.code === '403') {
-                    this.loadingMajor = false
-                    this.$message.error('专业重名！！')
-                    this.wat = true
-                } else {
-                    this.$message.error('添加失败!!!')
-                    this.wat = false
                 }
             },
             // 编辑专业请求
             async editMajorReq () {
-                this.loadingMajor = true
+                // this.loadingMajor = true
                 const {data} = await teacherCollegeEditMajor(this.formInfo)
                 if (data.code === '200') {
-                    this.loadingMajor = false
+                    // this.loadingMajor = false
                     this.$message.success('编辑成功')
                     this.seeMajor(this.collegeInfo)
                     this.wat = true
@@ -420,20 +437,24 @@
                 let info = parseInt(this.formInfo.className)
                 if (info>=2000&&info<=2100&&!/^[a-z\u4e00-\u9fa5]+$/g.test(this.formInfo.className)) {
                     // console.log('OK')
-                    this.loadingClass = true
-                    const {data} = await teacherCollegeAddClass({
-                        majorId: this.majorInfo.id,
-                        grade: info
-                    })
-                    if (data.code === '200') {
+                    try {
+                        this.loadingClass = true
+                        const {data} = await teacherCollegeAddClass({
+                            majorId: this.majorInfo.id,
+                            grade: info
+                        })
                         this.loadingClass = false
-                        this.$message.success('添加成功')
-                        this.seeClass(this.majorInfo)
-                        this.wat = true
-                        this.dialog = false
-                    } else {
-                        this.$message.error('添加失败!!!')
-                        this.wat = false
+                        if (data.code === '200') {
+                            this.$message.success('添加成功')
+                            this.seeClass(this.majorInfo)
+                            this.wat = true
+                            this.dialog = false
+                        } else {
+                            this.$message.error('添加失败!!!')
+                            this.wat = false
+                        }
+                    } catch (e) {
+                        this.loadingClass = false
                     }
                 } else {
                     this.$message.error('年级有误，请输入正确年份！')

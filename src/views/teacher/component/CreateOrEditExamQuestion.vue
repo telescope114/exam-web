@@ -96,25 +96,33 @@
         },
         methods: {
             async loadQuestionBank () {
-                this.loadingQuestionBank = true
-                const { data } = await teacherExamQuestionGetAllQuestionBank()
-                this.loadingQuestionBank = false
-                if (data.code === '200') {
-                    this.questionBankList = data.data
-                    console.log(this.questionBankList)
+                try {
+                    this.loadingQuestionBank = true
+                    const {data} = await teacherExamQuestionGetAllQuestionBank()
+                    this.loadingQuestionBank = false
+                    if (data.code === '200') {
+                        this.questionBankList = data.data
+                        console.log(this.questionBankList)
+                    }
+                } catch (e) {
+                    this.loadingQuestionBank = false
                 }
             },
             async loadExamQuestionOption () {
-                this.loadingExamQuestionOption = true
-                const { data } = await teacherExamQuestionGetExamQuestionOption({eid: this.examQuestionInfo.eid})
-                this.loadingExamQuestionOption = false
-                if (data.code === '200') {
-                    data.data.forEach(item => {
-                        this.optionList[item.option.slice(0,1)] = {
-                            id: item.id,
-                            option: item.option.slice(2,item.option.length)
-                        }
-                    })
+                try {
+                    this.loadingExamQuestionOption = true
+                    const {data} = await teacherExamQuestionGetExamQuestionOption({eid: this.examQuestionInfo.eid})
+                    this.loadingExamQuestionOption = false
+                    if (data.code === '200') {
+                        data.data.forEach(item => {
+                            this.optionList[item.option.slice(0, 1)] = {
+                                id: item.id,
+                                option: item.option.slice(2, item.option.length)
+                            }
+                        })
+                    }
+                } catch (e) {
+                    this.loadingExamQuestionOption = false
                 }
             },
             /*clearAnswer (num) {
@@ -130,21 +138,25 @@
             },
             submit () {
                 // console.log(this.examQuestionInfo)
-                this.loadingSubmit = true
-                this.$refs.examQuestionInfo.validate((valid) => {
-                    if (valid) {
-                        if (this.isEdit) {
-                            this.editExamQuestion()
+                try {
+                    this.loadingSubmit = true
+                    this.$refs.examQuestionInfo.validate((valid) => {
+                        if (valid) {
+                            if (this.isEdit) {
+                                this.editExamQuestion()
+                            } else {
+                                this.addExamQuestion()
+                            }
+                            this.loadingSubmit = false
                         } else {
-                            this.addExamQuestion()
+                            this.$message.error('填写完整！！！')
+                            this.loadingSubmit = false
+                            return false
                         }
-                        this.loadingSubmit = false
-                    } else {
-                        this.$message.error('填写完整！！！')
-                        this.loadingSubmit = false
-                        return false
-                    }
-                })
+                    })
+                } catch (e) {
+                    this.loadingSubmit = false
+                }
             },
             async addExamQuestion () {
                 if (this.examQuestionInfo.type === 0) {

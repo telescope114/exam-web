@@ -59,16 +59,20 @@
         methods: {
             // 获取班级列表
             async loadAssign () {
-                this.loadingAssign = true
-                const { data } = await teacherTeacherGetAllClassByTeacherId({ tid: this.teacherInfo.tid })
-                this.loadingAssign = false
-                // 生成树的数据
-                if (data.code === '200') {
-                    this.assignClassList = collegeMajorClass(data.data)
-                    this.getMenuList(data.data)
-                    console.log(this.cids)
-                } else {
-                    this.$message.error('请求失败')
+                try {
+                    this.loadingAssign = true
+                    const {data} = await teacherTeacherGetAllClassByTeacherId({tid: this.teacherInfo.tid})
+                    this.loadingAssign = false
+                    // 生成树的数据
+                    if (data.code === '200') {
+                        this.assignClassList = collegeMajorClass(data.data)
+                        this.getMenuList(data.data)
+                        console.log(this.cids)
+                    } else {
+                        this.$message.error('请求失败')
+                    }
+                } catch (e) {
+                    this.loadingAssign = false
                 }
             },
             getMenuList (list) {
@@ -79,25 +83,29 @@
                 })
             },
             async submit () {
-                this.loadingSubmit = true
-                this.cids = this.$refs.assignClassList.getCheckedKeys()
-                let check = []
-                this.cids.forEach(item => {
-                    if (typeof(item) === "number") {
-                        check.push(item)
+                try {
+                    this.loadingSubmit = true
+                    this.cids = this.$refs.assignClassList.getCheckedKeys()
+                    let check = []
+                    this.cids.forEach(item => {
+                        if (typeof (item) === "number") {
+                            check.push(item)
+                        }
+                    })
+                    console.log(check)
+                    const {data} = await teacherTeacherAssignClass({
+                        tid: this.teacherInfo.tid,
+                        cids: check
+                    })
+                    this.loadingSubmit = false
+                    if (data.code === '200') {
+                        this.$message.success('分配成功!!')
+                        this.$emit('success')
+                    } else {
+                        this.$message.error('无权操作!!!')
                     }
-                })
-                console.log(check)
-                const { data } = await teacherTeacherAssignClass({
-                    tid: this.teacherInfo.tid,
-                    cids: check
-                })
-                this.loadingSubmit = false
-                if (data.code === '200') {
-                    this.$message.success('分配成功!!')
-                    this.$emit('success')
-                } else {
-                    this.$message.error('无权操作!!!')
+                } catch (e) {
+                    this.loadingSubmit = false
                 }
             },
             cancel () {

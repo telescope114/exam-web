@@ -23,8 +23,7 @@
 </template>
 
 <script>
-    import { systemMenuAdd } from "@/services/admin";
-    import {systemMenuEdit} from "../../../services/admin";
+    import { systemMenuAdd, systemMenuEdit } from "@/services/admin";
 
     export default {
         name: "AdminCreateOrEditMenu",
@@ -84,16 +83,18 @@
             },
             // 创建菜单
             async createMenu () {
-                this.loadingSubmit = true
-                this.menuInfo.parentId = this.parent.id
-                const { data } = await systemMenuAdd(this.menuInfo)
-                console.log(data)
-                if (data.code === '200') {
-                    this.$message.success('添加成功！')
-                    this.$emit('success')
+                try {
+                    this.loadingSubmit = true
+                    this.menuInfo.parentId = this.parent.id
+                    const {data} = await systemMenuAdd(this.menuInfo)
                     this.loadingSubmit = false
-                } else {
-                    this.$message.error('无权操作！！')
+                    if (data.code === '200') {
+                        this.$message.success('添加成功！')
+                        this.$emit('success')
+                    } else {
+                        this.$message.error('无权操作！！')
+                    }
+                } catch (e) {
                     this.loadingSubmit = false
                 }
             },
@@ -102,7 +103,6 @@
                 if (this.menuInfo.menuName !== this.checkMenu.menuName || this.menuInfo.menuUrl !== this.checkMenu.menuUrl || this.menuInfo.type !== this.checkMenu.type) {
                     this.menuInfo.parentId = this.parent.id
                     const { data } = await systemMenuEdit(this.menuInfo)
-                    console.log(data)
                     if (data.code === '200') {
                         this.$message.success('修改成功！')
                         this.$emit('success')

@@ -1,19 +1,5 @@
 <template>
     <div class="teacher-class">
-<!--        <el-backtop target=".page-component__scroll .el-scrollbar__wrap"></el-backtop>-->
-        <!--<el-card>
-            <div class="select-header">
-                <div class="select">
-                    <label>学院</label>
-                    <el-input placeholder="请输入学院" style="width: 150px" v-model="selectForm.college" clearable></el-input>
-                    <label>专业</label>
-                    <el-input placeholder="请输入专业" style="width: 150px" v-model="selectForm.major" clearable></el-input>
-                    <label>年级</label>
-                    <el-input placeholder="请输入年级" style="width: 150px" v-model="selectForm.grade" clearable></el-input>
-                    <el-button type="primary" icon="el-icon-search" circle></el-button>
-                </div>
-            </div>
-        </el-card>-->
         <el-card>
             <el-table
                 :data="classListPagination"
@@ -84,13 +70,17 @@
         },
         methods: {
             async loadingClass () {
-                const { data } = await teacherClass()
-                if (data.code === '200') {
-                    this.classList = data.data
-                    this.classListPagination = this.classListPagination.sort()
-                    this.classListPagination = this.classList.slice(0,this.pageSize)
+                try {
+                    const {data} = await teacherClass()
+                    this.loading = false
+                    if (data.code === '200') {
+                        this.classList = data.data
+                        this.classListPagination = this.classListPagination.sort()
+                        this.classListPagination = this.classList.slice(0, this.pageSize)
+                    }
+                } catch (e) {
+                    this.loading = false
                 }
-                this.loading = false
             },
             // 查看班级
             async seeClass (row) {

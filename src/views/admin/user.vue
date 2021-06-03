@@ -30,7 +30,7 @@
                         label="状态"
                         width="180">
                         <template slot-scope="scope">
-                            <el-tooltip :content="'当前状态： ' + (scope.row.status === 1?'启用':'禁用')" placement="top">
+                            <el-tooltip :content="'当前状态： ' + (scope.row.status === 1?'启用':'禁用')" placement="top" :enterable="false">
                                 <el-switch
                                     v-model="scope.row.status"
                                     inactive-color="#ff4949"
@@ -119,12 +119,16 @@
         },
         methods: {
             async loadUser () {
-                const { data } = await systemUser()
-                this.loadingUser = false
-                if (data.code === '200') {
-                    this.userList = data.data
-                    this.userListPagination = this.userList.slice(0,this.pageSize)
-                    this.userPage = 1
+                try {
+                    const {data} = await systemUser()
+                    this.loadingUser = false
+                    if (data.code === '200') {
+                        this.userList = data.data
+                        this.userListPagination = this.userList.slice(0, this.pageSize)
+                        this.userPage = 1
+                    }
+                } catch (e) {
+                    this.loadingUser = false
                 }
             },
             // 添加用户
@@ -194,25 +198,33 @@
                 }
             },
             async ableUser (row) {
-                const { data } = await systemUserEnable({userId: row.id})
-                if (data.code === '200') {
-                    this.$message.success('启用成功')
-                    row.status = 1
-                } else {
-                    this.$message.error('无权操作')
+                try {
+                    const {data} = await systemUserEnable({userId: row.id})
+                    if (data.code === '200') {
+                        this.$message.success('启用成功')
+                        row.status = 1
+                    } else {
+                        this.$message.error('无权操作')
+                        row.status = 0
+                    }
+                } catch (e) {
                     row.status = 0
                 }
             },
             async disableUser (row) {
-                const { data } = await systemUserDisable({userId: row.id})
-                if (data.code === '200') {
-                    this.$message.warning('禁用成功')
-                    row.status = 0
-                } else if (data.code ==='304') {
-                    this.$message.error('不能禁用管理员！！！')
-                    row.status = 1
-                } else {
-                    this.$message.error('无权操作')
+                try {
+                    const {data} = await systemUserDisable({userId: row.id})
+                    if (data.code === '200') {
+                        this.$message.warning('禁用成功')
+                        row.status = 0
+                    } else if (data.code === '304') {
+                        this.$message.error('不能禁用管理员！！！')
+                        row.status = 1
+                    } else {
+                        this.$message.error('无权操作')
+                        row.status = 1
+                    }
+                } catch (e) {
                     row.status = 1
                 }
             },

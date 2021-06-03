@@ -86,22 +86,30 @@
         },
         methods: {
             async loadExamList () {
-                this.loadingScore = true
-                const { data } = await teacherScore()
-                this.loadingScore = false
-                if (data.code === '200') {
-                    this.scoreList = data.data
-                    this.handleCurrentChange(1)
+                try {
+                    this.loadingScore = true
+                    const {data} = await teacherScore()
+                    this.loadingScore = false
+                    if (data.code === '200') {
+                        this.scoreList = data.data
+                        this.handleCurrentChange(1)
+                    }
+                } catch (e) {
+                    this.loadingScore = false
                 }
             },
             async seeClassExamScoreList (row) {
-                this.examInfo = row
-                this.dialogStudentList = true
-                this.loadingGetStudentScore = true
-                const { data } = await teacherScoreGetStudentScore({examId: row.examId,classId: row.classId})
-                this.loadingGetStudentScore = false
-                if (data.code === '200') {
-                    this.studentScoreList = data.data
+                try {
+                    this.examInfo = row
+                    this.dialogStudentList = true
+                    this.loadingGetStudentScore = true
+                    const {data} = await teacherScoreGetStudentScore({examId: row.examId, classId: row.classId})
+                    this.loadingGetStudentScore = false
+                    if (data.code === '200') {
+                        this.studentScoreList = data.data
+                    }
+                } catch (e) {
+                    this.loadingGetStudentScore = false
                 }
             },
             handleSizeChange (key) {

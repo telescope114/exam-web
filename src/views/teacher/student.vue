@@ -19,7 +19,7 @@
         <div class="teacher-student-main">
             <el-card class="el-card-search">
                 <div class="teacher-student-header">
-                    <el-button @click="addStudent" :disabled="!classInfo" size="small" type="primary">添加学生</el-button>
+                    <el-button @click="addStudent" :disabled="!classInfo" size="small" type="primary" v-if="$store.state.role===0">添加学生</el-button>
                     <div class="select">
                         <label>学生姓名</label>
                         <el-input placeholder="请输入学生姓名" style="width: 150px" v-model="selectForm.studentName" clearable></el-input>
@@ -55,9 +55,10 @@
                         <el-table-column
                             label="状态"
                             width="100"
+                            v-if="$store.state.role===0"
                         >
                             <template slot-scope="scope">
-                                <el-tooltip :content="'当前状态：'+(scope.row.status?'启用':'禁用')" placement="top">
+                                <el-tooltip :content="'当前状态：'+(scope.row.status?'启用':'禁用')" placement="top" :enterable="false">
                                     <el-switch
                                         v-model="scope.row.status"
                                         @click.native="ableOrDisableStatus(scope.row)"
@@ -89,7 +90,7 @@
                             width="150"
                         >
                             <template slot-scope="scope">
-                                <el-button size="mini" type="text" @click="editStudent(scope.row)">编辑</el-button>
+                                <el-button size="mini" type="text" @click="editStudent(scope.row)" v-if="$store.state.role===0">编辑</el-button>
                                 <el-button size="mini" type="text" @click="resetStudentPassword(scope.row)">重置密码</el-button>
                             </template>
                         </el-table-column>
@@ -149,11 +150,15 @@
         },
         methods: {
             async loadClassList() {
-                this.loadingClassList = true
-                const {data} = await teacherStudent()
-                this.loadingClassList = false
-                if (data.code === '200') {
-                    this.classList = collegeMajorClass(data.data)
+                try {
+                    this.loadingClassList = true
+                    const {data} = await teacherStudent()
+                    this.loadingClassList = false
+                    if (data.code === '200') {
+                        this.classList = collegeMajorClass(data.data)
+                    }
+                } catch (e) {
+                    this.loadingClassList = false
                 }
             },
             loadStudentList() {
@@ -194,11 +199,15 @@
             },
             // 获取学生列表
             async getStudentList(row) {
-                this.loadingStudentList = true
-                const {data} = await teacherStudentGetStudentList({classId: row.classId})
-                this.loadingStudentList = false
-                if (data.code === '200') {
-                    this.studentList = data.data
+                try {
+                    this.loadingStudentList = true
+                    const {data} = await teacherStudentGetStudentList({classId: row.classId})
+                    this.loadingStudentList = false
+                    if (data.code === '200') {
+                        this.studentList = data.data
+                    }
+                } catch (e) {
+                    this.loadingStudentList = false
                 }
             },
             // 启用/禁用
@@ -219,24 +228,32 @@
             },
             // 启用
             async ableStudent (row) {
-                const { data } = await teacherStudentEnable({userId: row.userId})
-                if (data.code === '200') {
-                    this.$message.success('启用成功！！')
-                    row.status = 1
-                } else {
-                    this.$message.error('无权操作！！')
+                try {
+                    const {data} = await teacherStudentEnable({userId: row.userId})
+                    if (data.code === '200') {
+                        this.$message.success('启用成功！！')
+                        row.status = 1
+                    } else {
+                        this.$message.error('无权操作！！')
+                        row.status = 0
+                    }
+                } catch (e) {
                     row.status = 0
                 }
             },
             // 禁用
             async disableStudent (row) {
                 // console.log('userId='+row.userId)
-                const { data } = await teacherStudentDisable({userId: row.userId})
-                if (data.code === '200') {
-                    this.$message.warning('禁用成功！！')
-                    row.status = 0
-                } else {
-                    this.$message.error('无权操作！！')
+                try {
+                    const {data} = await teacherStudentDisable({userId: row.userId})
+                    if (data.code === '200') {
+                        this.$message.warning('禁用成功！！')
+                        row.status = 0
+                    } else {
+                        this.$message.error('无权操作！！')
+                        row.status = 1
+                    }
+                } catch (e) {
                     row.status = 1
                 }
             },

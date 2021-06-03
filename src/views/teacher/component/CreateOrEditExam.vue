@@ -165,14 +165,19 @@
         },
         methods: {
             async loadQuestionBank () {
-                this.loadingQuestionBank = true
-                this.loadingClassList = true
-                const { data } = await teacherExamAddExamAdd()
-                this.loadingQuestionBank = false
-                this.loadingClassList = false
-                if (data.code === '200') {
-                    this.questionBankList = data.data
-                    console.log(questionBank)
+                try {
+                    this.loadingQuestionBank = true
+                    this.loadingClassList = true
+                    const {data} = await teacherExamAddExamAdd()
+                    this.loadingQuestionBank = false
+                    this.loadingClassList = false
+                    if (data.code === '200') {
+                        this.questionBankList = data.data
+                        console.log(questionBank)
+                    }
+                } catch (e) {
+                    this.loadingQuestionBank = false
+                    this.loadingClassList = false
                 }
             },
             async loadClassList () {
@@ -330,23 +335,31 @@
                 this.createOrEditExamInfo.duration = parseInt(this.createOrEditExamInfo.duration)
             },
             async addExam () {
-                console.log(this.createOrEditExamInfo)
-                const { data } = await teacherExamAddExamSubmit(this.createOrEditExamInfo)
-                // console.log(data)
-                if (data.code === '200') {
-                    this.$message.success('添加成功！')
-                    this.$emit('success')
-                } else {
-                    this.$message.error('无权操作！！！')
+                // console.log(this.createOrEditExamInfo)
+                try {
+                    const {data} = await teacherExamAddExamSubmit(this.createOrEditExamInfo)
+                    // console.log(data)
+                    if (data.code === '200') {
+                        this.$message.success('添加成功！')
+                        this.$emit('success')
+                    } else {
+                        this.$message.error('无权操作！！！')
+                    }
+                } catch (e) {
+                    this.loadingSubmit = false
                 }
             },
             async editExam () {
-                const { data } = await teacherExamEditExamSubmit(this.createOrEditExamInfo)
-                if (data.code === '200') {
-                    this.$message.success('编辑成功！')
-                    this.$emit('success')
-                } else {
-                    this.$message.error('无权操作！！！')
+                try {
+                    const {data} = await teacherExamEditExamSubmit(this.createOrEditExamInfo)
+                    if (data.code === '200') {
+                        this.$message.success('编辑成功！')
+                        this.$emit('success')
+                    } else {
+                        this.$message.error('无权操作！！！')
+                    }
+                } catch (e) {
+                    this.loadingSubmit = false
                 }
             }
         }

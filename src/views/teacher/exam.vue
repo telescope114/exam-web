@@ -153,16 +153,20 @@
         },
         methods: {
             async loadExam () {
-                this.loadingExam = true
-                const { data } = await teacherExam()
-                if (data.code === '200') {
-                    this.examList = data.data
-                    if (data.data[0].realName) {
-                        this.isDirector = true
+                try {
+                    this.loadingExam = true
+                    const {data} = await teacherExam()
+                    if (data.code === '200') {
+                        this.examList = data.data
+                        if (data.data[0].realName) {
+                            this.isDirector = true
+                        }
+                        this.handleSizeChange(5)
                     }
-                    this.handleSizeChange(5)
+                    this.loadingExam = false
+                } catch (e) {
+                    this.loadingExam = false
                 }
-                this.loadingExam = false
             },
             // 选择添加考试类型
             choiceExamType () {
@@ -196,13 +200,17 @@
                 }
             },
             async selectReq (form) {
-                this.loadingExam = true
-                const { data } = await teacherExamSearchExam(form)
-                this.loadingExam = false
-                if (data.code === '200') {
-                    this.examList = data.data
-                    // console.log(this.examList)
-                    this.handleSizeChange(this.pageSize)
+                try {
+                    this.loadingExam = true
+                    const {data} = await teacherExamSearchExam(form)
+                    this.loadingExam = false
+                    if (data.code === '200') {
+                        this.examList = data.data
+                        // console.log(this.examList)
+                        this.handleSizeChange(this.pageSize)
+                    }
+                } catch (e) {
+                    this.loadingExam = false
                 }
             },
             addExam () {

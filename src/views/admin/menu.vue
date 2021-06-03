@@ -35,7 +35,7 @@
                 <el-table-column
                         label="当前状态">
                     <template slot-scope="scope">
-                        <el-tooltip :content="'当前状态： ' + (scope.row.status === 1?'启用':'禁用')" placement="top">
+                        <el-tooltip :content="'当前状态： ' + (scope.row.status === 1?'启用':'禁用')" placement="top" :enterable="false">
                             <el-switch
                                 @click.native="ableOrDisable(scope.row)"
                                 v-model="scope.row.status"
@@ -114,13 +114,17 @@
         methods: {
             // 加载侧边栏的菜单树
             async loadMenulist () {
-                const { data } = await systemMenu()
-                if (data.code === '200') {
-                    console.log(data.data)
-                    this.menusList = getMenuTree(data.data)
-                    this.menuInfo = []
+                try {
+                    const {data} = await systemMenu()
+                    if (data.code === '200') {
+                        console.log(data.data)
+                        this.menusList = getMenuTree(data.data)
+                        this.menuInfo = []
+                    }
+                    this.loadingMenu = false
+                } catch (e) {
+                    this.loadingMenu = false
                 }
-                this.loadingMenu = false
             },
             // 侧边栏选中菜单树
             handleNodeClick(data) {
@@ -194,18 +198,22 @@
                 }
             },
             async disableMenu (row) {
-                const ids = this.getChildrenId(row)
-                const { data } = await systemMenuDisable({menuIds: ids.join(',')})
-                if (data.code === '200') {
-                    this.$message.warning('已经禁用！')
-                    row.status = 0
-                    this.refreshMenuStatus(row,0)
-                } else if (data.code === '201') {
-                    this.$message.warning('已经禁用！')
-                    row.status = 0
-                    this.refreshMenuStatus(row,0)
-                } else{
-                    this.$message.error('无权操作！')
+                try {
+                    const ids = this.getChildrenId(row)
+                    const {data} = await systemMenuDisable({menuIds: ids.join(',')})
+                    if (data.code === '200') {
+                        this.$message.warning('已经禁用！')
+                        row.status = 0
+                        this.refreshMenuStatus(row, 0)
+                    } else if (data.code === '201') {
+                        this.$message.warning('已经禁用！')
+                        row.status = 0
+                        this.refreshMenuStatus(row, 0)
+                    } else {
+                        this.$message.error('无权操作！')
+                        row.status = 1
+                    }
+                } catch (e) {
                     row.status = 1
                 }
                 // console.log(row)
@@ -213,18 +221,22 @@
             async ableMenu (row) {
                 /*console.log(row)
                 this.$message.success('启用成功！')*/
-                const ids = this.getChildrenId(row)
-                const { data } = await systemMenuEnable({menuIds: ids.join(',')})
-                if (data.code === '200') {
-                    this.$message.success('已经启用！')
-                    this.status = 1
-                    this.refreshMenuStatus(row,1)
-                } else if (data.code === '201') {
-                    this.$message.success('已经启用！')
-                    this.status = 1
-                    this.refreshMenuStatus(row,1)
-                } else{
-                    this.$message.error('无权操作！')
+                try {
+                    const ids = this.getChildrenId(row)
+                    const {data} = await systemMenuEnable({menuIds: ids.join(',')})
+                    if (data.code === '200') {
+                        this.$message.success('已经启用！')
+                        this.status = 1
+                        this.refreshMenuStatus(row, 1)
+                    } else if (data.code === '201') {
+                        this.$message.success('已经启用！')
+                        this.status = 1
+                        this.refreshMenuStatus(row, 1)
+                    } else {
+                        this.$message.error('无权操作！')
+                        row.status = 0
+                    }
+                } catch (e) {
                     row.status = 0
                 }
             }

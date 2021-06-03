@@ -48,7 +48,7 @@
                     label="状态"
                 >
                     <template slot-scope="scope">
-                        <el-tooltip :content="'当前状态：'+(scope.row.status>0?'启用':'禁用')" placement="top">
+                        <el-tooltip :content="'当前状态：'+(scope.row.status>0?'启用':'禁用')" placement="top" :enterable="false">
                             <el-switch
                                 v-model="scope.row.status"
                                 :active-value="1"
@@ -159,12 +159,16 @@
         },
         methods: {
             async loadQuestionBank () {
-                this.loadingQuestionBank = true
-                const { data } = await teacherQuestionBank()
-                this.loadingQuestionBank = false
-                if (data.code === '200') {
-                    this.questionBankList = data.data
-                    this.handleSizeChange(5)
+                try {
+                    this.loadingQuestionBank = true
+                    const {data} = await teacherQuestionBank()
+                    this.loadingQuestionBank = false
+                    if (data.code === '200') {
+                        this.questionBankList = data.data
+                        this.handleSizeChange(5)
+                    }
+                } catch (e) {
+                    this.loadingQuestionBank = false
                 }
             },
             // 添加题库
@@ -209,22 +213,30 @@
                 }
             },
             async enableQuestionBank (row) {
-                const { data } = await teacherQuestionBankEnable({questionBankId: row.id})
-                if (data.code === '200') {
-                    this.$message.success('启用成功')
-                    row.status = 1
-                } else {
-                    this.$message.error('无权操作！！')
+                try {
+                    const {data} = await teacherQuestionBankEnable({questionBankId: row.id})
+                    if (data.code === '200') {
+                        this.$message.success('启用成功')
+                        row.status = 1
+                    } else {
+                        this.$message.error('无权操作！！')
+                        row.status = 0
+                    }
+                } catch (e) {
                     row.status = 0
                 }
             },
             async disableQuestionBank (row) {
-                const { data } = await teacherQuestionBankDisable({questionBankId: row.id})
-                if (data.code === '200') {
-                    this.$message.warning('禁用成功')
-                    row.status = 0
-                } else {
-                    this.$message.error('无权操作！！')
+                try {
+                    const {data} = await teacherQuestionBankDisable({questionBankId: row.id})
+                    if (data.code === '200') {
+                        this.$message.warning('禁用成功')
+                        row.status = 0
+                    } else {
+                        this.$message.error('无权操作！！')
+                        row.status = 1
+                    }
+                } catch (e) {
                     row.status = 1
                 }
             },

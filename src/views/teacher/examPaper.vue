@@ -51,7 +51,7 @@
                     <el-table-column
                             label="当前状态">
                         <template slot-scope="scope">
-                            <el-tooltip :content="'当前状态： ' + (scope.row.status === 1?'启用':'禁用')" placement="top">
+                            <el-tooltip :content="'当前状态： ' + (scope.row.status === 1?'启用':'禁用')" placement="top" :enterable="false">
                                 <el-switch
                                         @click.native="ableOrDisable(scope.row)"
                                         v-model="scope.row.status"
@@ -173,22 +173,30 @@
             },
             async enable (row) {
                 // console.log(row)
-                const { data } = await teacherExamPaperEnable({examPaperId: row.id})
-                if (data.code === '200') {
-                    this.$message.success('启用成功')
-                    row.status = 1
-                } else {
-                    this.$message.error('无权操作！')
+                try {
+                    const {data} = await teacherExamPaperEnable({examPaperId: row.id})
+                    if (data.code === '200') {
+                        this.$message.success('启用成功')
+                        row.status = 1
+                    } else {
+                        this.$message.error('无权操作！')
+                        row.status = 0
+                    }
+                } catch (e) {
                     row.status = 0
                 }
             },
             async disable (row) {
-                const { data } = await teacherExamPaperDisable({examPaperId: row.id})
-                if (data.code === '200') {
-                    this.$message.warning('禁用成功')
-                    row.status = 0
-                } else {
-                    this.$message.error('无权操作！')
+                try {
+                    const {data} = await teacherExamPaperDisable({examPaperId: row.id})
+                    if (data.code === '200') {
+                        this.$message.warning('禁用成功')
+                        row.status = 0
+                    } else {
+                        this.$message.error('无权操作！')
+                        row.status = 1
+                    }
+                } catch (e) {
                     row.status = 1
                 }
             },

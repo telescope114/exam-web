@@ -63,7 +63,7 @@
                     </el-table-column>
                     <el-table-column label="状态" width="100">
                         <template slot-scope="scope">
-                            <el-tooltip :content="'当前状态：' + (scope.row.status?'启用':'禁用')" placement="top">
+                            <el-tooltip :content="'当前状态：' + (scope.row.status?'启用':'禁用')" placement="top" :enterable="false">
                                 <el-switch
                                   v-model="scope.row.status"
                                   :active-value="1"
@@ -167,13 +167,17 @@
         },
         methods: {
             async loadExamQuestion () {
-                this.loadingExamQuestion = true
-                const { data } = await teacherExamQuestion()
-                if (data.code === '200') {
+                try {
+                    this.loadingExamQuestion = true
+                    const {data} = await teacherExamQuestion()
                     this.loadingExamQuestion = false
-                    this.examQuestionAllList = data.data
-                    this.examQuestionList = this.examQuestionAllList
-                    this.handleSizeChange(10)
+                    if (data.code === '200') {
+                        this.examQuestionAllList = data.data
+                        this.examQuestionList = this.examQuestionAllList
+                        this.handleSizeChange(10)
+                    }
+                } catch (e) {
+                    this.loadingExamQuestion = false
                 }
             },
             async loadQuestionBank () {
@@ -280,23 +284,31 @@
                 this.dialogExamQuestionOption = false
             },
             async disableExamQuestion (row) {
-                const { data } = await teacherExamQuestionDisable({examQuestionId: row.id})
-                if (data.code === '200') {
-                    this.$message.warning('禁用成功')
-                    row.status = 0
-                } else {
-                    this.$message.error('无权操作！！！！')
+                try {
+                    const {data} = await teacherExamQuestionDisable({examQuestionId: row.id})
+                    if (data.code === '200') {
+                        this.$message.warning('禁用成功')
+                        row.status = 0
+                    } else {
+                        this.$message.error('无权操作！！！！')
+                        row.status = 1
+                    }
+                } catch (e) {
                     row.status = 1
                 }
                 // this.$message.warning('已经禁用')
             },
             async enableExamQuestion (row) {
-                const { data } = await teacherExamQuestionEnable({examQuestionId: row.id})
-                if (data.code === '200') {
-                    this.$message.success('启用成功')
-                    row.status = 1
-                } else {
-                    this.$message.error('无权操作！！！！')
+                try {
+                    const {data} = await teacherExamQuestionEnable({examQuestionId: row.id})
+                    if (data.code === '200') {
+                        this.$message.success('启用成功')
+                        row.status = 1
+                    } else {
+                        this.$message.error('无权操作！！！！')
+                        row.status = 0
+                    }
+                } catch (e) {
                     row.status = 0
                 }
                 // this.$message.success('已经启用')

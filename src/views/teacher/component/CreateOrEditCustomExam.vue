@@ -133,21 +133,29 @@
         },
         methods: {
             async loadExamPaper () {
-                const { data } = await teacherExamCustomExamPaperGetExamPaper()
-                this.loadingExamPaper = false
-                if (data.code === '200') {
-                    this.examPaperList = data.data
-                    if (this.isEdit) {
-                        // console.log('edit')
-                        this.loadEdit()
+                try {
+                    const {data} = await teacherExamCustomExamPaperGetExamPaper()
+                    this.loadingExamPaper = false
+                    if (data.code === '200') {
+                        this.examPaperList = data.data
+                        if (this.isEdit) {
+                            // console.log('edit')
+                            this.loadEdit()
+                        }
                     }
+                } catch (e) {
+                    this.loadingExamPaper = false
                 }
             },
             async loadClassList () {
-                const { data } = await teacherExamGetClass()
-                this.loadingClassList = false
-                if (data.code === '200') {
-                    this.classList = data.data
+                try {
+                    const {data} = await teacherExamGetClass()
+                    this.loadingClassList = false
+                    if (data.code === '200') {
+                        this.classList = data.data
+                    }
+                } catch (e) {
+                    this.loadingClassList = false
                 }
             },
             async loadEdit () {

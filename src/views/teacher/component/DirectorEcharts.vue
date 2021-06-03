@@ -236,13 +236,17 @@
             },
 // 学院数据请求接口
             async studentReq() {
-                const { data } = await commonTeacherGetCollegeNumber()
-                this.loadingStudentEcharts = false
-                if (data.code === '200') {
-                    this.studentEcharts.series[0].data = data.data.map(item => {
-                        return { value: item.number, name: item.collegeName }
-                    })
-                    this.student()
+                try {
+                    const {data} = await commonTeacherGetCollegeNumber()
+                    this.loadingStudentEcharts = false
+                    if (data.code === '200') {
+                        this.studentEcharts.series[0].data = data.data.map(item => {
+                            return {value: item.number, name: item.collegeName}
+                        })
+                        this.student()
+                    }
+                } catch (e) {
+                    this.loadingStudentEcharts = false
                 }
             },
 // 学院数据可视化
@@ -252,14 +256,18 @@
             },
 // 题库数据请求接口
             async questionBankReq() {
-                const { data } = await commonTeacherGetQuestionBankInfo()
-                this.loadingQuestionBank = false
-                if (data.code === '200') {
-                    // console.log(data.data)
-                    this.questionBankEcharts.series[0].data = data.data.map(item => {
-                        return { value: item.number, name: item.questionBankName }
-                    })
-                    this.questionBank()
+                try {
+                    const {data} = await commonTeacherGetQuestionBankInfo()
+                    this.loadingQuestionBank = false
+                    if (data.code === '200') {
+                        // console.log(data.data)
+                        this.questionBankEcharts.series[0].data = data.data.map(item => {
+                            return {value: item.number, name: item.questionBankName}
+                        })
+                        this.questionBank()
+                    }
+                } catch (e) {
+                    this.loadingQuestionBank = false
                 }
             },
 // 题库数据可视化
@@ -269,12 +277,16 @@
             },
 // 近期考试请求接口
             async scoreReq () {
-                const { data } = await commonTeacherGetClassAverageScore()
-                this.loadingScoreEcharts = false
-                if (data.code === '200') {
-                    // console.log(data.data)
-                    this.getInfo(data.data)
-                    this.recentlyScore()
+                try {
+                    const {data} = await commonTeacherGetClassAverageScore()
+                    this.loadingScoreEcharts = false
+                    if (data.code === '200') {
+                        // console.log(data.data)
+                        this.getInfo(data.data)
+                        this.recentlyScore()
+                    }
+                } catch (e) {
+                    this.loadingScoreEcharts = false
                 }
             },
             async getInfo(data) {

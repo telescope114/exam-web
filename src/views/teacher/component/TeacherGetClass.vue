@@ -23,7 +23,7 @@
             }
         },
         created() {
-            this.loadingClass()
+            this.loadClass()
         },
         data () {
             return {
@@ -32,7 +32,7 @@
             }
         },
         methods: {
-            async loadingClass () {
+            async loadClass () {
                 console.log(this.teacherInfo)
                 const { data } = await teacherTeacherGetClassName({
                     tid: this.teacherInfo.tid

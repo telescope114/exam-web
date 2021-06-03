@@ -44,13 +44,13 @@
                 </el-form>
             </div>
         </template>
-        <el-dialog title="访客模式" :visible.sync="dialogText">
+        <!--<el-dialog title="访客模式" :visible.sync="dialogText">
             <el-table :data="textForm" border>
                 <el-table-column prop="role" label="角色"></el-table-column>
                 <el-table-column prop="username" label="账号"></el-table-column>
                 <el-table-column prop="password" label="密码"></el-table-column>
             </el-table>
-        </el-dialog>
+        </el-dialog>-->
     </div>
 </template>
 
@@ -64,7 +64,7 @@
             return {
                 // 存储表单数据的对象
                 dialogText: false,
-                textForm: [
+                /*textForm: [
                     {
                         username: '123456789',
                         password: '123456',
@@ -82,7 +82,7 @@
                         password: '123456',
                         role: '学生'
                     },
-                ],
+                ],*/
                 loginForm: {
                     username: '',
                     password: ''
@@ -110,72 +110,40 @@
                         // 按钮不可再按
                         this.isLoginLoading = true
                         // 清空token
-                        this.$store.commit('setUser','')
-                        this.$store.commit('setMenu',new Set())
-                        this.$store.commit('setRole','')
+                        this.$store.commit('setUser', '')
+                        this.$store.commit('setMenu', new Set())
+                        this.$store.commit('setRole', '')
                         this.onSubmitReq()
                     } else {
                         this.$message.error('账号密码输入有误！！')
                     }
                 })
-                /*try {
-                    // 校验成功后的功能
-                    await this.$refs.form.validate()
-                    // 发送请求
-                    // 按钮不可再按
-                    this.isLoginLoading = true
-                    // 清空token
-                    this.$store.commit('setUser','')
-                    this.$store.commit('setMenu','')
-                    // {}解构对象内的data
-                    const { data } = await login(this.loginForm)
-                    // 请求处理完毕之后
+            },
+            async onSubmitReq () {
+                try {// {}解构对象内的data
+                    const {data} = await login({...this.loginForm, password: base_64.encode(this.loginForm.password)})
                     this.isLoginLoading = false
+                    // const { data } = await login(this.loginForm)
+                    // 请求处理完毕之后
                     // 响应处理
                     // console.log(data)
                     if (data.code === '200') {
                         this.isLoginLoading = false
-                        this.$store.commit('setUser',data.token)
+                        this.$store.commit('setUser', data)
+                        // console.log(data)
                         if (data.role === 2) {
-                            this.$store.commit('setRole',data.role)
-                            this.$router.push({ name: 'StudentInfo' } )
-                        } else if (data.role === 0|| data.role === 1) {
-                            this.$store.commit('setRole',data.role)
-                            // this.$router.push(this.$route.query.redirect || {name: 'Index'})
+                            this.$store.commit('setRole', data.role)
+                            this.$router.push({name: 'StudentInfo'})
+                        } else if (data.role === 0 || data.role === 1) {
+                            this.$store.commit('setRole', data.role)
+                            this.$router.push(this.$route.query.redirect || {name: 'Index'})
                             // this.$router.push({name: 'Index'})
                         }
                     } else if (data.code === '0') {
                         this.$message.error("账号密码不匹配")
                     }
-                } catch (err) {
-                    // 校验失败后的功能
-                    console.log(err)
-                    console.log('校验未通过')
+                } catch (e) {
                     this.isLoginLoading = false
-                }*/
-            },
-            async onSubmitReq () {
-                // {}解构对象内的data
-                const { data } = await login({...this.loginForm, password: base_64.encode(this.loginForm.password)})
-                // const { data } = await login(this.loginForm)
-                // 请求处理完毕之后
-                this.isLoginLoading = false
-                // 响应处理
-                // console.log(data)
-                if (data.code === '200') {
-                    this.isLoginLoading = false
-                    this.$store.commit('setUser',data)
-                    // console.log(data)
-                    if (data.role === 2) {
-                        this.$store.commit('setRole',data.role)
-                        this.$router.push({ name: 'StudentInfo' } )
-                    } else if (data.role === 0|| data.role === 1) {
-                        this.$store.commit('setRole',data.role)
-                        this.$router.push(this.$route.query.redirect || {name: 'Index'})
-                        // this.$router.push({name: 'Index'})
-                    }
-                } else if (data.code === '0') {
-                    this.$message.error("账号密码不匹配")
                 }
             }
         }

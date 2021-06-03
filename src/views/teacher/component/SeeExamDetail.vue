@@ -31,11 +31,15 @@
         },
         methods: {
             async loadClassList () {
-                this.loadingClassList = true
-                const { data } = await teacherExamGetExamClass({examId: this.examInfo.id})
-                this.loadingClassList = false
-                if (data.code === '200') {
-                    this.classList = data.data
+                try {
+                    this.loadingClassList = true
+                    const {data} = await teacherExamGetExamClass({examId: this.examInfo.id})
+                    this.loadingClassList = false
+                    if (data.code === '200') {
+                        this.classList = data.data
+                    }
+                } catch (e) {
+                    this.loadingClassList = false
                 }
             },
             cancel () {
