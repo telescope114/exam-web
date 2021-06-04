@@ -35,10 +35,20 @@
                         ></el-input>
                     </el-form-item>
                     <el-form-item>
+                        <Vcode :show="isShow" @success="checkHumanOnSuccess" @close="checkHumanOnClose" />
+                        <el-button
+                                type="info"
+                                @click="checkHuman"
+                                :disabled="checkIsHuman"
+                                style="float: left"
+                                plain
+                            >人机校验</el-button>
                         <el-button
                                 type="primary"
                                 @click="onSubmit"
                                 :loading="isLoginLoading"
+                                :disabled="!checkIsHuman"
+                                style="float: right"
                         >登录</el-button>
                     </el-form-item>
                 </el-form>
@@ -57,13 +67,17 @@
 <script>
     import { login } from '@/services/common'
     import base_64 from 'base-64'
+    import Vcode from 'vue-puzzle-vcode'
 
     export default {
         name: 'LoginIndex',
+        components: { Vcode },
         data () {
             return {
                 // 存储表单数据的对象
                 dialogText: false,
+                checkIsHuman: false,
+                isShow: false,
                 /*textForm: [
                     {
                         username: '123456789',
@@ -145,6 +159,18 @@
                 } catch (e) {
                     this.isLoginLoading = false
                 }
+            },
+            checkHuman() {
+                this.isShow = true;
+            },
+
+            checkHumanOnSuccess(/*msg*/) {
+                this.checkIsHuman = true
+                this.isShow = false; // 通过验证后，需要手动关闭模态框
+            },
+
+            checkHumanOnClose() {
+                this.isShow = false;
             }
         }
     }
@@ -167,7 +193,7 @@
             border-radius: 10px;
             margin: 1rem auto;
             .el-button {
-                width: 100%;
+                width: 40%;
             }
         }
         header {
