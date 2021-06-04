@@ -158,6 +158,12 @@
                     const {data} = await teacherExam()
                     if (data.code === '200') {
                         this.examList = data.data
+                            this.examList.sort((a,b) => {
+                            switch (new Date(a.openTime) > new Date(b.openTime)) {
+                                case true: return -1
+                                case false: return 1
+                            }
+                        })
                         if (data.data[0].realName) {
                             this.isDirector = true
                         }
