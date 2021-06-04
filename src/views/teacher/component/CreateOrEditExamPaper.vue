@@ -109,6 +109,11 @@
                     fillQuestionScore: 2,
                     fillQuestionList: []
                 },
+                checkScore: {
+                    choiceQuestionScore: 2,
+                    judgementQuestionScore: 2,
+                    fillQuestionScore: 2
+                },
                 questionBankList: [],
                 questionBankInfo: {},
                 questionList: [],
@@ -121,16 +126,16 @@
         },
         computed: {
             choiceScore: function() {
-                return this.examPaperForm.choiceQuestionScore * this.examPaperForm.choiceQuestionList.length
+                return this.examPaperForm.choiceQuestionScore - 0
             },
             judgementScore: function () {
-                return this.examPaperForm.judgementQuestionScore * this.examPaperForm.judgementQuestionList.length
+                return this.examPaperForm.judgementQuestionScore - 0
             },
             fillScore: function () {
-                return this.examPaperForm.fillQuestionScore * this.examPaperForm.fillQuestionList.length
+                return this.examPaperForm.fillQuestionScore - 0
             },
             totalScore: function() {
-                return this.choiceScore + this.judgementScore + this.fillScore
+                return this.choiceScore * this.examPaperForm.choiceQuestionList.length + this.judgementScore * this.examPaperForm.judgementQuestionList.length + this.fillScore * this.examPaperForm.fillQuestionList.length
             }
         },
         created() {
@@ -170,7 +175,11 @@
                         ...this.examPaperForm.judgementQuestionList.map(item => item.id),
                         ...this.examPaperForm.fillQuestionList.map(item => item.id)
                 ]
-
+                    this.checkScore = {
+                        choiceQuestionScore: data.data.info.choiceQuestionScore,
+                        judgementQuestionScore: data.data.info.judgmentQuestionScore,
+                        fillQuestionScore: data.data.info.fillQuestionScore
+                    }
                     this.getExamQuestionListReq(false)
                 }
             },
@@ -284,7 +293,7 @@
                             if (this.isEdit) {
                                 const form = {
                                     examPaperName: this.examPaperForm.examPaperName,
-                                    examPaperId: this.examPaperForm.examPaperId,
+                                    examPaperId: parseInt(this.examPaperForm.examPaperId),
                                     questionBankId: this.examPaperForm.questionBankId,
                                     examQuestionIds: [...this.examPaperForm.choiceQuestionList.map(item => item.id),...this.examPaperForm.judgementQuestionList.map(item => item.id),...this.examPaperForm.fillQuestionList.map(item => item.id)],
                                     choiceQuestion: this.examPaperForm.choiceQuestionList.length,
@@ -294,8 +303,14 @@
                                     judgementQuestionScore: this.judgementScore,
                                     fillQuestionScore: this.fillScore,
                                 }
-                                if (new Set(this.inspectExamPaperList).toString() === new Set(form.examQuestionIds).toString()) {
-                                    this.$message.error('没有任何修改')
+                                if (this.inspectExamPaperList.sort((a,b) => {return a>b}).join('') === form.examQuestionIds.sort((a,b) => {return a>b}).join('')) {
+                                    if (this.checkScore.choiceQuestionScore === form.choiceQuestionScore
+                                        && this.checkScore.judgementQuestionScore === form.judgementQuestionScore
+                                        && this.checkScore.fillQuestionScore === form.fillQuestionScore) {
+                                        this.$message.error('没有任何修改')
+                                    } else {
+                                        this.submitEditExamPaperReq(form)
+                                    }
                                 } else {
                                     this.submitEditExamPaperReq(form)
                                 }

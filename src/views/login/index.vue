@@ -121,7 +121,7 @@
             },
             async onSubmitReq () {
                 try {// {}解构对象内的data
-                    const {data} = await login({...this.loginForm, password: base_64.encode(this.loginForm.password)})
+                    const {data} = await login({...this.loginForm, password: 'SQSE'+base_64.encode(this.loginForm.password)})
                     this.isLoginLoading = false
                     // const { data } = await login(this.loginForm)
                     // 请求处理完毕之后

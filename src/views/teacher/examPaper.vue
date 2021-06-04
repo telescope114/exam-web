@@ -65,7 +65,7 @@
                     <el-table-column label="操作" fixed="right">
                         <template slot-scope="scope">
                             <el-button type="primary" icon="el-icon-view" @click="seeExamPaper(scope.row)" size="medium" circle></el-button>
-                            <el-button type="info" icon="el-icon-edit" @click="editExamPaper(scope.row)" size="medium" circle></el-button>
+                            <el-button v-if="$store.state.role" type="info" icon="el-icon-edit" @click="editExamPaper(scope.row)" size="medium" circle></el-button>
                         </template>
                     </el-table-column>
                 </el-table>

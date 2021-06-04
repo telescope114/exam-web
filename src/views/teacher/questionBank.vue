@@ -2,8 +2,8 @@
     <div class="teacher-question-bank">
         <el-card>
             <div class="select-header">
-                <el-button @click="addQuestionBank" type="primary">添加题库</el-button>
-                <el-button type="success" icon="el-icon-upload2" @click="uploadQuestionBank">导入题库</el-button>
+                <el-button @click="addQuestionBank" type="primary" v-if="$store.state.role">添加题库</el-button>
+                <el-button type="success" icon="el-icon-upload2" @click="uploadQuestionBank" v-if="$store.state.role">导入题库</el-button>
                 <div class="select">
                     <label>题库搜索</label>
                     <el-input placeholder="请输入题库" style="width: 150px" v-model="selectForm.questionBankName" clearable></el-input>
