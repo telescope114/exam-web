@@ -33,7 +33,7 @@
                     </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button v-if="checkExam" type="primary" @click="getScoreAllInformation(scope.row)">成绩明细</el-button>
+                            <el-button v-if="checkExam" :disabled="scope.row.isExam === 0" type="primary" @click="getScoreAllInformation(scope.row)">成绩明细</el-button>
                             <el-button v-else disabled type="warn">成绩明细</el-button>
                         </template>
                     </el-table-column>

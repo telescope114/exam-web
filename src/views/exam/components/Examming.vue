@@ -5,19 +5,19 @@
                 <div v-if="questionList.choiceQuestionNumber>0">
                     <h3>选择题</h3>
                     <div>
-                        <el-tag v-for="index in questionList.choiceQuestionNumber" :type="answerChoiceList[(index - 1)+'']?'primary':'danger'" :key="index" @click.native="choiceNum(index)">{{index}}</el-tag>
+                        <el-tag v-for="index in questionList.choiceQuestionNumber" :type="answerChoiceList[(index - 1)+'']?'primary':'danger'" :key="index" @click.native="tagToPage(0, index)">{{index}}</el-tag>
                     </div>
                 </div>
                 <div v-if="questionList.judgmentQuestionNumber>0">
                     <h3>判断题</h3>
                     <div>
-                        <el-tag v-for="index in questionList.judgmentQuestionNumber" :type="answerJudgmentList[(index - 1)+'']?'primary':'danger'" :key="index" @click.native="judgmentNum(index)">{{index}}</el-tag>
+                        <el-tag v-for="index in questionList.judgmentQuestionNumber" :type="answerJudgmentList[(index - 1)+'']?'primary':'danger'" :key="index" @click.native="tagToPage(1, index)">{{index}}</el-tag>
                     </div>
                 </div>
                 <div v-if="questionList.fillQuestionNumber>0">
                     <h3>填空题</h3>
                     <div>
-                        <el-tag v-for="index in questionList.fillQuestionNumber" :type="answerFillList[(index - 1)+'']?'primary':'danger'" :key="index" @click.native="fillNum(index)">{{index}}</el-tag>
+                        <el-tag v-for="index in questionList.fillQuestionNumber" :type="answerFillList[(index - 1)+'']?'primary':'danger'" :key="index" @click.native="tagToPage(2, index)">{{index}}</el-tag>
                     </div>
                 </div>
             </el-aside>
@@ -53,8 +53,8 @@
                         </div>
                         <div>
                             <el-button type="primary" @click="page(aimQuestion)">上一题</el-button>
-                            <el-button v-if="!isEnd" type="primary" @click="page(aimQuestion + 2)">下一题</el-button>
                             <el-button v-if="isEnd" type="danger" @click="dialogEndExam = true">提交</el-button>
+                            <el-button v-else type="primary" @click="page(aimQuestion + 2)">下一题</el-button>
                         </div>
                     </div>
 
@@ -108,6 +108,9 @@
                 isEnd: false,
                 dialogEndExam: false
             }
+        },
+        computed: {
+
         },
         created() {
             if (this.code === '203') {
@@ -251,12 +254,28 @@
                     this.aimAnswer = char
                 }
             },
+            // 标签跳转
+            async tagToPage (questionType, num) {
+                // console.log(num)
+                this.isEnd = false
+                if (questionType === 2 && num === this.questionList.fillQuestionNumber) {
+                    this.isEnd = true
+                }
+                switch (questionType) {
+                    case 0: this.choiceNum(num); break;
+                    case 1: this.judgmentNum(num); break;
+                    case 2: this.fillNum(num); break;
+                }
+            },
             // 上一题、下一题
             page (num) {
                 this.isEnd = false
                 if (this.aimType === 0) {
                     if (num === 0) {
                         this.$message.warning('已经是第一题了')
+                    } else if (num-1 === this.questionList.choiceQuestionNumber && !this.questionList.judgmentQuestionNumber && !this.questionList.fillQuestionNumber) {
+                        this.isEnd = true
+                        this.choiceNum(num)
                     } else if (num > this.questionList.choiceQuestionNumber) {
                         if (this.questionList.judgmentQuestionNumber>0) {
                             this.judgmentNum(1)
@@ -270,6 +289,7 @@
                             }
                         }
                     } else {
+                        // console.log(num)
                         this.choiceNum(num)
                     }
                 } else if (this.aimType === 1) {
@@ -279,6 +299,9 @@
                         } else {
                             this.$message.warning('已经是第一题了')
                         }
+                    } else if (num-1 === this.questionList.judgmentQuestionNumber && !this.questionList.fillQuestionNumber) {
+                        this.isEnd = true
+                        this.judgmentNum(num)
                     } else if (num > this.questionList.judgmentQuestionNumber) {
                         if (this.questionList.fillQuestionNumber > 0) {
                             this.fillNum(1)
@@ -291,6 +314,8 @@
                         this.judgmentNum(num)
                     }
                 } else if (this.aimType === 2) {
+                    console.log(num)
+                    console.log(this.questionList.fillQuestionNumber)
                     if ( num === 0) {
                         if (this.questionList.judgmentQuestionNumber > 0) {
                             this.judgmentNum(this.questionList.judgmentQuestionNumber)
@@ -299,6 +324,10 @@
                         } else {
                             this.$message.warning('已经是第一题了')
                         }
+                    } else if (num === this.questionList.fillQuestionNumber) {
+                        this.isEnd = true
+                        // this.setAnswer()
+                        this.fillNum(num)
                     } else if (num > this.questionList.fillQuestionNumber) {
                         this.$message.warning('已经是最后一道题了')
                         this.setAnswer()
@@ -309,6 +338,7 @@
                 }
             },
             endExam () {
+                this.setAnswer()
                 this.$emit('endExam',this.questionList.seid)
                 // const { data } = await examEndExam({seid: this.questionList.seid})
                 // if (data.code === '200') {
