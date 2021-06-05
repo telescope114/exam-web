@@ -50,6 +50,7 @@
                     // console.log(103)
                     this.$store.commit('setUser','')
                     this.$store.commit('setMenu','')
+                    this.$store.commit('setRole','')
                     this.$router.push({name: 'Login'})
                 } else if (data.code === '200') {
                     // console.log(104)

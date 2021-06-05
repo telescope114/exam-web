@@ -29,7 +29,7 @@
                                 <span>
                                     <h4><span class="blue">选择题、填空题</span>可以<span class="blue">双击</span>进入下一题</h4>
                                     <h4><span class="blue">填空题</span>按<span class="blue">“Enter”</span>可以进入下一题</h4>
-                                    <h4>即使做到<span class="blue">最后一道题</span>也会有下一题按钮</h4>
+                                    <h4>只有<span class="blue">最后一道题</span>才有<span class="blue">提交</span>按钮</h4>
                                 </span>
                                 <h1>考试须知</h1>
                                 <span>

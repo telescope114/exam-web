@@ -201,7 +201,6 @@
                         } else {
                             console.log(type)
                             if (type === item.type) {
-                                console.log(item)
                                 list.push(item)
                             }
                         }

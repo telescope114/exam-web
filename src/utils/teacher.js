@@ -46,7 +46,7 @@ export const collegeMajorClass = (Array) => {
                 }
             }
         }
-        console.log(collegeMap)
+        // console.log(collegeMap)
         for (const item in collegeMap) {
             treeData.push(collegeMap[item])
         }

@@ -37,12 +37,19 @@
                     <el-form-item>
                         <Vcode :show="isShow" @success="checkHumanOnSuccess" @close="checkHumanOnClose" />
                         <el-button
+                                v-if="!checkIsHuman"
                                 type="info"
                                 @click="checkHuman"
-                                :disabled="checkIsHuman"
                                 style="float: left"
                                 plain
                             >人机校验</el-button>
+                        <el-button
+                                v-else
+                                type="success"
+                                @click="checkHuman"
+                                disabled
+                                style="float: left"
+                            >校验成功</el-button>
                         <el-button
                                 type="primary"
                                 @click="onSubmit"
@@ -119,8 +126,9 @@
         methods: {
             // 登录功能
             onSubmit () {
-                this.$refs.form.validate(valid => {
-                    if (valid) {
+            this.$refs.form.validate(valid => {
+                if (valid) {
+                    if (this.checkIsHuman) {
                         // 按钮不可再按
                         this.isLoginLoading = true
                         // 清空token
@@ -129,9 +137,14 @@
                         this.$store.commit('setRole', '')
                         this.onSubmitReq()
                     } else {
-                        this.$message.error('账号密码输入有误！！')
+                        this.$message.error('请进行人机校验')
                     }
-                })
+
+                } else {
+                    this.$message.error('账号密码输入有误！！')
+                }
+            })
+
             },
             async onSubmitReq () {
                 try {// {}解构对象内的data
