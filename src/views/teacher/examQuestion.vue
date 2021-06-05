@@ -2,7 +2,7 @@
     <div class="teacher-exam-question">
         <el-card>
             <div class="search">
-                <el-button type="primary" @click="addExamQuestion">添加试题</el-button>
+                <el-button type="primary" @click="addExamQuestion" v-if="$store.state.role">添加试题</el-button>
                 <div class="search-main">
                     <label>试题类型：</label>
                     <el-select v-model="selectForm.examQuestionType" style="width: 100px">
@@ -262,7 +262,7 @@
                     this.$confirm(`禁用警告：你正在禁用 ${row.questionBankName} 的 ${row.title}`,'警告',{
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
-                        type: 'success'
+                        type: 'error'
                     }).then(() => {
                         this.disableExamQuestion(row)
                     }).catch(() => {

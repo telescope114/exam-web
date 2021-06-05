@@ -1,6 +1,6 @@
 <template>
-<!--    <div class="examInfo">-->
-    <div class="examInfo" @mouseleave="checkMouseStatus" @mouseenter="enterMouseStatus">
+    <div class="examInfo">
+<!--    <div class="examInfo" @mouseleave="checkMouseStatus" @mouseenter="enterMouseStatus">-->
         <el-container>
             <el-header>
                 <div v-if="isExam"
